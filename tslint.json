@@ -3,6 +3,11 @@
     "extends": [
         "tslint:recommended"
     ],
+    "linterOptions": {
+        "exclude": [
+            "src/**/*.test.ts"
+        ]
+    },
     "jsRules": {},
     "rules": {
         "trailing-comma": [ false ],

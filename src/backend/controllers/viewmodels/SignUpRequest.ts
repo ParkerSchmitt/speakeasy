@@ -1,17 +1,19 @@
-import emailValidator from 'email-validator'
+/* eslint-disable @typescript-eslint/no-extraneous-class */
+/* eslint-disable no-prototype-builtins */
+import * as EmailValidator from 'email-validator'
 
-export const MissingEmailError : Error = new Error('Missing email from request')
-export const InvalidEmailError : Error = new Error('Email is not valid')
-export const MissingFirstNameError : Error = new Error('Missing first name from request')
-export const MissingLastNameError : Error = new Error('Missing last name from request')
-export const MissingPasswordError : Error = new Error('Missing password  from request')
+export const MissingEmailError: Error = new Error('Missing email from request')
+export const InvalidEmailError: Error = new Error('Email is not valid')
+export const MissingFirstNameError: Error = new Error('Missing first name from request')
+export const MissingLastNameError: Error = new Error('Missing last name from request')
+export const MissingPasswordError: Error = new Error('Missing password  from request')
 
-export const InvalidEmailTypeError : Error = new Error('Email must be a string')
-export const InvalidFirstNameTypeError : Error = new Error('First name must be a string')
-export const InvalidLastNameTypeError : Error = new Error('Last name must be a string')
-export const InvalidPasswordTypeError : Error = new Error('Password must be a string')
+export const InvalidEmailTypeError: Error = new Error('Email must be a string')
+export const InvalidFirstNameTypeError: Error = new Error('First name must be a string')
+export const InvalidLastNameTypeError: Error = new Error('Last name must be a string')
+export const InvalidPasswordTypeError: Error = new Error('Password must be a string')
 
-export interface SignUpRequest{
+export interface SignUpRequest {
   firstName: string
   lastName: string
   email: string
@@ -21,7 +23,7 @@ export interface SignUpRequest{
 // Converts JSON strings to this viewmodel
 // and asserts the results and throws errors if it is invalid
 export class Convert {
-  public static toSignUpRequest(json: object): SignUpRequest {
+  public static toSignUpRequest (json: object): SignUpRequest {
   type ObjectKey = keyof typeof json
 
   const emailKey = 'email' as ObjectKey
@@ -35,7 +37,7 @@ export class Convert {
   if (typeof json[emailKey] !== 'string') {
     throw InvalidEmailTypeError
   }
-  if (emailValidator.validate(json[emailKey]) !== true) {
+  if (!EmailValidator.validate(json[emailKey])) {
     throw InvalidEmailError
   }
 

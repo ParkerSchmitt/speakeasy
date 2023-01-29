@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-        "jsx": "react",
-        "jsx": "react",
         "module": "commonjs",
         "esModuleInterop": true,
         "target": "es6",
@@ -9,6 +7,12 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
+        "strictNullChecks": true,
+        "alwaysStrict": true,
+        "strict": true,
+        "jsx": "react",
+  
+
         "baseUrl": ".",
         "paths": {
             "*": [
@@ -17,11 +21,16 @@
         }
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "webpack.config.js",
+        "./eslintrc.json"    
     ],
     "exclude": [
         "src/**/*.spec.ts",
-        "src/**/*.test.ts"
+        "src/**/*.test.ts",
+        "src/index.tsx"
+
+
     ],
     "jest": {
         "moduleFileExtensions": [
@@ -31,6 +40,11 @@
           "ts"
         ],
         "testPathIgnorePatterns": ["signoz"]
-      }
-      
+      },
+
+      "ts-node": {
+        "esm": true
+    },
+    "strictNullChecks": true
+
 }

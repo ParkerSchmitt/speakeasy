@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import {
@@ -13,7 +13,7 @@ import {
 }
   from 'mdb-react-ui-kit'
 
-function PageLogin () {
+function PageLogin (): ReactElement {
   return (
     <MDBContainer fluid style={{ backgroundColor: '#fff8e3' }}>
 

@@ -1,10 +1,10 @@
 import './App.css'
-import React from 'react'
+import React, { type ReactElement } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import PageLogin from './pages/PageLogin'
 import PageRegister from './pages/PageRegister'
 
-function Router () {
+function Router (): ReactElement {
   return (
     <Routes>
       <Route path="/login" element={ <PageLogin /> } />

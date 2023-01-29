@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "jsx": "react",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es6",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "src/**/*.spec.ts",
+        "src/**/*.test.ts"
+    ],
+    "jest": {
+        "moduleFileExtensions": [
+          "js",
+          "jsx",
+          "tsx",
+          "ts"
+        ],
+        "testPathIgnorePatterns": ["signoz"]
+      }
+      
+}

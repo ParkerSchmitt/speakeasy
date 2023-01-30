@@ -1,7 +1,8 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import type SignUpMediator from '../mediators/AccountMediator'
-import { AccountExistsError } from '../mediators/AccountMediator'
-import { Convert } from './viewmodels/SignUpRequest'
+import { AccountExistsError, InvalidCredentialsError } from '../mediators/AccountMediator'
+import { Convert as SignUpConvert } from './viewmodels/SignUpRequest'
+import { Convert as SignInConvert, type SignInRequest } from './viewmodels/SignInRequest'
 
 export interface AccountControllerConfig {
   Mediator: SignUpMediator
@@ -30,7 +31,7 @@ class AccountController {
       return
     }
     try {
-      const requestObj = Convert.toSignUpRequest(req.body)
+      const requestObj = SignUpConvert.toSignUpRequest(req.body)
       await this.mediator.PostReceiveSignup(requestObj)
     } catch (error) {
       const message = 'Could not process request'
@@ -51,6 +52,43 @@ class AccountController {
     }
 
     res.status(200).json({ code: 200, response: 'Signed up' })
+  }
+
+  /**
+     * PostReceiveSignin converts the JSON request to a viewmodel and attempts to authenticate the user given the credentials POSTed
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+  PostReceiveSignin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (req.body == null) {
+      res.status(400).json({ code: 400, response: 'No body found' })
+      return
+    }
+    let requestObj: SignInRequest
+    try {
+      requestObj = SignInConvert.toSignInRequest(req.body)
+      await this.mediator.PostReceiveSignin(requestObj)
+    } catch (error) {
+      const message = 'Could not process request'
+      if (error instanceof Error) {
+        if (error === InvalidCredentialsError) {
+          res.status(401).json({ code: 401, response: 'Invalid username or password' })
+          return
+        }
+
+        res.status(400).json({ code: 400, error: error.message })
+        return
+      }
+
+      res.status(500).json({ code: 500, error: message })
+      return
+    }
+    // No errors were thrown. user successfully authenticated.
+    const session = req.session
+    session.email = requestObj.email
+    res.status(200).json({ code: 200, response: 'Signed in' })
   }
 }
 

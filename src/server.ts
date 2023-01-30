@@ -1,16 +1,27 @@
 import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
+
 import { Database } from 'sqlite3'
 import AccountMediator from './backend/mediators/AccountMediator'
 import AccountController from './backend/controllers/AccountController'
 import AccountRepository from './backend/repositories/AccountRepository'
 
 export const app = express()
+
+const oneDay = 1000 * 60 * 60 * 24
+
+declare module 'express-session' {
+  interface SessionData {
+    email: string
+  }
+}
+
 app.use(session({
   secret: 'TEST',
   resave: false,
-  saveUninitialized: false
+  cookie: { maxAge: oneDay },
+  saveUninitialized: true
 }))
 app.use(cors())
 app.use(express.json())
@@ -21,7 +32,7 @@ app.use((req, res, next) => {
   next()
 })
 
-const signUpController = new AccountController({
+const accountController = new AccountController({
   Mediator: new AccountMediator({
     Repository: new AccountRepository({
       tableName: 'accounts',
@@ -35,10 +46,10 @@ const signUpController = new AccountController({
 })
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-app.post('/register', signUpController.PostReceiveSignup)
-app.post('/', (req, res) => {
-  res.send('POST Request Called')
-})
+app.post('/register', accountController.PostReceiveSignup)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/authenticate', accountController.PostReceiveSignin)
+
 // start the Express server
 app.listen(4000, () => {
   console.log(`server running on ${4000}`)

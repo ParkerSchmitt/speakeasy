@@ -44,6 +44,33 @@ class AccountRepository {
   }
 
   /**
+     * retrieveHashAndSalt attempts to find the given hash and salt for a certain email
+     * @param email the email to check for
+     * @returns a object, OR null if there is nothing for the given email (email doesn't exist). {hash: string, salt: string}
+     */
+  async retrieveHashAndSalt (email: string): Promise<{ hash: string, salt: string } | null> {
+    const query = `SELECT passwordHash, passwordSalt FROM ${this.tableName} WHERE email=$value`
+    const row = await new Promise<any[]>((resolve, reject) => {
+      this.database.all(query, {
+        $value: email
+      }, (error, result) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+    if (row.length === 0) {
+      return null
+    } else {
+      const hash = row[0].passwordHash
+      const salt = row[0].passwordSalt
+      return { hash, salt }
+    }
+  }
+
+  /**
      * insertAccount puts a account into the database.
      * @param email The email to insert
      * @param firstName The first name to insert

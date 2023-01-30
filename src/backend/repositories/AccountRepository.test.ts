@@ -52,9 +52,7 @@ describe('AccountRepository',  () => {
         `should insert values into database`,
         async (email, firstName, lastName, passwordHash, passwordSalt) => {
             const insert = await AccountRepositoryCorrectTable.insertAccount(email, firstName, lastName, passwordHash, passwordSalt);
-
             const query = `SELECT email, firstName, lastName, passwordHash, passwordSalt FROM ${AccountRepositoryCorrectTable.tableName} WHERE email=$value`;
-
             let rows  = await new Promise<any[]>((resolve,reject) => {database.all(query,{
                 '$value': email
             }, (error, result) => {
@@ -65,14 +63,29 @@ describe('AccountRepository',  () => {
                   }
             })
         })
-    
             expect(rows.length).toEqual(1);
             expect(rows[0].email).toEqual(email);
             expect(rows[0].firstName).toEqual(firstName);
             expect(rows[0].lastName).toEqual(lastName);
             expect(rows[0].passwordHash).toEqual(passwordHash);
             expect(rows[0].passwordSalt).toEqual(passwordSalt);
-
         }
     );
+
+          // Makes sur
+          it.each([
+            ["abc@test.com","asnkfjdksfkdsnkj12334231", "dsfdsf13e423"],
+        ])(
+            `should retrieve correct email and hash`,
+            async (email, correctHash,correctSalt) => {
+                const responseObj = await AccountRepositoryCorrectTable.retrieveHashAndSalt(email)
+        
+                expect(responseObj).not.toBeNull()
+                expect(responseObj!.hash).toEqual(correctHash)
+                expect(responseObj!.salt).toEqual(correctSalt)
+            }
+        );
+
+
+
 });

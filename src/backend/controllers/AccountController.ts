@@ -90,6 +90,22 @@ class AccountController {
     session.email = requestObj.email
     res.status(200).json({ code: 200, response: 'Signed in' })
   }
+
+  /**
+     * GetIsAuthenticated sees if there exist a email under the users session, indicating they are logged in.
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+  GetIsAuthenticated = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const session = req.session
+    if (session.email !== undefined) {
+      res.status(200).json({ code: 200, response: true })
+    } else {
+      res.status(200).json({ code: 200, response: false })
+    }
+  }
 }
 
 export default AccountController

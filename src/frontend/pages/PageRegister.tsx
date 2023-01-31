@@ -27,6 +27,13 @@ function PageRegister (): ReactElement {
   const [passwordRepeat, setPasswordRepeat] = useState('')
   const [passwordRepeatFlag, setPasswordRepeatFlag] = useState(false)
 
+  /**
+   * Validates the input to see if it is correct, and sets the state of the input
+   * @param indicator boolean, if it is valid or not
+   * @param target the event target to set the valadility of.
+   * @param funcSetInput the value that we are changing the state of
+   * @param funcSetInputFlag the flag that corresponds to the input. Used to determine input is modified and if a warning should even be displayed.
+   */
   const validateInput = (indicator: boolean, target: HTMLInputElement, funcSetInput: (val: string) => void, funcSetInputFlag: (val: boolean) => void): void => {
     if (indicator) {
       funcSetInput(target.value)
@@ -40,6 +47,10 @@ function PageRegister (): ReactElement {
     }
   }
 
+  /**
+   * Handles form submission from the login sceen and attempts to login the user.
+   * @param e  the form event.
+   */
   const handleSubmission = (e: FormEvent<HTMLFormElement>): void => {
     fetch('http://localhost:4000/register', {
       method: 'POST',

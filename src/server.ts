@@ -23,7 +23,13 @@ app.use(session({
   cookie: { maxAge: oneDay },
   saveUninitialized: true
 }))
-app.use(cors())
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 
 app.use((req, res, next) => {
@@ -49,6 +55,8 @@ const accountController = new AccountController({
 app.post('/register', accountController.PostReceiveSignup)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/authenticate', accountController.PostReceiveSignin)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.get('/isAuthenticated', accountController.GetIsAuthenticated)
 
 // start the Express server
 app.listen(4000, () => {

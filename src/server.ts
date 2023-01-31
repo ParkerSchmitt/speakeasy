@@ -6,6 +6,9 @@ import { Database } from 'sqlite3'
 import AccountMediator from './backend/mediators/AccountMediator'
 import AccountController from './backend/controllers/AccountController'
 import AccountRepository from './backend/repositories/AccountRepository'
+import TopicRepository from './backend/repositories/TopicRepository'
+import TopicMediator from './backend/mediators/TopicsMediator'
+import TopicsController from './backend/controllers/TopicsController'
 
 export const app = express()
 
@@ -38,15 +41,26 @@ app.use((req, res, next) => {
   next()
 })
 
+const database = new Database('./src/storage.db', (err) => {
+  if (err != null) {
+    console.error(err.message)
+  }
+})
+
 const accountController = new AccountController({
   Mediator: new AccountMediator({
     Repository: new AccountRepository({
       tableName: 'accounts',
-      database: new Database('./src/storage.db', (err) => {
-        if (err != null) {
-          console.error(err.message)
-        }
-      })
+      database
+    })
+  })
+})
+
+const topicsController = new TopicsController({
+  Mediator: new TopicMediator({
+    Repository: new TopicRepository({
+      topicTableName: 'topics',
+      database
     })
   })
 })
@@ -57,6 +71,9 @@ app.post('/register', accountController.PostReceiveSignup)
 app.post('/authenticate', accountController.PostReceiveSignin)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.get('/isAuthenticated', accountController.GetIsAuthenticated)
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.get('/retrieveTopics', topicsController.GetReceiveTopics)
 
 // start the Express server
 app.listen(4000, () => {

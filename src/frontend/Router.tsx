@@ -5,6 +5,7 @@ import PageLogin from './pages/PageLogin'
 import PageRegister from './pages/PageRegister'
 import PageTopics from './pages/PageTopics'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import PageLearn from './pages/PageLearn'
 
 function Router (): ReactElement {
   return (
@@ -14,6 +15,12 @@ function Router (): ReactElement {
         <Route path="/topics" element={
           <ProtectedRoute>
             <PageTopics/>
+          </ProtectedRoute>
+        }>
+        </Route>
+        <Route path="/learn" element={
+          <ProtectedRoute>
+            <PageLearn/>
           </ProtectedRoute>
         }>
         </Route>

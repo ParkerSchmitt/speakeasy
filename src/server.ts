@@ -77,5 +77,5 @@ app.get('/retrieveTopics', topicsController.GetReceiveTopics)
 
 // start the Express server
 app.listen(4000, () => {
-  console.log(`server running on ${4000}`)
+  console.log(`API server running on ${4000}`)
 })

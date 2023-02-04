@@ -19,7 +19,9 @@ function Router (): ReactElement {
         }>
         </Route>
         <Route path="/learn" element={
+          <ProtectedRoute>
             <PageLearn/>
+          </ProtectedRoute>
         }>
         </Route>
     </Routes>

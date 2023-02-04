@@ -31,14 +31,13 @@ export default function PageTopics (): ReactElement {
                     </MDBCol>
                     <MDBCol></MDBCol>
                 </MDBRow>
-                <hr></hr>
-
+                <hr/>
                 <MDBCardBody>
                     <h2 className="my-5 text-center" >Casa</h2>
                 </MDBCardBody>
             </MDBCard>
          </MDBContainer>
-         <br></br>
+         <br/>
          <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
          <MDBRow>
             <MDBCol>

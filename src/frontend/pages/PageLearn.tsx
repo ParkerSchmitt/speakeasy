@@ -16,8 +16,72 @@ import {
   MDBRow
 } from 'mdb-react-ui-kit'
 
+
+
+
 export default function PageTopics (): ReactElement {
-  return (
+
+    /**
+     * Saves the memorization effectiveness of the card the user just flipped over.
+     * @param learnedScore The score of how well the user did learning
+     * @returns A void promise
+     */
+    const feedbackHook = (learnedScore: number): Promise<void> => {
+        try {
+            fetch('http://localhost:4000/saveCard', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                learnedScore: learnInt
+                cardNum: this.state.cardNum,
+                topic: this.prop.topic
+            })
+        })      .then(async response => {
+            if (response.status === 200) {
+              navigate('/topics')
+            }
+          })
+          .catch((error) => {
+            throw error
+          })
+        } catch (err: error) {
+            throw err
+        }
+
+        const receiveCards = (learnedScore: number): Promise<void> => {
+            try {
+                fetch('http://localhost:4000/receiveCards', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    learnedScore: learnInt
+                    cardNum: this.state.cardNum,
+                    topic: this.prop.topic
+                })
+            })      .then(async response => {
+                if (response.status === 200) {
+                  navigate('/topics')
+                }
+              })
+              .catch((error) => {
+                throw error
+              })
+            } catch (err: error) {
+                throw err
+            }
+
+    } 
+
+
+    return (
     <>
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
         <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>
@@ -41,28 +105,28 @@ export default function PageTopics (): ReactElement {
          <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
          <MDBRow>
             <MDBCol>
-            <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
+            <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(4)}}>
                 <MDBCardBody className='text-success text-center'>
                     <MDBCardTitle>Remembered</MDBCardTitle>
                 </MDBCardBody>
                 </MDBCard>
             </MDBCol>
             <MDBCol>
-                <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column' >
+                <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(3)}}>
                     <MDBCardBody className='text-secondary text-center'>
                         <MDBCardTitle>Recognized</MDBCardTitle>
                     </MDBCardBody>
                 </MDBCard>
             </MDBCol>
             <MDBCol>
-                <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
+                <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(2)}}>
                     <MDBCardBody className='text-warning text-center'>
                         <MDBCardTitle>Seen</MDBCardTitle>
                     </MDBCardBody>
                 </MDBCard>
             </MDBCol>
             <MDBCol>
-                <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column'>
+                <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(1)}}>
                 <MDBCardBody className='text-danger text-center'>
                     <MDBCardTitle>New</MDBCardTitle>
                 </MDBCardBody>

@@ -2,11 +2,13 @@ import type { Database } from 'sqlite3'
 
 export interface TopicRepositoryConfig {
   topicTableName: string
+  cardTableName: string
   database: Database
 }
 
 class TopicRepository {
   topicTableName: string
+  cardTableName: string
   database: Database
 
   /**
@@ -15,6 +17,7 @@ class TopicRepository {
      */
   constructor (config: TopicRepositoryConfig) {
     this.topicTableName = config.topicTableName
+    this.cardTableName = config.cardTableName
     this.database = config.database
   }
 
@@ -25,6 +28,27 @@ class TopicRepository {
      */
   async receiveTopics (): Promise<Array<{ id: number, name: string, description: string, imageUrl: string }>> {
     const query = `SELECT id, name, description, imageUrl FROM ${this.topicTableName}`
+    const topics = await new Promise<any[]>((resolve, reject) => {
+      this.database.all(query, (error, result) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+    return topics
+  }
+
+  /**
+     * receiveNewCards attempts to retrieve cards from a given topic
+     * @param topic the name of the topic to search for cards under
+     * @param amount the amount of cards to try and receive
+     * @param offset the amount of cards to offset by
+     * @returns a promise for an array containing the cards
+     */
+  async receiveNewCards (topic: string, amount: number, offset: number): Promise<Array<{ id: number, targetLanguageWord: string, nativeLanguageWord: string }>> {
+    const query = `SELECT ${this.cardTableName}.id, targetLanguageWord, nativeLanguageWord FROM ${this.cardTableName} INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id WHERE ${this.topicTableName}.name = "${topic}" ORDER BY ${this.cardTableName}.id ASC LIMIT ${amount} OFFSET ${offset}`
     const topics = await new Promise<any[]>((resolve, reject) => {
       this.database.all(query, (error, result) => {
         if (error !== null) {

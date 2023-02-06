@@ -6,9 +6,9 @@ import { Database } from 'sqlite3'
 import AccountMediator from './backend/mediators/AccountMediator'
 import AccountController from './backend/controllers/AccountController'
 import AccountRepository from './backend/repositories/AccountRepository'
-import TopicRepository from './backend/repositories/TopicRepository'
-import TopicMediator from './backend/mediators/TopicsMediator'
-import TopicsController from './backend/controllers/TopicsController'
+// import TopicRepository from './backend/repositories/TopicRepository'
+// import TopicMediator from './backend/mediators/TopicsMediator'
+// import TopicsController from './backend/controllers/TopicsController'
 
 export const app = express()
 
@@ -56,6 +56,7 @@ const accountController = new AccountController({
   })
 })
 
+/*
 const topicsController = new TopicsController({
   Mediator: new TopicMediator({
     Repository: new TopicRepository({
@@ -64,6 +65,7 @@ const topicsController = new TopicsController({
     })
   })
 })
+*/
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/register', accountController.PostReceiveSignup)
@@ -72,8 +74,7 @@ app.post('/authenticate', accountController.PostReceiveSignin)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.get('/isAuthenticated', accountController.GetIsAuthenticated)
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-app.get('/retrieveTopics', topicsController.GetReceiveTopics)
+// app.get('/retrieveTopics', topicsController.GetReceiveTopics)
 
 // start the Express server
 app.listen(4000, () => {

@@ -22,8 +22,8 @@ export interface SignUpRequest {
 
 // Converts JSON strings to this viewmodel
 // and asserts the results and throws errors if it is invalid
-export class Convert {
-  public static toSignUpRequest (json: object): SignUpRequest {
+export class SignUpRequest {
+  public static parse (json: object): SignUpRequest {
   type ObjectKey = keyof typeof json
 
   const emailKey = 'email' as ObjectKey

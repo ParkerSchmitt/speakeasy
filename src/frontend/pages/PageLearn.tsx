@@ -43,7 +43,7 @@ export default function PageTopics (): ReactElement {
             <MDBCol>
             <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
                 <MDBCardBody className='text-success text-center'>
-                    <MDBCardTitle>Remembered</MDBCardTitle>
+                    <MDBCardTitle>Mastered</MDBCardTitle>
                 </MDBCardBody>
                 </MDBCard>
             </MDBCol>
@@ -57,7 +57,7 @@ export default function PageTopics (): ReactElement {
             <MDBCol>
                 <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
                     <MDBCardBody className='text-warning text-center'>
-                        <MDBCardTitle>Seen</MDBCardTitle>
+                        <MDBCardTitle>Learning</MDBCardTitle>
                     </MDBCardBody>
                 </MDBCard>
             </MDBCol>

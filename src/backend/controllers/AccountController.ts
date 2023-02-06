@@ -1,8 +1,8 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import type SignUpMediator from '../mediators/AccountMediator'
 import { AccountExistsError, InvalidCredentialsError } from '../mediators/AccountMediator'
-import { Convert as SignUpConvert } from './viewmodels/SignUpRequest'
-import { Convert as SignInConvert, type SignInRequest } from './viewmodels/SignInRequest'
+import { SignUpRequest } from './viewmodels/SignUpRequest'
+import { SignInRequest } from './viewmodels/SignInRequest'
 
 export interface AccountControllerConfig {
   Mediator: SignUpMediator
@@ -31,7 +31,7 @@ class AccountController {
       return
     }
     try {
-      const requestObj = SignUpConvert.toSignUpRequest(req.body)
+      const requestObj = SignUpRequest.parse(req.body)
       await this.mediator.PostReceiveSignup(requestObj)
     } catch (error) {
       const message = 'Could not process request'
@@ -68,7 +68,7 @@ class AccountController {
     }
     let requestObj: SignInRequest
     try {
-      requestObj = SignInConvert.toSignInRequest(req.body)
+      requestObj = SignInRequest.parse(req.body)
       await this.mediator.PostReceiveSignin(requestObj)
     } catch (error) {
       const message = 'Could not process request'

@@ -80,7 +80,7 @@ app.get('/isAuthenticated', accountController.GetIsAuthenticated)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.get('/retrieveTopics', topicsController.GetReceiveTopics)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-app.get('/retrieveCards', topicsController.GetReceiveCards)
+app.post('/retrieveCards', topicsController.GetReceiveCards)
 
 // start the Express server
 app.listen(4000, () => {

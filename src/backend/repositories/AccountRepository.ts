@@ -48,8 +48,8 @@ class AccountRepository {
      * @param email the email to check for
      * @returns a object, OR null if there is nothing for the given email (email doesn't exist). {hash: string, salt: string}
      */
-  async retrieveHashAndSalt (email: string): Promise<{ hash: string, salt: string } | null> {
-    const query = `SELECT passwordHash, passwordSalt FROM ${this.tableName} WHERE email=$value`
+  async retrieveHashAndSalt (email: string): Promise<{ id: number, hash: string, salt: string } | null> {
+    const query = `SELECT id, passwordHash, passwordSalt FROM ${this.tableName} WHERE email=$value`
     const row = await new Promise<any[]>((resolve, reject) => {
       this.database.all(query, {
         $value: email
@@ -64,9 +64,10 @@ class AccountRepository {
     if (row.length === 0) {
       return null
     } else {
+      const id = row[0].id
       const hash = row[0].passwordHash
       const salt = row[0].passwordSalt
-      return { hash, salt }
+      return { id, hash, salt }
     }
   }
 

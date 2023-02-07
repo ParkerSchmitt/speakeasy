@@ -49,8 +49,9 @@ class AccountMediator {
   /**
     * PostReceiveSignin attempts to authenticate the user with the repository.
     * @param request the viewmodel of the POST request. Includes email, and password.
+    * @returns the userid if successful login
     */
-  async PostReceiveSignin (request: SignInRequest): Promise<void> {
+  async PostReceiveSignin (request: SignInRequest): Promise<number> {
     try {
       const retrieveObj = await this.repository.retrieveHashAndSalt(request.email)
       if (retrieveObj === null) {
@@ -63,6 +64,7 @@ class AccountMediator {
       if (passwordAttemptHash !== hash) {
         throw InvalidCredentialsError
       }
+      return retrieveObj.id
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {

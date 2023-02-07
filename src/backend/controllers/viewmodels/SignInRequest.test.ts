@@ -1,4 +1,4 @@
-import  {MissingEmailError,InvalidEmailError,InvalidEmailTypeError, MissingPasswordError, InvalidPasswordTypeError, Convert} from './SignInRequest';
+import  {MissingEmailError,InvalidEmailError,InvalidEmailTypeError, MissingPasswordError, InvalidPasswordTypeError, SignInRequest} from './SignInRequest';
 
 
 describe("SignUpRequest", () => {
@@ -19,7 +19,7 @@ describe("SignUpRequest", () => {
       ])(
         `should return proper error given invalid json object`,
         (json, error) => {
-          expect(() => {Convert.toSignInRequest(json)}).toThrowError(error);
+          expect(() => {SignInRequest.parse(json)}).toThrowError(error);
         }
       );
 
@@ -32,7 +32,7 @@ describe("SignUpRequest", () => {
       ])(
         `should return proper structure given json request`,
         (json, conversion) => {
-          expect(Convert.toSignInRequest(json)).toEqual(conversion);
+          expect(SignInRequest.parse(json)).toEqual(conversion);
         }
       );
 });

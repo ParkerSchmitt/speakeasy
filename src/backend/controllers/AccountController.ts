@@ -1,8 +1,8 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import type SignUpMediator from '../mediators/AccountMediator'
 import { AccountExistsError, InvalidCredentialsError } from '../mediators/AccountMediator'
-import { Convert as SignUpConvert } from './viewmodels/SignUpRequest'
-import { Convert as SignInConvert, type SignInRequest } from './viewmodels/SignInRequest'
+import { SignUpRequest } from './viewmodels/SignUpRequest'
+import { SignInRequest } from './viewmodels/SignInRequest'
 
 export interface AccountControllerConfig {
   Mediator: SignUpMediator
@@ -31,7 +31,7 @@ class AccountController {
       return
     }
     try {
-      const requestObj = SignUpConvert.toSignUpRequest(req.body)
+      const requestObj = SignUpRequest.parse(req.body)
       await this.mediator.PostReceiveSignup(requestObj)
     } catch (error) {
       const message = 'Could not process request'
@@ -68,8 +68,11 @@ class AccountController {
     }
     let requestObj: SignInRequest
     try {
-      requestObj = SignInConvert.toSignInRequest(req.body)
-      await this.mediator.PostReceiveSignin(requestObj)
+      requestObj = SignInRequest.parse(req.body)
+      const accountId = await this.mediator.PostReceiveSignin(requestObj)
+      // No errors were thrown. user successfully authenticated.
+      const session = req.session
+      session.accountId = accountId
     } catch (error) {
       const message = 'Could not process request'
       if (error instanceof Error) {
@@ -85,9 +88,7 @@ class AccountController {
       res.status(500).json({ code: 500, error: message })
       return
     }
-    // No errors were thrown. user successfully authenticated.
-    const session = req.session
-    session.email = requestObj.email
+
     res.status(200).json({ code: 200, response: 'Signed in' })
   }
 
@@ -100,7 +101,7 @@ class AccountController {
      */
   GetIsAuthenticated = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const session = req.session
-    if (session.email !== undefined) {
+    if (session.accountId !== undefined) {
       res.status(200).json({ code: 200, response: true })
     } else {
       res.status(200).json({ code: 200, response: false })

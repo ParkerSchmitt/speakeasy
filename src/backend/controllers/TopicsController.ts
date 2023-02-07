@@ -1,5 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express'
+import { InvalidCredentialsError } from '../mediators/AccountMediator'
 import type TopicsMediator from '../mediators/TopicsMediator'
+import { ReceiveCardsRequest } from './viewmodels/ReceiveCardsRequest'
 
 export interface TopicControllerConfig {
   Mediator: TopicsMediator
@@ -31,6 +33,38 @@ class TopicController {
     }
     res.status(200).json({ code: 200, response: responseObj })
   }
-}
 
+  /**
+     * GetReceiveCards retrieves the current cards the user has to stufy from inside of the database and returns them to the user.
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise. Returns data directly to request as JSON
+     */
+  GetReceiveCards = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (req.body == null) {
+      res.status(400).json({ code: 400, response: 'No body found' })
+      return
+    }
+    if (req.session.accountId === undefined) {
+      res.status(500).json({ code: 500, response: 'Must be authorized' })
+    } else {
+      let requestObj: ReceiveCardsRequest
+      try {
+      // No errors were thrown. user successfully authenticated.
+        requestObj = ReceiveCardsRequest.parse(req.body)
+        const responseObj = await this.mediator.GetReceiveCards(req.session.accountId, requestObj)
+        res.status(200).json({ code: 200, response: responseObj })
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error === InvalidCredentialsError) {
+            res.status(401).json({ code: 401, response: 'Invalid username or password' })
+            return
+          }
+          res.status(400).json({ code: 400, error: error.message })
+        }
+      }
+    }
+  }
+}
 export default TopicController

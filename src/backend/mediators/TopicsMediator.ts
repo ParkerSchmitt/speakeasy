@@ -47,23 +47,26 @@ class TopicMediator {
     * @param request - the request the user made.
     * @returns a Promise with the information in JSON
     */
-  async GetReceiveCards (request: ReceiveCardsRequest): Promise<Array<{ id: number, name: string, description: string, imageUrl: string, scheduledCard: boolean }>> {
+  async GetReceiveCards (accountId: number, request: ReceiveCardsRequest): Promise<Array<{ id: number, targetLanguageWord: string, nativeLanguageWord: string, scheduledCard: boolean }>> {
     try {
       if (request.amount > this.maxCards || request.amount < 0) {
         throw InvalidCardAmount
       }
 
-      // First lets grab cards that the user is scheduled to learning- stored in the linkages table
+      // First lets grab cards that the user is scheduled to learn- stored in the linkages table
 
-      const scheduledCardsResponse = await this.repository.receiveScheduledCards(request.topic, this.maxCards, new Date())
+      const scheduledCardsResponse = await this.repository.receiveStoredCards(request.topic, accountId, request.amount, Math.floor(new Date().getTime() / 1000.0))
+      const scheduledCards = scheduledCardsResponse.map(cardData => ({ ...cardData, scheduledCard: true }))
 
       const leftover: number = request.amount - scheduledCardsResponse.length
+      const offset: number = await this.repository.receiveMaxCardReached(request.topic, accountId) ?? 0
 
       if (leftover > 0) {
-        const newCardsResponse = await this.repository.receiveNewCards(request.topic, leftover)
+        const newCardsResponse = await this.repository.receiveNewCards(request.topic, leftover, offset)
+        const newCards = newCardsResponse.map(cardData => ({ ...cardData, scheduledCard: false }))
+        return scheduledCards.concat(newCards)
       }
-
-      return scheduledCardsResponse.concat(newCardsResponse)
+      return scheduledCards
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {

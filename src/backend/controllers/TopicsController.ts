@@ -46,24 +46,25 @@ class TopicController {
       res.status(400).json({ code: 400, response: 'No body found' })
       return
     }
-    let requestObj: ReceiveCardsRequest
-    try {
-      requestObj = ReceiveCardsRequest.parse(req.body)
-      await this.mediator.PostReceiveSignin(requestObj)
-    } catch (error) {
-      const message = 'Could not process request'
-      if (error instanceof Error) {
-        if (error === InvalidCredentialsError) {
-          res.status(401).json({ code: 401, response: 'Invalid username or password' })
-          return
+    if (req.session.accountId === undefined) {
+      res.status(500).json({ code: 500, response: 'Must be authorized' })
+    } else {
+      let requestObj: ReceiveCardsRequest
+      try {
+      // No errors were thrown. user successfully authenticated.
+        requestObj = ReceiveCardsRequest.parse(req.body)
+        const responseObj = await this.mediator.GetReceiveCards(req.session.accountId, requestObj)
+        res.status(200).json({ code: 200, response: responseObj })
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error === InvalidCredentialsError) {
+            res.status(401).json({ code: 401, response: 'Invalid username or password' })
+            return
+          }
+          res.status(400).json({ code: 400, error: error.message })
         }
-
-        res.status(400).json({ code: 400, error: error.message })
-        return
       }
-      res.status(200).json({ code: 200, response: responseObj })
     }
   }
 }
-
 export default TopicController

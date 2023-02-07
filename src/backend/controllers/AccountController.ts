@@ -69,7 +69,10 @@ class AccountController {
     let requestObj: SignInRequest
     try {
       requestObj = SignInRequest.parse(req.body)
-      await this.mediator.PostReceiveSignin(requestObj)
+      const accountId = await this.mediator.PostReceiveSignin(requestObj)
+      // No errors were thrown. user successfully authenticated.
+      const session = req.session
+      session.accountId = accountId
     } catch (error) {
       const message = 'Could not process request'
       if (error instanceof Error) {
@@ -85,9 +88,7 @@ class AccountController {
       res.status(500).json({ code: 500, error: message })
       return
     }
-    // No errors were thrown. user successfully authenticated.
-    const session = req.session
-    session.email = requestObj.email
+
     res.status(200).json({ code: 200, response: 'Signed in' })
   }
 
@@ -100,7 +101,7 @@ class AccountController {
      */
   GetIsAuthenticated = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const session = req.session
-    if (session.email !== undefined) {
+    if (session.accountId !== undefined) {
       res.status(200).json({ code: 200, response: true })
     } else {
       res.status(200).json({ code: 200, response: false })

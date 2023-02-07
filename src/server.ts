@@ -6,6 +6,9 @@ import { Database } from 'sqlite3'
 import AccountMediator from './backend/mediators/AccountMediator'
 import AccountController from './backend/controllers/AccountController'
 import AccountRepository from './backend/repositories/AccountRepository'
+import TopicsController from './backend/controllers/TopicsController'
+import TopicMediator from './backend/mediators/TopicsMediator'
+import TopicRepository from './backend/repositories/TopicRepository'
 // import TopicRepository from './backend/repositories/TopicRepository'
 // import TopicMediator from './backend/mediators/TopicsMediator'
 // import TopicsController from './backend/controllers/TopicsController'
@@ -16,7 +19,7 @@ const oneDay = 1000 * 60 * 60 * 24
 
 declare module 'express-session' {
   interface SessionData {
-    email: string
+    accountId: number
   }
 }
 
@@ -56,16 +59,17 @@ const accountController = new AccountController({
   })
 })
 
-/*
 const topicsController = new TopicsController({
   Mediator: new TopicMediator({
+    MaxCards: 10,
     Repository: new TopicRepository({
       topicTableName: 'topics',
+      cardAccountLinkageTableName: 'cards_accounts',
+      cardTableName: 'cards',
       database
     })
   })
 })
-*/
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/register', accountController.PostReceiveSignup)
@@ -73,8 +77,10 @@ app.post('/register', accountController.PostReceiveSignup)
 app.post('/authenticate', accountController.PostReceiveSignin)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.get('/isAuthenticated', accountController.GetIsAuthenticated)
-
-// app.get('/retrieveTopics', topicsController.GetReceiveTopics)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.get('/retrieveTopics', topicsController.GetReceiveTopics)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.get('/retrieveCards', topicsController.GetReceiveCards)
 
 // start the Express server
 app.listen(4000, () => {

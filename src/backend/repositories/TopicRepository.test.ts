@@ -21,6 +21,14 @@ describe('TopicRepository',  () => {
             resolve()
         }})
     })
+    await new Promise<void>((resolve,reject) => {database.exec("CREATE TABLE cards_accounts(id INTEGER PRIMARY KEY, card_id INTEGER, account_id INTEGER, easiness DECIMAL(10,3), interval INTEGER, repetitions INTERVAL, datetime INTEGER)", (err) => {
+        if (err) {
+            reject(err)
+        } else {
+            resolve()
+        }})
+    })
+
     await new Promise<void>((resolve,reject) => { database.exec("INSERT INTO topics(name, description, imageurl) VALUES ('Test', 'Test Description', 'Test Image URL')", (err) => {
         if (err) {
             reject(err)
@@ -34,12 +42,20 @@ describe('TopicRepository',  () => {
         } else {
             resolve()
         }})
-    })    
+    })
+    await new Promise<void>((resolve,reject) => { database.exec("INSERT INTO cards_accounts(card_id, account_id, easiness, interval, repetitions, datetime) VALUES (1,1,5.3,5,3, 1675734233)", (err) => {
+        if (err) {
+            reject(err)
+        } else {
+            resolve()
+        }})
+    })        
 
 
      TopicRepositoryCorrectTable = new TopicRepository({
         topicTableName: 'topics',
         cardTableName: 'cards',
+        cardAccountLinkageTableName: 'cards_accounts',
         database: database,
     })
     });
@@ -68,6 +84,34 @@ describe('TopicRepository',  () => {
         async (topic, amount, offset, expectedObject) => {
             const result = await TopicRepositoryCorrectTable.receiveNewCards(topic,amount,offset);
             expect(result).toEqual(expectedObject);
+
+        }
+    );
+
+    // Makes sure it retrieves the existing (learned) cards form the database.
+    it.each([
+        ['Test', 1, 1, 1675820631, [{"id": 1, "nativeLanguageWord": "Home", "targetLanguageWord": "Casa"}]],
+        ['Test', 1, 0, 1675820631, []],
+        ['Test', 1, 1, 1675303131, []], // should be an empty array because the timestamp is less before the timestamp saved
+       ])(
+        `should retrieve the cards from the database`,
+        async (topic, accountId, amount, date, expectedObject) => {
+            const result = await TopicRepositoryCorrectTable.receiveStoredCards(topic,accountId,amount,date);
+            expect(result).toEqual(expectedObject);
+
+        }
+    );
+
+        // Makes sure it retrieves the existing (learned) cards form the database.
+    it.each([
+        ['Test', 1, 1],
+        ['Test', 3, null],
+        ['Test', 0, null], // should be an empty array because the timestamp is less before the timestamp saved
+       ])(
+        `should retrieve the cards from the database`,
+        async (topic, accountId, expectedMax) => {
+            const result = await TopicRepositoryCorrectTable.receiveMaxCardReached(topic, accountId);
+            expect(result).toEqual(expectedMax);
 
         }
     );

@@ -7,7 +7,7 @@ describe('AccountRepository',  () => {
 
     it('should create database in memory', async () => {
 
-    await new Promise<void>((resolve,reject) => {database.exec("CREATE TABLE accounts (id SERIAL, email varchar(255), firstName varchar(255), lastName varchar(255), passwordHash varchar(255), passwordSalt varchar(32))", (err) => {
+    await new Promise<void>((resolve,reject) => {database.exec("CREATE TABLE accounts (id INTEGER PRIMARY KEY, email varchar(255), firstName varchar(255), lastName varchar(255), passwordHash varchar(255), passwordSalt varchar(32))", (err) => {
         if (err) {
             reject(err)
         } else {
@@ -15,7 +15,7 @@ describe('AccountRepository',  () => {
         }})
     })
 
-    await new Promise<void>((resolve,reject) => { database.exec("INSERT INTO accounts (id, email, firstName, lastName, passwordHash, passwordSalt) VALUES('1', 'duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f')", (err) => {
+    await new Promise<void>((resolve,reject) => { database.exec("INSERT INTO accounts (email, firstName, lastName, passwordHash, passwordSalt) VALUES('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f')", (err) => {
         if (err) {
             reject(err)
         } else {
@@ -74,13 +74,14 @@ describe('AccountRepository',  () => {
 
           // Makes sur
           it.each([
-            ["abc@test.com","asnkfjdksfkdsnkj12334231", "dsfdsf13e423"],
+            ["abc@test.com",2 ,"asnkfjdksfkdsnkj12334231", "dsfdsf13e423"], //from previous test
         ])(
             `should retrieve correct email and hash`,
-            async (email, correctHash,correctSalt) => {
+            async (email, correctAccountId, correctHash,correctSalt) => {
                 const responseObj = await AccountRepositoryCorrectTable.retrieveHashAndSalt(email)
         
                 expect(responseObj).not.toBeNull()
+                expect(responseObj!.id).toEqual(correctAccountId)
                 expect(responseObj!.hash).toEqual(correctHash)
                 expect(responseObj!.salt).toEqual(correctSalt)
             }

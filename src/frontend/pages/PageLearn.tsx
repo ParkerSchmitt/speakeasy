@@ -1,140 +1,149 @@
-import React, { type ReactElement } from 'react'
+import React, { useEffect, useState, type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import {
   MDBCard,
   MDBCardBody,
-
-  MDBCardText,
-
   MDBCardTitle,
-
   MDBCol,
-
   MDBContainer,
   MDBNavbarBrand,
-  MDBRow
+  MDBRow,
+  MDBSpinner
 } from 'mdb-react-ui-kit'
-
-
-
+import { type Card, FlashCard } from '../components/Flashcard'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 export default function PageTopics (): ReactElement {
+  const [cards, setCards] = useState<Card[]>([])
+  const [flip, setFlip] = useState(false)
+  const [currentCards, setCurrentCards] = useState<Card[]>([])
 
-    /**
+  /**
      * Saves the memorization effectiveness of the card the user just flipped over.
      * @param learnedScore The score of how well the user did learning
      * @returns A void promise
      */
-    const feedbackHook = (learnedScore: number): Promise<void> => {
-        try {
-            fetch('http://localhost:4000/saveCard', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                learnedScore: learnInt
-                cardNum: this.state.cardNum,
-                topic: this.prop.topic
-            })
-        })      .then(async response => {
-            if (response.status === 200) {
-              navigate('/topics')
-            }
-          })
-          .catch((error) => {
-            throw error
-          })
-        } catch (err: error) {
-            throw err
+
+  // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    // Update the document title using the browser API
+    receiveCards()
+  }, [])
+
+  const receiveCards = (): void => {
+    fetch('http://localhost:4000/retrieveCards', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        topic: 'Spanish',
+        amount: 5
+      })
+    }).then(async response => await response.json())
+      .then(response => {
+        const newCards: Card[] = []
+        for (let i = 0; i < response.response.length; i++) {
+          const card: Card = {
+            id: response.response[i].id,
+            previewText: response.response[i].targetLanguageWord,
+            revealText: response.response[i].nativeLanguageWord
+          }
+          newCards.push(card)
         }
+        setCards(
+          cards.concat(newCards)
+        )
+        setCurrentCards([newCards[0]])
+        console.log(cards)
+      }).catch((error) => {
+        throw error
+      })
+      .catch((error) => {
+        throw error
+      })
+  }
 
-        const receiveCards = (learnedScore: number): Promise<void> => {
-            try {
-                fetch('http://localhost:4000/receiveCards', {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    learnedScore: learnInt
-                    cardNum: this.state.cardNum,
-                    topic: this.prop.topic
-                })
-            })      .then(async response => {
-                if (response.status === 200) {
-                  navigate('/topics')
-                }
-              })
-              .catch((error) => {
-                throw error
-              })
-            } catch (err: error) {
-                throw err
-            }
+  enum CardResponse {
+    Mastered,
+    Recognized,
+    Learning,
+    New
+  }
+  const nextCardHandler = (result: CardResponse): void => {
+    setFlip(false)
+    const tempCard = [...cards]
+    tempCard.splice(0, 1)
+    setCards(tempCard)
+    setCurrentCards([tempCard[0]])
+  }
 
-    } 
-
-
-    return (
+  return (
     <>
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
         <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>
-            <MDBCard className='p-5 w-100 d-flex flex-column'>
-                <MDBRow>
-                    <MDBCol>
-                        <MDBCardText>1/20</MDBCardText>
-                    </MDBCol>
-                    <MDBCol>
-                        <MDBCardTitle className='text-center'>Spanish</MDBCardTitle>
-                    </MDBCol>
-                    <MDBCol></MDBCol>
-                </MDBRow>
-                <hr/>
-                <MDBCardBody>
-                    <h2 className="my-5 text-center" >Casa</h2>
-                </MDBCardBody>
-            </MDBCard>
+            { cards.length === 0 && <div className="cardl"><MDBSpinner role='status'><span className='visually-hidden'>Loading...</span></MDBSpinner></div>}
+                { cards.length > 0 &&
+                <TransitionGroup>
+                    {currentCards.map((card) =>
+                    <CSSTransition key={card.id} classNames={{
+                      enterActive: 'animatein',
+                      exitActive: 'animateout'
+                    }} timeout={50}>
+                    <div className={`cardl ${flip ? 'flip' : ''}`}>
+                    <div className='front' onClick={() => { setFlip(!flip) }}>
+                    <FlashCard id={card.id} title='Spanish' text={ card.previewText }/>
+                    </div>
+                    <div className='back' onClick={() => { setFlip(!flip) }}>
+                    <FlashCard id={card.id} title='Translation' text={ card.revealText }/>
+                    </div>
+                    </div>
+            </CSSTransition>
+                    )}
+</TransitionGroup>
+
+                  }
          </MDBContainer>
          <br/>
-         <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
-         <MDBRow>
-            <MDBCol>
-            <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(4)}}>
-                <MDBCardBody className='text-success text-center'>
-                    <MDBCardTitle>Mastered</MDBCardTitle>
-                </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            <MDBCol>
-                <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(3)}}>
-                    <MDBCardBody className='text-secondary text-center'>
-                        <MDBCardTitle>Recognized</MDBCardTitle>
-                    </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            <MDBCol>
-                <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(2)}}>
-                    <MDBCardBody className='text-warning text-center'>
-                        <MDBCardTitle>Learning</MDBCardTitle>
-                    </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            <MDBCol>
-                <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column' onClick={() => {feedbackHook(1)}}>
-                <MDBCardBody className='text-danger text-center'>
-                    <MDBCardTitle>New</MDBCardTitle>
-                </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-        </MDBRow>
+         {
+            flip && <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
+            <MDBRow>
+               <MDBCol onClick={() => { setFlip(false); setCurrentCards([cards[1]]) }}>
+               <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
+                   <MDBCardBody className='text-success text-center'>
+                       <MDBCardTitle>Mastered</MDBCardTitle>
+                   </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+               <MDBCol>
+                   <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column'>
+                       <MDBCardBody className='text-secondary text-center'>
+                           <MDBCardTitle>Recognized</MDBCardTitle>
+                       </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+               <MDBCol>
+                   <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
+                       <MDBCardBody className='text-warning text-center'>
+                           <MDBCardTitle>Learning</MDBCardTitle>
+                       </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+               <MDBCol onClick={() => { nextCardHandler(CardResponse.New) }}>
+                   <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column'>
+                   <MDBCardBody className='text-danger text-center'>
+                       <MDBCardTitle>New</MDBCardTitle>
+                   </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+           </MDBRow>
 
-         </MDBContainer>
-  </>
+            </MDBContainer>
+
+         }
+          </>
   )
 }

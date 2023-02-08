@@ -14,3 +14,41 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.cardl {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: 300ms;
+  cursor: pointer;
+  transform: perspective(1000px) rotateY(var(--rotate-y,0))
+  translateY(var(--translate-y,0));
+}
+
+.cardl .front {
+  left: 0;
+  width: 100%;
+  position: absolute;
+  padding: 1rem;
+  backface-visibility:hidden;
+}
+
+.cardl.animatein{
+  transform: translateY(-1200px) scale(1.2);
+}
+.cardl.animateout {
+  transform: translateY(1200px) scale(0.8);
+}
+
+.cardl.flip {
+  --rotate-y: 180deg;
+}
+
+.cardl .back {
+  transform: rotateY(180deg);
+  width: 100%;
+  backface-visibility:hidden;
+}

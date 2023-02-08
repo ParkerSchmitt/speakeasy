@@ -8,12 +8,17 @@ import {
   MDBCol,
   MDBContainer,
   MDBNavbarBrand,
-  MDBRow
+  MDBRow,
+  MDBSpinner
 } from 'mdb-react-ui-kit'
 import { type Card, FlashCard } from '../components/Flashcard'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 export default function PageTopics (): ReactElement {
   const [cards, setCards] = useState<Card[]>([])
+  const [flip, setFlip] = useState(false)
+  const [currentCards, setCurrentCards] = useState<Card[]>([])
+
   /**
      * Saves the memorization effectiveness of the card the user just flipped over.
      * @param learnedScore The score of how well the user did learning
@@ -36,7 +41,7 @@ export default function PageTopics (): ReactElement {
       credentials: 'include',
       body: JSON.stringify({
         topic: 'Spanish',
-        amount: 2
+        amount: 5
       })
     }).then(async response => await response.json())
       .then(response => {
@@ -52,6 +57,7 @@ export default function PageTopics (): ReactElement {
         setCards(
           cards.concat(newCards)
         )
+        setCurrentCards([newCards[0]])
         console.log(cards)
       }).catch((error) => {
         throw error
@@ -61,48 +67,83 @@ export default function PageTopics (): ReactElement {
       })
   }
 
+  enum CardResponse {
+    Mastered,
+    Recognized,
+    Learning,
+    New
+  }
+  const nextCardHandler = (result: CardResponse): void => {
+    setFlip(false)
+    const tempCard = [...cards]
+    tempCard.splice(0, 1)
+    setCards(tempCard)
+    setCurrentCards([tempCard[0]])
+  }
+
   return (
     <>
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
         <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>
-            {
-                cards.length > 0 && <FlashCard card={ cards[0] }/>
-            }
+            { cards.length === 0 && <div className="cardl"><MDBSpinner role='status'><span className='visually-hidden'>Loading...</span></MDBSpinner></div>}
+                { cards.length > 0 &&
+                <TransitionGroup>
+                    {currentCards.map((card) =>
+                    <CSSTransition key={card.id} classNames={{
+                      enterActive: 'animatein',
+                      exitActive: 'animateout'
+                    }} timeout={50}>
+                    <div className={`cardl ${flip ? 'flip' : ''}`}>
+                    <div className='front' onClick={() => { setFlip(!flip) }}>
+                    <FlashCard id={card.id} title='Spanish' text={ card.previewText }/>
+                    </div>
+                    <div className='back' onClick={() => { setFlip(!flip) }}>
+                    <FlashCard id={card.id} title='Translation' text={ card.revealText }/>
+                    </div>
+                    </div>
+            </CSSTransition>
+                    )}
+</TransitionGroup>
+
+                  }
          </MDBContainer>
          <br/>
-         <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
-         <MDBRow>
-            <MDBCol>
-            <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
-                <MDBCardBody className='text-success text-center'>
-                    <MDBCardTitle>Mastered</MDBCardTitle>
-                </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            <MDBCol>
-                <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column'>
-                    <MDBCardBody className='text-secondary text-center'>
-                        <MDBCardTitle>Recognized</MDBCardTitle>
-                    </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            <MDBCol>
-                <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
-                    <MDBCardBody className='text-warning text-center'>
-                        <MDBCardTitle>Learning</MDBCardTitle>
-                    </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-            <MDBCol>
-                <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column'>
-                <MDBCardBody className='text-danger text-center'>
-                    <MDBCardTitle>New</MDBCardTitle>
-                </MDBCardBody>
-                </MDBCard>
-            </MDBCol>
-        </MDBRow>
+         {
+            flip && <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
+            <MDBRow>
+               <MDBCol onClick={() => { setFlip(false); setCurrentCards([cards[1]]) }}>
+               <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
+                   <MDBCardBody className='text-success text-center'>
+                       <MDBCardTitle>Mastered</MDBCardTitle>
+                   </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+               <MDBCol>
+                   <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column'>
+                       <MDBCardBody className='text-secondary text-center'>
+                           <MDBCardTitle>Recognized</MDBCardTitle>
+                       </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+               <MDBCol>
+                   <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
+                       <MDBCardBody className='text-warning text-center'>
+                           <MDBCardTitle>Learning</MDBCardTitle>
+                       </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+               <MDBCol onClick={() => { nextCardHandler(CardResponse.New) }}>
+                   <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column'>
+                   <MDBCardBody className='text-danger text-center'>
+                       <MDBCardTitle>New</MDBCardTitle>
+                   </MDBCardBody>
+                   </MDBCard>
+               </MDBCol>
+           </MDBRow>
 
-         </MDBContainer>
-  </>
+            </MDBContainer>
+
+         }
+          </>
   )
 }

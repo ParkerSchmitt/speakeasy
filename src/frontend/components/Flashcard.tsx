@@ -7,21 +7,21 @@ export interface Card {
   revealText: string
 }
 
-export const FlashCard = (props: { card: Card }): React.ReactElement => {
+export const FlashCard = (props: { id: number, title: string, text: string }): React.ReactElement => {
   return (
     <MDBCard className='p-5 w-100 d-flex flex-column'>
         <MDBRow>
             <MDBCol>
-                <MDBCardText>#{props.card.id}</MDBCardText>
+                <MDBCardText>#{props.id}</MDBCardText>
             </MDBCol>
             <MDBCol>
-                <MDBCardTitle className='text-center'>Spanish</MDBCardTitle>
+                <MDBCardTitle className='text-center'>{props.title}</MDBCardTitle>
             </MDBCol>
             <MDBCol></MDBCol>
         </MDBRow>
         <hr/>
         <MDBCardBody>
-            <h2 className="my-5 text-center" >{props.card.previewText}</h2>
+            <h2 className="my-5 text-center" >{props.text}</h2>
         </MDBCardBody>
     </MDBCard>
   )

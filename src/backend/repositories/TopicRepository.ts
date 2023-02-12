@@ -1,4 +1,5 @@
 import type { Database } from 'sqlite3'
+import { type CardType } from '../types/CardType'
 
 export interface TopicRepositoryConfig {
   topicTableName: string
@@ -65,6 +66,33 @@ class TopicRepository {
   }
 
   /**
+     * receiveStoredCard attempts to retrieve a particular card from a given topic already learned by a user
+     * @param accountId the id of the user associated with the card stored
+     * @param cardId the id of the card
+     * @returns a promise for the card, or null if it doesn't exist yet.
+     */
+  async receiveStoredCard (accountId: number, cardId: number): Promise< CardType | null> {
+    const query = `SELECT ${this.cardTableName}.id, ${this.topicTableName}.name AS topic, ${this.cardTableName}.targetLanguageWord AS previewText, ${this.cardTableName}.nativeLanguageWord AS revealText,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
+                      INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
+                      INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
+                      WHERE ${this.cardAccountLinkageTableName}.card_id = ${cardId} AND ${this.cardAccountLinkageTableName}.account_id = ${accountId} 
+                      LIMIT 1`
+    const cards = await new Promise<any | null>((resolve, reject) => {
+      this.database.get(query, (error, result) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          if (result === undefined) {
+            resolve(null)
+          }
+          resolve(result)
+        }
+      })
+    })
+    return cards
+  }
+
+  /**
      * receiveStoredCards attempts to retrieve cards from a given topic already learned by a user
      * @param topic the name of the topic to search for cards under
      * @param accountId the id of the user associated with the cards stored
@@ -112,6 +140,69 @@ class TopicRepository {
       })
     })
     return max
+  }
+
+  /**
+     * saveLearnedCard attempts to save a card to auser
+     * @param topic the name of the topic to search for cards under
+     * @param cardId the id of the card to insert/update
+     * @param accountId the id of the user associated with the cards stored
+     * @param easiness the easiness of the word to the user
+     * @param interval the interval to store/update
+     * @param repetitions the repetitions to store/update
+     * @param date the review date to store/update
+     * @returns a promise containing a integer representing the highest card a user has learned, or null
+     */
+  async updateLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
+    const query = `UPDATE ${this.cardAccountLinkageTableName} 
+                  SET easiness=$easiness, interval=$interval, repetitions=$repetitions, datetime=$date
+                  WHERE ${this.cardAccountLinkageTableName}.card_id = $cardId AND ${this.cardAccountLinkageTableName}.account_id = $accountId`
+    await new Promise<void>((resolve, reject) => {
+      this.database.get(query, {
+        $cardId: cardId,
+        $accountId: accountId,
+        $easiness: easiness,
+        $interval: interval,
+        $repetitions: repetitions,
+        $date: date
+      }, (error: Error) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
+  }
+
+  /**
+     * insertLearnedCard attempts to save a card to auser
+     * @param cardId the id of the card to insert/update
+     * @param accountId the id of the user associated with the cards stored
+     * @param easiness the easiness of the word to the user
+     * @param interval the interval to store/update
+     * @param repetitions the repetitions to store/update
+     * @param date the review date to store/update
+     * @returns a promise containing a integer representing the highest card a user has learned, or null
+     */
+  async insertLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
+    const query = `INSERT INTO ${this.cardAccountLinkageTableName} (card_id, account_id, easiness, interval, repetitions, datetime) VALUES ($cardId,$accountId,$easiness,$interval,$repetitions,$date)`
+    await new Promise<void>((resolve, reject) => {
+      this.database.get(query, {
+        $cardId: cardId,
+        $accountId: accountId,
+        $easiness: easiness,
+        $interval: interval,
+        $repetitions: repetitions,
+        $date: date
+      }, (error: Error) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
   }
 }
 

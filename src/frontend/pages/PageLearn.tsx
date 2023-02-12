@@ -41,7 +41,7 @@ export default function PageTopics (): ReactElement {
       credentials: 'include',
       body: JSON.stringify({
         topic: 'Spanish',
-        amount: 5
+        amount: 10
       })
     }).then(async response => await response.json())
       .then(response => {
@@ -68,17 +68,40 @@ export default function PageTopics (): ReactElement {
   }
 
   enum CardResponse {
-    Mastered,
-    Recognized,
+    New,
     Learning,
-    New
+    Recognized,
+    Mastered,
   }
-  const nextCardHandler = (result: CardResponse): void => {
+  const nextCardHandler = (cardId: number, result: CardResponse): void => {
+    // First save the card
+
+    fetch('http://localhost:4000/saveCard', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        topic: 'Spanish',
+        quality: result,
+        cardId
+      })
+    }).catch((error: Error) => {
+      console.log(`Error saving card: Response: ${error.message}`)
+    })
+
     setFlip(false)
     const tempCard = [...cards]
     tempCard.splice(0, 1)
     setCards(tempCard)
     setCurrentCards([tempCard[0]])
+
+    // If we are at the end of the cards
+    if (tempCard.length === 0) {
+      receiveCards()
+    }
   }
 
   return (
@@ -110,29 +133,31 @@ export default function PageTopics (): ReactElement {
          <br/>
          {
             flip && <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
-            <MDBRow>
-               <MDBCol onClick={() => { setFlip(false); setCurrentCards([cards[1]]) }}>
+            { currentCards.map((card) =>
+
+            <MDBRow key={card.id}>
+               <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Mastered) }}>
                <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-success text-center'>
                        <MDBCardTitle>Mastered</MDBCardTitle>
                    </MDBCardBody>
                    </MDBCard>
                </MDBCol>
-               <MDBCol>
+               <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Recognized) }}>
                    <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-secondary text-center'>
                            <MDBCardTitle>Recognized</MDBCardTitle>
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
-               <MDBCol>
+               <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Learning) }}>
                    <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-warning text-center'>
                            <MDBCardTitle>Learning</MDBCardTitle>
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
-               <MDBCol onClick={() => { nextCardHandler(CardResponse.New) }}>
+               <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.New) }}>
                    <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-danger text-center'>
                        <MDBCardTitle>New</MDBCardTitle>
@@ -140,6 +165,7 @@ export default function PageTopics (): ReactElement {
                    </MDBCard>
                </MDBCol>
            </MDBRow>
+            )}
 
             </MDBContainer>
 

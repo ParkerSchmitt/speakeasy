@@ -2,6 +2,9 @@
 ## Introduction
 Speakeasy is a language learning tool designed for users who want to master a new language. It offers a bare-bones approach to language learning that includes memorization exercises for a language's most common vocabulary terms, using a spaced memorization learning algorithm.
 
+<img width="1280" alt="image" src="https://user-images.githubusercontent.com/25104076/218289639-c4183661-af20-43f7-9940-96a59a27d994.png">
+
+
 ## Features
 * Interactive lessons: Speakeasy's lessons are designed to be interactive, making language learning engaging and entertaining.
 * Progress tracking: Speakeasy tracks users' progress and provides feedback on their performance, helping them stay motivated and focused on their language learning goals.

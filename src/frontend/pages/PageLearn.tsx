@@ -17,6 +17,8 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 export default function PageTopics (): ReactElement {
   const [cards, setCards] = useState<Card[]>([])
   const [flip, setFlip] = useState(false)
+  const [showImage, setShowImage] = useState(false)
+
   const [currentCards, setCurrentCards] = useState<Card[]>([])
 
   /**
@@ -49,8 +51,11 @@ export default function PageTopics (): ReactElement {
         for (let i = 0; i < response.response.length; i++) {
           const card: Card = {
             id: response.response[i].id,
-            previewText: response.response[i].targetLanguageWord,
-            revealText: response.response[i].nativeLanguageWord
+            previewText: response.response[i].previewText,
+            revealText: response.response[i].revealText,
+            pronunciation: response.response[i].pronunciation,
+            imageUrl: 'resources/images/' + (response.response[i].imageUrl as string),
+            audio: new Audio('resources/audio/' + (response.response[i].audioUrl as string))
           }
           newCards.push(card)
         }
@@ -104,6 +109,10 @@ export default function PageTopics (): ReactElement {
     }
   }
 
+  const showImageHandler = (): void => {
+    setShowImage(!showImage)
+  }
+
   return (
     <>
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
@@ -117,12 +126,12 @@ export default function PageTopics (): ReactElement {
                       exitActive: 'animateout'
                     }} timeout={50}>
                     <div className={`cardl ${flip ? 'flip' : ''}`}>
-                    <div className='front' onClick={() => { setFlip(!flip) }}>
-                    <FlashCard id={card.id} title='Spanish' text={ card.previewText }/>
-                    </div>
-                    <div className='back' onClick={() => { setFlip(!flip) }}>
-                    <FlashCard id={card.id} title='Translation' text={ card.revealText }/>
-                    </div>
+                      <div className='front' onClick={() => { setFlip(!flip) }}>
+                        <FlashCard id={card.id} title='Spanish' text={ card.previewText } pronunciation={ card.pronunciation } audio={ (!flip) ? card.audio : undefined } pressShowImageButtonHandler = {showImageHandler} />
+                      </div>
+                      <div className='back' onClick={() => { setFlip(!flip) }}>
+                        <FlashCard id={card.id} title='Translation' text={ card.revealText } image={(!showImage && flip) ? card.imageUrl : undefined } pressShowImageButtonHandler = {showImageHandler} />
+                      </div>
                     </div>
             </CSSTransition>
                     )}

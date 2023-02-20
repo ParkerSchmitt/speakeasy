@@ -1,10 +1,9 @@
 export interface CardType {
-  topic: string
   id: number
+  topicId: number
   previewText: string
   revealText: string
-  repetitions: number
-  interval: number
-  easiness: number
-  datetime: number
+  pronunciation: string
+  imageUrl: string
+  audioUrl: string
 }

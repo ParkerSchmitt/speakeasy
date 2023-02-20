@@ -9,7 +9,7 @@ import AccountRepository from './backend/repositories/AccountRepository'
 import TopicsController from './backend/controllers/TopicsController'
 import TopicMediator from './backend/mediators/TopicsMediator'
 import TopicRepository from './backend/repositories/TopicRepository'
-import { type CardType } from './backend/types/CardType'
+import { type CardAccountType } from './backend/types/CardAccountType'
 // import TopicRepository from './backend/repositories/TopicRepository'
 // import TopicMediator from './backend/mediators/TopicsMediator'
 // import TopicsController from './backend/controllers/TopicsController'
@@ -21,7 +21,7 @@ const oneDay = 1000 * 60 * 60 * 24
 declare module 'express-session' {
   interface SessionData {
     accountId: number
-    activeReviews: Record<string, CardType[]> // topic: string, Cards to review: CardType[]:
+    activeReviews: Record<string, CardAccountType[]> // topic: string, Cards to review: CardType[]:
   }
 }
 

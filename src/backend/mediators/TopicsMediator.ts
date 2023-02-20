@@ -2,7 +2,7 @@ import { type Session, type SessionData } from 'express-session'
 import { type ReceiveCardsRequest } from '../controllers/viewmodels/ReceiveCardsRequest'
 import { type SaveCardRequest } from '../controllers/viewmodels/SaveCardRequest'
 import type TopicRepository from '../repositories/TopicRepository'
-import { type CardType } from '../types/CardType'
+import { type CardAccountType } from '../types/CardAccountType'
 export const InvalidCardAmount: Error = new Error('Requested invalid amount of cards')
 export const InvalidCredentialsError: Error = new Error('Not authorized')
 
@@ -51,7 +51,7 @@ class TopicMediator {
     * @param request - the request the user made.
     * @returns a Promise with the information in JSON
     */
-  async PostReceiveCards (session: Session & Partial<SessionData>, request: ReceiveCardsRequest): Promise<Array<{ id: number, targetLanguageWord: string, nativeLanguageWord: string, scheduledCard: boolean }>> {
+  async PostReceiveCards (session: Session & Partial<SessionData>, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean }>> {
     try {
       if (request.amount > this.maxCards || request.amount < 0) {
         throw InvalidCardAmount
@@ -62,7 +62,7 @@ class TopicMediator {
 
       // First see if there are any review cards. If there are, grab them instead
       if (session.activeReviews !== undefined && session.activeReviews[request.topic].length !== 0) {
-        return session.activeReviews[request.topic].splice(0, request.amount).map(cardData => ({ id: cardData.id, targetLanguageWord: cardData.previewText, nativeLanguageWord: cardData.revealText, scheduledCard: true }))
+        return session.activeReviews[request.topic].splice(0, request.amount).map(cardData => ({ id: cardData.id, previewText: cardData.previewText, revealText: cardData.revealText, pronunciation: cardData.pronunciation, imageUrl: cardData.imageUrl, audioUrl: cardData.audioUrl, scheduledCard: true }))
       }
 
       // First lets grab cards that the user is scheduled to learn- stored in the linkages table
@@ -89,7 +89,7 @@ class TopicMediator {
     }
   }
 
-  saveCardToReviewStack (session: Session & Partial<SessionData>, topic: string, card: CardType): void {
+  saveCardToReviewStack (session: Session & Partial<SessionData>, topic: string, card: CardAccountType): void {
     if (session.activeReviews === undefined) {
       session.activeReviews = {}
     }

@@ -1,4 +1,5 @@
 import type { Database } from 'sqlite3'
+import { type CardAccountType } from '../types/CardAccountType'
 import { type CardType } from '../types/CardType'
 
 export interface TopicRepositoryConfig {
@@ -51,8 +52,8 @@ class TopicRepository {
      * @param offset the amount of cards to offset by
      * @returns a promise for an array containing the cards
      */
-  async receiveNewCards (topic: string, amount: number, offset: number): Promise<Array<{ id: number, targetLanguageWord: string, nativeLanguageWord: string }>> {
-    const query = `SELECT ${this.cardTableName}.id, targetLanguageWord, nativeLanguageWord FROM ${this.cardTableName} INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id WHERE ${this.topicTableName}.name = "${topic}" ORDER BY ${this.cardTableName}.id ASC LIMIT ${amount} OFFSET ${offset}`
+  async receiveNewCards (topic: string, amount: number, offset: number): Promise<CardType[]> {
+    const query = `SELECT ${this.cardTableName}.id, topicId, previewText, revealText, pronunciation, audioUrl, ${this.cardTableName}.imageUrl AS imageUrl FROM ${this.cardTableName} INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id WHERE ${this.topicTableName}.name = "${topic}" ORDER BY ${this.cardTableName}.id ASC LIMIT ${amount} OFFSET ${offset}`
     const cards = await new Promise<any[]>((resolve, reject) => {
       this.database.all(query, (error, result) => {
         if (error !== null) {
@@ -71,8 +72,8 @@ class TopicRepository {
      * @param cardId the id of the card
      * @returns a promise for the card, or null if it doesn't exist yet.
      */
-  async receiveStoredCard (accountId: number, cardId: number): Promise< CardType | null> {
-    const query = `SELECT ${this.cardTableName}.id, ${this.topicTableName}.name AS topic, ${this.cardTableName}.targetLanguageWord AS previewText, ${this.cardTableName}.nativeLanguageWord AS revealText,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
+  async receiveStoredCard (accountId: number, cardId: number): Promise< CardAccountType | null> {
+    const query = `SELECT ${this.cardTableName}.id, ${this.cardTableName}.topicId as topicID, ${this.topicTableName}.name AS topic, ${this.cardTableName}.previewText AS previewText, ${this.cardTableName}.revealText AS revealText, ${this.cardTableName}.audioUrl AS audioUrl, ${this.cardTableName}.imageUrl AS imageUrl, ${this.cardTableName}.pronunciation AS pronunciation,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
                       INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
                       INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
                       WHERE ${this.cardAccountLinkageTableName}.card_id = ${cardId} AND ${this.cardAccountLinkageTableName}.account_id = ${accountId} 
@@ -100,8 +101,8 @@ class TopicRepository {
      * @param date the time we should look for cards for
      * @returns a promise for an array containing the cards
      */
-  async receiveStoredCards (topic: string, accountId: number, amount: number, date: number): Promise<Array<{ id: number, targetLanguageWord: string, nativeLanguageWord: string }>> {
-    const query = `SELECT ${this.cardTableName}.id, targetLanguageWord, nativeLanguageWord FROM ${this.cardTableName} 
+  async receiveStoredCards (topic: string, accountId: number, amount: number, date: number): Promise<CardType[]> {
+    const query = `SELECT ${this.cardTableName}.id, topicId, previewText, revealText, ${this.cardTableName}.imageUrl, audioUrl, pronunciation FROM ${this.cardTableName} 
                     INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
                     INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
                     WHERE ${this.cardAccountLinkageTableName}.datetime < ${date} AND ${this.cardAccountLinkageTableName}.account_id = ${accountId} 

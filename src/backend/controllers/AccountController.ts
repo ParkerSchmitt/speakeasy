@@ -80,7 +80,6 @@ class AccountController {
           res.status(401).json({ code: 401, response: 'Invalid username or password' })
           return
         }
-
         res.status(400).json({ code: 400, error: error.message })
         return
       }

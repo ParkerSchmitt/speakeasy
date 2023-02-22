@@ -12,12 +12,17 @@ import {
   MDBSpinner
 } from 'mdb-react-ui-kit'
 import { type Card, FlashCard } from '../components/Flashcard'
+import { ReportDialog } from '../components/ReportDialog'
+
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 export default function PageTopics (): ReactElement {
   const [cards, setCards] = useState<Card[]>([])
   const [flip, setFlip] = useState(false)
   const [showImage, setShowImage] = useState(false)
+  const [flagReportDialog, setFlagReportDialog] = useState(false)
+
+  const toggleFlagReportDialogShow = (): void => { setFlagReportDialog(!flagReportDialog) }
 
   const [currentCards, setCurrentCards] = useState<Card[]>([])
 
@@ -115,6 +120,9 @@ export default function PageTopics (): ReactElement {
 
   return (
     <>
+
+        {flagReportDialog && <ReportDialog show={flagReportDialog} closeWindowHandler={toggleFlagReportDialogShow}/>}
+
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
         <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>
             { cards.length === 0 && <div className="cardl"><MDBSpinner role='status'><span className='visually-hidden'>Loading...</span></MDBSpinner></div>}
@@ -127,10 +135,10 @@ export default function PageTopics (): ReactElement {
                     }} timeout={50}>
                     <div className={`cardl ${flip ? 'flip' : ''}`}>
                       <div className='front' onClick={() => { setFlip(!flip) }}>
-                        <FlashCard id={card.id} title='Spanish' text={ card.previewText } pronunciation={ card.pronunciation } audio={ (!flip) ? card.audio : undefined } pressShowImageButtonHandler = {showImageHandler} />
+                        <FlashCard id={card.id} title='Spanish' text={ card.previewText } flagShowImage={showImage} pronunciation={ card.pronunciation } audio={ (!flip) ? card.audio : undefined } pressShowImageButtonHandler = {showImageHandler} pressReportButtonHandler = {toggleFlagReportDialogShow} />
                       </div>
                       <div className='back' onClick={() => { setFlip(!flip) }}>
-                        <FlashCard id={card.id} title='Translation' text={ card.revealText } image={(!showImage && flip) ? card.imageUrl : undefined } pressShowImageButtonHandler = {showImageHandler} />
+                        <FlashCard id={card.id} title='Translation' text={ card.revealText } flagShowImage={showImage} image={(!showImage && flip) ? card.imageUrl : undefined } pressShowImageButtonHandler = {showImageHandler} pressReportButtonHandler = {toggleFlagReportDialogShow} />
                       </div>
                     </div>
             </CSSTransition>

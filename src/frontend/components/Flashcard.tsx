@@ -10,14 +10,14 @@ export interface Card {
   audio: HTMLAudioElement
 }
 
-export const FlashCard = (props: { id: number, title: string, text: string, pronunciation?: string, audio?: HTMLAudioElement, image?: string, pressShowImageButtonHandler: () => void }): React.ReactElement => {
+export const FlashCard = (props: { id: number, title: string, text: string, pronunciation?: string, audio?: HTMLAudioElement, flagShowImage: boolean, image?: string, pressShowImageButtonHandler: () => void, pressReportButtonHandler: () => void }): React.ReactElement => {
   return (
     <MDBCard className='w-100 d-flex flex-column'>
     <div className='px-5'>
     <div className="pt-3 d-flex align-items-end flex-row-reverse mb-3">
-    <div className="ps-4 py-2"><MDBIcon fas icon='flag' /></div>
-    <div className="p-2"><MDBIcon fas icon='microphone' /></div>
-    <div className="p-2"><MDBIcon fas icon='image' onClick={(e: Event) => { e.stopPropagation(); props.pressShowImageButtonHandler() } }/></div>
+    <div className="ps-2 "><div className="p-2 d-flex align-items-center justify-content-center eventButton"><MDBIcon fas icon='flag' onClick={(e: Event) => { e.stopPropagation(); props.pressReportButtonHandler() } } /></div></div>
+    <div className="p-2 d-flex align-items-center justify-content-center eventButton"><MDBIcon fas icon='microphone'/></div>
+    <div className={`p-2 d-flex align-items-center justify-content-center eventButton ${(props.flagShowImage) ? '' : 'eventButtonActive'}`} onClick={(e: any) => { e.stopPropagation(); props.pressShowImageButtonHandler() } } ><MDBIcon fas icon='image'/></div>
     </div>
         <MDBRow className='pb-3'>
             <MDBCol>
@@ -33,7 +33,7 @@ export const FlashCard = (props: { id: number, title: string, text: string, pron
         <MDBCardBody>
             <h2 className="my-4 text-center" >{props.text}
               { props.pronunciation !== undefined && <h3 className="text-center" ><i>/{props.pronunciation}/</i>
-              {props.audio !== undefined && <div className="p-2"><MDBIcon fas size='xs' icon='volume-up' style={{ fontSize: '0.65em;' }} onClick={(e: Event) => { e.stopPropagation(); e.preventDefault(); props.audio?.play().catch((err) => { console.log(err) }) }}/></div> }</h3> }
+              {props.audio !== undefined && <div><MDBIcon fas size='xs' icon='volume-up' style={{ fontSize: '0.65em;' }} onClick={(e: Event) => { e.stopPropagation(); e.preventDefault(); props.audio?.play().catch((err) => { console.log(err) }) }}/></div> }</h3> }
             </h2>
         </MDBCardBody>
         }

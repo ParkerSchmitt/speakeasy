@@ -54,7 +54,7 @@ class TopicController {
       try {
       // No errors were thrown. user successfully authenticated.
         requestObj = ReceiveCardsRequest.parse(req.body)
-        const responseObj = await this.mediator.PostReceiveCards(req.session, requestObj)
+        const responseObj = await this.mediator.PostReceiveCards(req.session, (Math.floor(new Date().getTime() / 1000.0)), requestObj)
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
@@ -80,7 +80,7 @@ class TopicController {
       try {
       // No errors were thrown. user successfully authenticated.
         requestObj = SaveCardRequest.parse(req.body)
-        await this.mediator.PostSaveCard(req.session, requestObj)
+        await this.mediator.PostSaveCard(req.session, (Math.floor(new Date().getTime() / 1000.0)), requestObj)
         res.status(200).json({ code: 200, response: 'Saved' })
       } catch (error) {
         if (error instanceof Error) {

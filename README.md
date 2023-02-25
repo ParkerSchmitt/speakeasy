@@ -1,4 +1,6 @@
 # Speakeasy
+[![Node.js CI](https://github.com/ksu-cs-projects-2022-2023/spring2023-ParkerSchmitt/actions/workflows/build.yml/badge.svg)](https://github.com/ksu-cs-projects-2022-2023/spring2023-ParkerSchmitt/actions/workflows/build.yml)
+
 ## Introduction
 Speakeasy is a language learning tool designed for users who want to master a new language. It offers a bare-bones approach to language learning that includes memorization exercises for a language's most common vocabulary terms, using a spaced memorization learning algorithm.
 

@@ -51,7 +51,7 @@ class TopicMediator {
     * @param request - the request the user made.
     * @returns a Promise with the information in JSON
     */
-  async PostReceiveCards (session: Session & Partial<SessionData>, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean }>> {
+  async PostReceiveCards (session: Session & Partial<SessionData>, time: number, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean }>> {
     try {
       if (request.amount > this.maxCards || request.amount < 0) {
         throw InvalidCardAmount
@@ -67,7 +67,7 @@ class TopicMediator {
 
       // First lets grab cards that the user is scheduled to learn- stored in the linkages table
 
-      const scheduledCardsResponse = await this.repository.receiveStoredCards(request.topic, session.accountId, request.amount, Math.floor(new Date().getTime() / 1000.0))
+      const scheduledCardsResponse = await this.repository.receiveStoredCards(request.topic, session.accountId, request.amount, time)
       const scheduledCards = scheduledCardsResponse.map(cardData => ({ ...cardData, scheduledCard: true }))
 
       const leftover: number = request.amount - scheduledCardsResponse.length
@@ -96,6 +96,17 @@ class TopicMediator {
     if (session.activeReviews[topic] === undefined) {
       session.activeReviews[topic] = [card]
     } else {
+      /**
+       * Check to see if it already exists inside of activeReview (we don't want duplicates!)
+       * This code isn't exactly optimal, but considering the active review arrays won't get that large it isn't a big concern.
+       * If we wanted to make this better we would store instead of using a Record<string, CardAccountType[]> use a Record<string, Record<string, CardAccount>>
+       * That way we could check for dupes in constant time.
+       */
+      for (let i = 0; i < session.activeReviews[topic].length; i++) {
+        if (session.activeReviews[topic][i].id === card.id) {
+          return
+        }
+      }
       session.activeReviews[topic].push(card)
     }
   }
@@ -105,7 +116,7 @@ class TopicMediator {
     * @param request - the request the user made.
     * @returns a void Promise
     */
-  async PostSaveCard (session: Session & Partial<SessionData>, request: SaveCardRequest): Promise<void> {
+  async PostSaveCard (session: Session & Partial<SessionData>, time: number, request: SaveCardRequest): Promise<void> {
     try {
       if (session.accountId == null) {
         throw InvalidCredentialsError
@@ -158,7 +169,7 @@ class TopicMediator {
 
       // The card doesn't exist. Lets insert a new card in memory with inital properties
       } else {
-        const { easiness, interval, repetitions, date } = calculateSM2Variables(request.quality, 2.5, 0, 0, Date.now())
+        const { easiness, interval, repetitions, date } = calculateSM2Variables(request.quality, 2.5, 0, 0, time)
         await this.repository.insertLearnedCard(request.cardId, session.accountId, easiness, interval, repetitions, date)
         // Now it exists
         const card = await this.repository.receiveStoredCard(session.accountId, request.cardId)

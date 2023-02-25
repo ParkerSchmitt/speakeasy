@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import { InvalidCredentialsError } from '../mediators/AccountMediator'
-import type TopicsMediator from '../mediators/TopicsMediator'
+import type TopicsMediator from '../mediators/TopicMediator'
 import { ReceiveCardsRequest } from './viewmodels/ReceiveCardsRequest'
 import { SaveCardRequest } from './viewmodels/SaveCardRequest'
 
@@ -54,12 +54,12 @@ class TopicController {
       try {
       // No errors were thrown. user successfully authenticated.
         requestObj = ReceiveCardsRequest.parse(req.body)
-        const responseObj = await this.mediator.PostReceiveCards(req.session, requestObj)
+        const responseObj = await this.mediator.PostReceiveCards(req.session, (Math.floor(new Date().getTime() / 1000.0)), requestObj)
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
           if (error === InvalidCredentialsError) {
-            res.status(401).json({ code: 401, response: 'Invalid username or password' })
+            res.status(401).json({ code: 500, response: 'Must be authorized.' })
             return
           }
           res.status(400).json({ code: 400, error: error.message })
@@ -80,7 +80,7 @@ class TopicController {
       try {
       // No errors were thrown. user successfully authenticated.
         requestObj = SaveCardRequest.parse(req.body)
-        await this.mediator.PostSaveCard(req.session, requestObj)
+        await this.mediator.PostSaveCard(req.session, (Math.floor(new Date().getTime() / 1000.0)), requestObj)
         res.status(200).json({ code: 200, response: 'Saved' })
       } catch (error) {
         if (error instanceof Error) {

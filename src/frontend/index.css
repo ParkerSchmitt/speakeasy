@@ -52,3 +52,14 @@ code {
   width: 100%;
   backface-visibility:hidden;
 }
+
+.eventButtonActive {
+  background-color: rgb(255 136 73) !important;
+  border-radius: 0.5em;
+  color: white;
+}
+
+.eventButton:hover {
+  background-color: rgb(229, 229, 229);
+  border-radius: 0.5em;
+}

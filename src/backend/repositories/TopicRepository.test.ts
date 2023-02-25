@@ -44,7 +44,7 @@ describe('TopicRepository',  () => {
 
     // Makes sure it retrieves a existing (learned) cardform the database.
     it.each([
-        [ 1, 1, {"id": 1, "topic": "Test", "easiness": 5.3, "datetime": 1675734233, "interval": 5, "repetitions": 3, "previewText": "Casa", "revealText": "Home", "audioUrl": "test/url.wav", "imageUrl": "test/url.png", "pronunciation": "cah-sah", "topicID": 1}],
+        [ 1, 1, {"id": 1, "topic": "Test", "easiness": 5.3, "datetime": 1675734233, "interval": 5, "repetitions": 3, "previewText": "Casa", "revealText": "Home", "audioUrl": "test/url.wav", "imageUrl": "test/url.png", "pronunciation": "cah-sah", "topicId": 1}],
         [ 1, 100, null],
         [ 1, 444, null], // should be an empty array because the timestamp is less before the timestamp saved
        ])(

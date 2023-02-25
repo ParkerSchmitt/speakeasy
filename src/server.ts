@@ -40,7 +40,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(express.json())
 
-app.use((req, res, next) => {
+app.use((req: any, res: { set: (arg0: string, arg1: string) => void }, next: () => void) => {
   res.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
   next()

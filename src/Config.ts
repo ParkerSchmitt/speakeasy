@@ -12,7 +12,6 @@ interface ConfigInterface {
   CARD_TABLE_NAME: string
   MAX_CARDS: number
   API_PORT: number
-  CORS: boolean
   CORS_ORIGIN: string
   CORS_CREDENTIALS: boolean
   CORS_OPTIONS_SUCCESS_STATUS: number
@@ -24,21 +23,20 @@ interface ConfigInterface {
 // Loading process.env as ENV interface
 const getConfig = (): Partial<ConfigInterface> => {
   return {
-    NODE_ENV: String(process.env.NODE_ENV),
-    ACCOUNT_TABLE_NAME: String(process.env.ACCOUNT_TABLE_NAME),
-    TOPIC_TABLE_NAME: String(process.env.TOPIC_TABLE_NAME),
-    CARD_ACCOUNT_LINKAGE_NAME: String(process.env.CARD_ACCOUNT_LINKAGE_NAME),
-    CARD_TABLE_NAME: String(process.env.CARD_TABLE_NAME),
-    MAX_CARDS: Number(process.env.MAX_CARDS),
-    API_PORT: Number(process.env.API_PORT),
-    CORS: Boolean(process.env.CORS),
-    CORS_ORIGIN: String(process.env.CORS_ORIGINAL),
-    CORS_CREDENTIALS: Boolean(process.env.CORS_CREDENTIALS),
-    CORS_OPTIONS_SUCCESS_STATUS: Number(process.env.OPTIONS_SUCCESS_STATUS),
-    SESSION_SECRET: String(process.env.SESSION_SECRET),
-    SESSION_RESAVE: Boolean(process.env.SESSION_RESAVE),
-    SESSION_COOKIE_MAX_AGE: Number(process.env.SESSION_COOKIE_MAX_AGE),
-    SESSION_SAVE_UNINITALIZED: Boolean(process.env.SESSION_SAVE_UNINITALIZED)
+    NODE_ENV: (process.env.NODE_ENV != null) ? String(process.env.NODE_ENV) : undefined,
+    ACCOUNT_TABLE_NAME: (process.env.ACCOUNT_TABLE_NAME != null) ? String(process.env.ACCOUNT_TABLE_NAME) : undefined,
+    TOPIC_TABLE_NAME: (process.env.TOPIC_TABLE_NAME != null) ? String(process.env.TOPIC_TABLE_NAME) : undefined,
+    CARD_ACCOUNT_LINKAGE_NAME: (process.env.CARD_ACCOUNT_LINKAGE_NAME != null) ? String(process.env.CARD_ACCOUNT_LINKAGE_NAME) : undefined,
+    CARD_TABLE_NAME: (process.env.CARD_TABLE_NAME != null) ? String(process.env.CARD_TABLE_NAME) : undefined,
+    MAX_CARDS: (process.env.MAX_CARDS != null) ? Number(process.env.MAX_CARDS) : undefined,
+    API_PORT: (process.env.API_PORT != null) ? Number(process.env.API_PORT) : undefined,
+    CORS_ORIGIN: (process.env.CORS_ORIGIN != null) ? String(process.env.CORS_ORIGIN) : undefined,
+    CORS_CREDENTIALS: (process.env.CORS_CREDENTIALS != null) ? Boolean(process.env.CORS_CREDENTIALS) : undefined,
+    CORS_OPTIONS_SUCCESS_STATUS: (process.env.CORS_OPTIONS_SUCCESS_STATUS != null) ? Number(process.env.CORS_OPTIONS_SUCCESS_STATUS) : undefined,
+    SESSION_SECRET: (process.env.SESSION_SECRET != null) ? String(process.env.SESSION_SECRET) : undefined,
+    SESSION_RESAVE: (process.env.SESSION_RESAVE != null) ? Boolean(process.env.SESSION_RESAVE) : undefined,
+    SESSION_COOKIE_MAX_AGE: (process.env.SESSION_COOKIE_MAX_AGE != null) ? Number(process.env.SESSION_COOKIE_MAX_AGE) : undefined,
+    SESSION_SAVE_UNINITALIZED: (process.env.SESSION_SAVE_UNINITALIZED != null) ? Boolean(process.env.SESSION_SAVE_UNINITALIZED) : undefined
   }
 }
 // Throwing an Error if any field was undefined we don't

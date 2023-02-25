@@ -6,17 +6,17 @@ import { Database } from 'sqlite3'
 import AccountMediator from './backend/mediators/AccountMediator'
 import AccountController from './backend/controllers/AccountController'
 import AccountRepository from './backend/repositories/AccountRepository'
-import TopicsController from './backend/controllers/TopicsController'
-import TopicMediator from './backend/mediators/TopicsMediator'
+import TopicController from './backend/controllers/TopicController'
+import TopicMediator from './backend/mediators/TopicMediator'
 import TopicRepository from './backend/repositories/TopicRepository'
 import { type CardAccountType } from './backend/types/CardAccountType'
+import Config from './Config'
 // import TopicRepository from './backend/repositories/TopicRepository'
 // import TopicMediator from './backend/mediators/TopicsMediator'
 // import TopicsController from './backend/controllers/TopicsController'
+console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
-
-const oneDay = 1000 * 60 * 60 * 24
 
 declare module 'express-session' {
   interface SessionData {
@@ -26,16 +26,16 @@ declare module 'express-session' {
 }
 
 app.use(session({
-  secret: 'TEST',
-  resave: false,
-  cookie: { maxAge: oneDay },
-  saveUninitialized: true
+  secret: Config.SESSION_SECRET,
+  resave: Config.SESSION_RESAVE,
+  cookie: { maxAge: Config.SESSION_COOKIE_MAX_AGE },
+  saveUninitialized: Config.SESSION_SAVE_UNINITALIZED
 }))
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
-  credentials: true,
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: Config.CORS_ORIGIN,
+  credentials: Config.CORS_CREDENTIALS,
+  optionsSuccessStatus: Config.CORS_OPTIONS_SUCCESS_STATUS // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions))
 app.use(express.json())
@@ -61,13 +61,13 @@ const accountController = new AccountController({
   })
 })
 
-const topicsController = new TopicsController({
+const topicsController = new TopicController({
   Mediator: new TopicMediator({
-    MaxCards: 10,
+    MaxCards: Config.MAX_CARDS,
     Repository: new TopicRepository({
-      topicTableName: 'topics',
-      cardAccountLinkageTableName: 'cards_accounts',
-      cardTableName: 'cards',
+      topicTableName: Config.TOPIC_TABLE_NAME,
+      cardAccountLinkageTableName: Config.CARD_ACCOUNT_LINKAGE_NAME,
+      cardTableName: Config.CARD_TABLE_NAME,
       database
     })
   })
@@ -88,6 +88,6 @@ app.post('/retrieveCards', topicsController.PostReceiveCards)
 app.post('/saveCard', topicsController.PostSaveCard)
 
 // start the Express server
-app.listen(4000, () => {
-  console.log(`API server running on ${4000}`)
+app.listen(Config.API_PORT, () => {
+  console.log(`API server running on ${Config.API_PORT}`)
 })

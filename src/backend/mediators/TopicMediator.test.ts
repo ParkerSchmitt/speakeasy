@@ -4,8 +4,8 @@ import { SaveCardRequest } from '../controllers/viewmodels/SaveCardRequest';
 import DatabaseMock from '../mocks/DatabaseMock'; /*eslint: ignore */
 import TopicRepository from '../repositories/TopicRepository';
 import { CardAccountType } from '../types/CardAccountType';
-import TopicMediator from './TopicsMediator';
-import TopicsMediator from './TopicsMediator';
+import TopicMediator from './TopicMediator';
+import TopicsMediator from './TopicMediator';
 
 declare module 'express-session' {
     interface SessionData {

@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import { InvalidCredentialsError } from '../mediators/AccountMediator'
-import type TopicsMediator from '../mediators/TopicsMediator'
+import type TopicsMediator from '../mediators/TopicMediator'
 import { ReceiveCardsRequest } from './viewmodels/ReceiveCardsRequest'
 import { SaveCardRequest } from './viewmodels/SaveCardRequest'
 
@@ -59,7 +59,7 @@ class TopicController {
       } catch (error) {
         if (error instanceof Error) {
           if (error === InvalidCredentialsError) {
-            res.status(401).json({ code: 401, response: 'Invalid username or password' })
+            res.status(401).json({ code: 500, response: 'Must be authorized.' })
             return
           }
           res.status(400).json({ code: 400, error: error.message })

@@ -4,17 +4,12 @@ import { BrowserRouter } from 'react-router-dom'
 import './frontend/index.css'
 import Router from './frontend/Router'
 
-const rootElem: HTMLElement | null = document.getElementById('root')
-
-if (rootElem !== null) {
-  const root = ReactDOM.createRoot(rootElem)
-  root.render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <Router/>
-      </BrowserRouter>
-    </React.StrictMode>
-  )
-} else {
-  throw new Error("Can't find root element.")
-}
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <Router/>
+    </BrowserRouter>
+  </React.StrictMode>
+)

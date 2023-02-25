@@ -15,6 +15,7 @@ import { type Card, FlashCard } from '../components/Flashcard'
 import { ReportDialog } from '../components/ReportDialog'
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import { useNavigate } from 'react-router'
 
 export default function PageTopics (): ReactElement {
   const [cards, setCards] = useState<Card[]>([])
@@ -25,6 +26,7 @@ export default function PageTopics (): ReactElement {
   const toggleFlagReportDialogShow = (): void => { setFlagReportDialog(!flagReportDialog) }
 
   const [currentCards, setCurrentCards] = useState<Card[]>([])
+  const navigate = useNavigate()
 
   /**
      * Saves the memorization effectiveness of the card the user just flipped over.
@@ -50,28 +52,30 @@ export default function PageTopics (): ReactElement {
         topic: 'Spanish',
         amount: 10
       })
-    }).then(async response => await response.json())
-      .then(response => {
-        const newCards: Card[] = []
-        for (let i = 0; i < response.response.length; i++) {
-          const card: Card = {
-            id: response.response[i].id,
-            previewText: response.response[i].previewText,
-            revealText: response.response[i].revealText,
-            pronunciation: response.response[i].pronunciation,
-            imageUrl: 'resources/images/' + (response.response[i].imageUrl as string),
-            audio: new Audio('resources/audio/' + (response.response[i].audioUrl as string))
-          }
-          newCards.push(card)
+    }).then(async (response) => {
+      if (response.status === 500) {
+        navigate('/login')
+      }
+
+      const json = await response.json()
+      const newCards: Card[] = []
+      for (let i = 0; i < json.response.length; i++) {
+        const card: Card = {
+          id: json.response[i].id,
+          previewText: json.response[i].previewText,
+          revealText: json.response[i].revealText,
+          pronunciation: json.response[i].pronunciation,
+          imageUrl: 'resources/images/' + (json.response[i].imageUrl as string),
+          audio: new Audio('resources/audio/' + (json.response[i].audioUrl as string))
         }
-        setCards(
-          cards.concat(newCards)
-        )
-        setCurrentCards([newCards[0]])
-        console.log(cards)
-      }).catch((error) => {
-        throw error
-      })
+        newCards.push(card)
+      }
+      setCards(
+        cards.concat(newCards)
+      )
+      setCurrentCards([newCards[0]])
+      console.log(cards)
+    })
       .catch((error) => {
         throw error
       })
@@ -98,6 +102,10 @@ export default function PageTopics (): ReactElement {
         quality: result,
         cardId
       })
+    }).then((response) => {
+      if (response.status === 500) {
+        navigate('/login')
+      }
     }).catch((error: Error) => {
       console.log(`Error saving card: Response: ${error.message}`)
     })

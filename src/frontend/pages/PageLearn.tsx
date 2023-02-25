@@ -12,6 +12,8 @@ import {
   MDBSpinner
 } from 'mdb-react-ui-kit'
 import { type Card, FlashCard } from '../components/Flashcard'
+import { EndFlashcard } from '../components/EndFlashcard'
+
 import { ReportDialog } from '../components/ReportDialog'
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
@@ -22,6 +24,7 @@ export default function PageTopics (): ReactElement {
   const [flip, setFlip] = useState(false)
   const [showImage, setShowImage] = useState(false)
   const [flagReportDialog, setFlagReportDialog] = useState(false)
+  const [endOfCardsFlag, setEndOfCardsFlag] = useState(false)
 
   const toggleFlagReportDialogShow = (): void => { setFlagReportDialog(!flagReportDialog) }
 
@@ -59,22 +62,27 @@ export default function PageTopics (): ReactElement {
 
       const json = await response.json()
       const newCards: Card[] = []
-      for (let i = 0; i < json.response.length; i++) {
-        const card: Card = {
-          id: json.response[i].id,
-          previewText: json.response[i].previewText,
-          revealText: json.response[i].revealText,
-          pronunciation: json.response[i].pronunciation,
-          imageUrl: 'resources/images/' + (json.response[i].imageUrl as string),
-          audio: new Audio('resources/audio/' + (json.response[i].audioUrl as string))
+
+      if (json.response.length === 0) {
+        setEndOfCardsFlag(true)
+      } else {
+        for (let i = 0; i < json.response.length; i++) {
+          const card: Card = {
+            id: json.response[i].id,
+            previewText: json.response[i].previewText,
+            revealText: json.response[i].revealText,
+            pronunciation: json.response[i].pronunciation,
+            imageUrl: '../resources/images/' + (json.response[i].imageUrl as string),
+            audio: new Audio('resources/audio/' + (json.response[i].audioUrl as string))
+          }
+          newCards.push(card)
         }
-        newCards.push(card)
+        setCards(
+          cards.concat(newCards)
+        )
+        setCurrentCards([newCards[0]])
+        console.log(cards)
       }
-      setCards(
-        cards.concat(newCards)
-      )
-      setCurrentCards([newCards[0]])
-      console.log(cards)
     })
       .catch((error) => {
         throw error
@@ -133,7 +141,9 @@ export default function PageTopics (): ReactElement {
 
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
         <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>
-            { cards.length === 0 && <div className="cardl"><MDBSpinner role='status'><span className='visually-hidden'>Loading...</span></MDBSpinner></div>}
+            { /* if user makes it to the end of cards display message */ (cards.length === 0 && !endOfCardsFlag) && <div className="cardl"><MDBSpinner role='status'><span className='visually-hidden'>Loading...</span></MDBSpinner></div>}
+            { /* if user makes it to the end of cards display message */ (cards.length === 0 && endOfCardsFlag) && <div className="cardl"><EndFlashcard/></div>}
+
                 { cards.length > 0 &&
                 <TransitionGroup>
                     {currentCards.map((card) =>

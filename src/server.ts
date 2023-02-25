@@ -55,7 +55,7 @@ const database = new Database('./src/storage.db', (err) => {
 const accountController = new AccountController({
   Mediator: new AccountMediator({
     Repository: new AccountRepository({
-      tableName: 'accounts',
+      tableName: Config.ACCOUNT_TABLE_NAME,
       database
     })
   })

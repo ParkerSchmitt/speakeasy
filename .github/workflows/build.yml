@@ -29,5 +29,6 @@ jobs:
     - run: unset CI
     - run: npm install
     - run: npm install concurrently
-    - run: npm run build --if-present
+    - run: npm run build-fe
+    - run: npm run build-be
     - run: npm test

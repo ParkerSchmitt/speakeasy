@@ -23,15 +23,13 @@
     "include": [
         "src/**/*",
         "webpack.config.js",
-        "./eslintrc.json"    
+        "./eslintrc.json",
+        "src/index.tsx"
     ],
     "exclude": [
         "src/**/*.spec.ts",
         "src/**/*.test.ts",
-        "src/index.tsx",
         "utils/*.ts"
-
-
     ],
     "jest": {
         "moduleFileExtensions": [

@@ -2,6 +2,9 @@
   "name": "language-frontend-app",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "autoprefixer": "10.4.5"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.1",
     "@react-spring/web": "^9.6.1",
@@ -12,6 +15,9 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "autoprefixer": "10.4.5",
+    "bootstrap": "^5.2.0-beta1",
+    "concurrently": "^7.6.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-browserify": "^3.12.0",
@@ -40,7 +46,9 @@
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"npx ts-node --esm ./src/server.ts\"",
-    "build": "concurrently \"react-scripts build\"",
+    "build-be": "tsc --build",
+    "build-fe": "react-scripts build",
+
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .ts,.tsx"
@@ -76,5 +84,17 @@
     "eslint-plugin-react": "^7.32.2",
     "typescript": "^4.9.4",
     "webpack-cli": "^5.0.1"
-  }
+  },
+  "description": "Speakeasy is a language learning tool designed for users who want to master a new language. It offers a bare-bones approach to language learning that includes memorization exercises for a language's most common vocabulary terms, using a spaced memorization learning algorithm.",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ksu-cs-projects-2022-2023/spring2023-ParkerSchmitt.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ksu-cs-projects-2022-2023/spring2023-ParkerSchmitt/issues"
+  },
+  "homepage": "https://github.com/ksu-cs-projects-2022-2023/spring2023-ParkerSchmitt#readme"
 }

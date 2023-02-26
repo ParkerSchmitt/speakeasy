@@ -2,6 +2,7 @@ import { type Request, type Response, type NextFunction } from 'express'
 import { InvalidCredentialsError } from '../mediators/AccountMediator'
 import type TopicsMediator from '../mediators/TopicMediator'
 import { ReceiveCardsRequest } from './viewmodels/ReceiveCardsRequest'
+import { ReportCardRequest } from './viewmodels/ReportCardRequest'
 import { SaveCardRequest } from './viewmodels/SaveCardRequest'
 
 export interface TopicControllerConfig {
@@ -81,6 +82,28 @@ class TopicController {
       // No errors were thrown. user successfully authenticated.
         requestObj = SaveCardRequest.parse(req.body)
         await this.mediator.PostSaveCard(req.session, (Math.floor(new Date().getTime() / 1000.0)), requestObj)
+        res.status(200).json({ code: 200, response: 'Saved' })
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).json({ code: 400, error: error.message })
+        }
+      }
+    }
+  }
+
+  PostReportCard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (req.body == null) {
+      res.status(400).json({ code: 400, response: 'No body found' })
+      return
+    }
+    if (req.session.accountId === undefined) {
+      res.status(500).json({ code: 500, response: 'Must be authorized' })
+    } else {
+      let requestObj: ReportCardRequest
+      try {
+      // No errors were thrown. user successfully authenticated.
+        requestObj = ReportCardRequest.parse(req.body)
+        await this.mediator.PostReportCard(req.session, requestObj)
         res.status(200).json({ code: 200, response: 'Saved' })
       } catch (error) {
         if (error instanceof Error) {

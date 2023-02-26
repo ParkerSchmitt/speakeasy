@@ -6,6 +6,8 @@ export interface TopicRepositoryConfig {
   topicTableName: string
   cardTableName: string
   cardAccountLinkageTableName: string
+  cardReportTableName: string
+
   database: Database
 }
 
@@ -13,6 +15,7 @@ class TopicRepository {
   topicTableName: string
   cardTableName: string
   cardAccountLinkageTableName: string
+  cardReportTableName: string
   database: Database
 
   /**
@@ -23,6 +26,7 @@ class TopicRepository {
     this.topicTableName = config.topicTableName
     this.cardTableName = config.cardTableName
     this.cardAccountLinkageTableName = config.cardAccountLinkageTableName
+    this.cardReportTableName = config.cardReportTableName
     this.database = config.database
   }
 
@@ -196,6 +200,34 @@ class TopicRepository {
         $interval: interval,
         $repetitions: repetitions,
         $date: date
+      }, (error: Error) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
+  }
+
+  /**
+     * insertReportCart attempts to save a report about a card
+     * @param cardId the id of the card that is being reported
+     * @param accountId the id of the user associated with the report
+     * @param type area of interest for the report "image", "reveal", "preview", "pronunciation"
+     * @param reason why the user is reporting the card "incorrect", "offensive", "improvement"
+     * @param comment comment from user
+     * @returns a void promise
+     */
+  async insertReportCart (cardId: number, accountId: number, type: string, reason: string, comment: string): Promise<void> {
+    const query = `INSERT INTO ${this.cardReportTableName} (card_id, account_id, type, reason, comment) VALUES ($cardId,$accountId,$type,$reason,$comment)`
+    await new Promise<void>((resolve, reject) => {
+      this.database.get(query, {
+        $cardId: cardId,
+        $accountId: accountId,
+        $type: type,
+        $reason: reason,
+        $comment: comment
       }, (error: Error) => {
         if (error !== null) {
           reject(error)

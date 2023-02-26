@@ -1,5 +1,6 @@
 import { type Session, type SessionData } from 'express-session'
 import { type ReceiveCardsRequest } from '../controllers/viewmodels/ReceiveCardsRequest'
+import { type ReportCardRequest } from '../controllers/viewmodels/ReportCardRequest'
 import { type SaveCardRequest } from '../controllers/viewmodels/SaveCardRequest'
 import type TopicRepository from '../repositories/TopicRepository'
 import { type CardAccountType } from '../types/CardAccountType'
@@ -177,6 +178,28 @@ class TopicMediator {
         if (request.quality < 2 && card !== null) {
           this.saveCardToReviewStack(session, request.topic, card)
         }
+      }
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * PostReport attempts to store a users report about a card
+    * @param request - the request the user made.
+    * @returns a void Promise
+    */
+  async PostReportCard (session: Session & Partial<SessionData>, request: ReportCardRequest): Promise<void> {
+    try {
+      if (session.accountId == null) {
+        throw InvalidCredentialsError
+      } else {
+        await this.repository.insertReportCart(request.cardId, session.accountId, request.type, request.reason, request.comment)
       }
     } catch (error) {
       const message = 'Unknown Error'

@@ -134,10 +134,43 @@ export default function PageTopics (): ReactElement {
     setShowImage(!showImage)
   }
 
+  /**
+   * Called when a user tries to report a card
+   * @param type type type of report - image, reveal, preview, pronunciation
+   * @param reason the reason for the report  - offensive, incorrect, improvement
+   * @returns void proomise
+   * @param comment additonal comment for the report
+   */
+  const submitReportDialogHandler = (type: string, reason: string, comment: string): void => {
+    toggleFlagReportDialogShow()
+
+    fetch('http://localhost:4000/reportCard', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        topic: 'Spanish',
+        cardId: currentCards[0].id,
+        type: type,
+        reason: reason,
+        comment: comment
+      })
+    }).then((response) => {
+      if (response.status === 500) {
+        navigate('/login')
+      }
+    }).catch((error: Error) => {
+      console.log(`Error saving card: Response: ${error.message}`)
+    })
+  }
+
   return (
     <>
 
-        {flagReportDialog && <ReportDialog show={flagReportDialog} closeWindowHandler={toggleFlagReportDialogShow}/>}
+        {flagReportDialog && <ReportDialog show={flagReportDialog} submitDialogHandler={submitReportDialogHandler} closeWindowHandler={toggleFlagReportDialogShow}/>}
 
         <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
         <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>

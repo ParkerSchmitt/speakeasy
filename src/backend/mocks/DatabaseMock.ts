@@ -50,5 +50,11 @@ export default class DatabaseMock extends Database {
         console.log(err)
       }
     })
+
+    this.exec('CREATE TABLE cards_reports (id INTEGER PRIMARY KEY, card_id INTEGER, account_id INTEGER, type varchar(10), reason varchar(10), comment nvarchar(300))', (err: any) => {
+      if (err !== null) {
+        console.log(err)
+      }
+    })
   }
 }

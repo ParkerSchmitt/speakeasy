@@ -68,6 +68,7 @@ const topicsController = new TopicController({
       topicTableName: Config.TOPIC_TABLE_NAME,
       cardAccountLinkageTableName: Config.CARD_ACCOUNT_LINKAGE_NAME,
       cardTableName: Config.CARD_TABLE_NAME,
+      cardReportTableName: Config.CARD_REPORT_TABLE_NAME,
       database
     })
   })
@@ -86,6 +87,8 @@ app.get('/retrieveTopics', topicsController.GetReceiveTopics)
 app.post('/retrieveCards', topicsController.PostReceiveCards)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/saveCard', topicsController.PostSaveCard)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.post('/reportCard', topicsController.PostReportCard)
 
 // start the Express server
 app.listen(Config.API_PORT, () => {

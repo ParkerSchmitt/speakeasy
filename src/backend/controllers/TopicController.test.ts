@@ -31,7 +31,8 @@ describe('TopicsController', () => {
         database: database,
         cardAccountLinkageTableName: "cards_accounts",
         topicTableName: "topics",
-        cardTableName: "cards"
+        cardTableName: "cards",
+        cardReportTableName: "cards_reports"
       })
     })
   })
@@ -39,6 +40,7 @@ describe('TopicsController', () => {
   app.get('/retrieveTopics', topicController.GetReceiveTopics)
   app.post('/retrieveCards', topicController.PostReceiveCards)
   app.post('/saveCard', topicController.PostSaveCard)
+  app.post('/reportCard', topicController.PostReportCard)
 
   
 
@@ -78,6 +80,21 @@ describe('TopicsController', () => {
 
       const res = await request(app)
         .post('/saveCard')
+        .send(json)
+      expect(res.status).toEqual(status);
+      expect(res.body).toHaveProperty('code');
+    }
+  );
+
+  it.each(
+    [
+      [ {}, 500 ] // Not logged in 500
+    ])(
+    `should return proper json structure given reportCard request`,
+    async (json, status) => {
+
+      const res = await request(app)
+        .post('/reportCard')
         .send(json)
       expect(res.status).toEqual(status);
       expect(res.body).toHaveProperty('code');

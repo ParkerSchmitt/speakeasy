@@ -1,5 +1,6 @@
 import session, { Cookie, Session } from 'express-session';
 import { ReceiveCardsRequest } from '../controllers/viewmodels/ReceiveCardsRequest';
+import { ReportCardRequest } from '../controllers/viewmodels/ReportCardRequest';
 import { SaveCardRequest } from '../controllers/viewmodels/SaveCardRequest';
 import DatabaseMock from '../mocks/DatabaseMock'; /*eslint: ignore */
 import TopicRepository from '../repositories/TopicRepository';
@@ -25,6 +26,7 @@ describe('TopicMediator',  () => {
         topicTableName: 'topics',
         cardTableName: 'cards',
         cardAccountLinkageTableName: 'cards_accounts',
+        cardReportTableName: 'cards_reports',
         database: database,
         })
     })
@@ -310,6 +312,75 @@ describe('TopicMediator',  () => {
               expect(rowAmountAfter.length).toBe(rowAmountBefore.length);        
         }
     );    
+
+       // Makes sure it adds a new report card
+       it.each([
+        ['test', 1,1,'reveal','incorrect','Spelled wrong'],
+    ])(
+        `shouldd insert a users report for a card`,
+        async (topic, accountId, cardId, type, reason, comment) => {
+
+            let session: Session &  Partial<session.SessionData> = {
+                id: '1',
+                accountId: accountId,
+                activeReviews: undefined,
+                cookie: new Cookie,
+                regenerate: function (callback: (err: any) => void): session.Session {
+                    throw new Error('Function not implemented.');
+                },
+                destroy: function (callback: (err: any) => void): session.Session {
+                    throw new Error('Function not implemented.');
+                },
+                reload: function (callback: (err: any) => void): session.Session {
+                    throw new Error('Function not implemented.');
+                },
+                resetMaxAge: function (): session.Session {
+                    throw new Error('Function not implemented.');
+                },
+                save: function (callback?: ((err: any) => void) | undefined): session.Session {
+                    throw new Error('Function not implemented.');
+                },
+                touch: function (): session.Session {
+                    throw new Error('Function not implemented.');
+                }
+            }
+            let request: ReportCardRequest  = {
+                topic: topic,
+                cardId: cardId,
+                type: type,
+                reason: reason,
+                comment: comment
+            }
+
+              const rowAmountBefore = await new Promise<any[]>((resolve, reject) => {
+                database.all("SELECT * FROM cards_reports WHERE account_id = $accountId", {
+                  $accountId: accountId
+                }, (error, result) => {
+                  if (error !== null) {
+                    reject(error)
+                  } else {
+                    resolve(result)
+                  }
+                })
+              })
+
+            await TopicMediatorCorrectTable.PostReportCard(session, request);
+
+            const rowAmountAfter = await new Promise<any[]>((resolve, reject) => {
+                database.all("SELECT * FROM cards_reports WHERE account_id = $accountId", {
+                  $accountId: accountId
+                }, (error, result) => {
+                  if (error !== null) {
+                    reject(error)
+                  } else {
+                    resolve(result)
+                  }
+                })
+              })
+              expect(rowAmountAfter.length).toBe(rowAmountBefore.length + 1);        
+        }
+    );    
+
 
 
 });

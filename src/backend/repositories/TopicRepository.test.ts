@@ -10,6 +10,7 @@ describe('TopicRepository',  () => {
         topicTableName: 'topics',
         cardTableName: 'cards',
         cardAccountLinkageTableName: 'cards_accounts',
+        cardReportTableName: 'cards_reports',
         database: database,
     })
     });
@@ -148,4 +149,35 @@ describe('TopicRepository',  () => {
                 expect(rows[0].datetime).toEqual(date);
             }
         );
+
+     // Makes sure it inserts a card correctly
+     it.each([
+        [1,1,'reveal','incorrect','Spelled wrong'],
+       ])(
+        `should insert card report`,
+        async (cardId, accountId, type, reason, comment) => {
+            await TopicRepositoryCorrectTable.insertReportCart(cardId, accountId, type, reason, comment);
+            
+            //Now query the database and see if it updated
+            const query = `SELECT card_id, account_id, type, reason, comment FROM ${TopicRepositoryCorrectTable.cardReportTableName} WHERE card_id =$cardId AND account_id = $accountId `;
+            let rows  = await new Promise<any[]>((resolve,reject) => {database.all(query,{
+                '$cardId': cardId,
+                '$accountId': accountId
+            }, (error, result) => {
+                if (error) {
+                    reject(error)
+                  } else {
+                    resolve(result)
+                  }
+            })
+        })
+            expect(rows.length).toEqual(1);
+            expect(rows[0].card_id).toEqual(cardId);
+            expect(rows[0].account_id).toEqual(accountId);
+            expect(rows[0].type).toEqual(type);
+            expect(rows[0].reason).toEqual(reason);
+            expect(rows[0].comment).toEqual(comment);
+        }
+    );
+        
 });

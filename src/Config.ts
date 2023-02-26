@@ -10,6 +10,7 @@ interface ConfigInterface {
   TOPIC_TABLE_NAME: string
   CARD_ACCOUNT_LINKAGE_NAME: string
   CARD_TABLE_NAME: string
+  CARD_REPORT_TABLE_NAME: string
   MAX_CARDS: number
   API_PORT: number
   CORS_ORIGIN: string
@@ -28,6 +29,7 @@ const getConfig = (): Partial<ConfigInterface> => {
     TOPIC_TABLE_NAME: (process.env.TOPIC_TABLE_NAME != null) ? String(process.env.TOPIC_TABLE_NAME) : undefined,
     CARD_ACCOUNT_LINKAGE_NAME: (process.env.CARD_ACCOUNT_LINKAGE_NAME != null) ? String(process.env.CARD_ACCOUNT_LINKAGE_NAME) : undefined,
     CARD_TABLE_NAME: (process.env.CARD_TABLE_NAME != null) ? String(process.env.CARD_TABLE_NAME) : undefined,
+    CARD_REPORT_TABLE_NAME: (process.env.CARD_REPORT_TABLE_NAME != null) ? String(process.env.CARD_REPORT_TABLE_NAME) : undefined,
     MAX_CARDS: (process.env.MAX_CARDS != null) ? Number(process.env.MAX_CARDS) : undefined,
     API_PORT: (process.env.API_PORT != null) ? Number(process.env.API_PORT) : undefined,
     CORS_ORIGIN: (process.env.CORS_ORIGIN != null) ? String(process.env.CORS_ORIGIN) : undefined,

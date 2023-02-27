@@ -6,10 +6,12 @@ import PageRegister from './pages/PageRegister'
 import PageTopics from './pages/PageTopics'
 // import { ProtectedRoute } from './components/ProtectedRoute'
 import PageLearn from './pages/PageLearn'
+import PageIndex from './pages/PageIndex'
 
 function Router (): ReactElement {
   return (
     <Routes>
+      <Route path="/" element={ <PageIndex /> } />
       <Route path="/login" element={ <PageLogin /> } />
       <Route path="/register" element={ <PageRegister /> } />
         <Route path="/topics" element={

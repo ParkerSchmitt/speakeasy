@@ -31,13 +31,64 @@ class TopicRepository {
   }
 
   /**
-     * emailExists checks to see if a account exists inside of the database
-     * @param email the email to check for
-     * @returns a boolean promise. TRUE if there is an email found, FALSE if there isn't.
+     * receives the topics in the system
+     * @returns a promise with the resulting topic information
      */
   async receiveTopics (): Promise<Array<{ id: number, name: string, description: string, imageUrl: string }>> {
     const query = `SELECT id, name, description, imageUrl FROM ${this.topicTableName}`
     const topics = await new Promise<any[]>((resolve, reject) => {
+      this.database.all(query, (error, result) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+    return topics
+  }
+
+  /**
+     * receiveTopicPercentage gets the percentage of how much a user has learned from a topic
+     * @param userId the id of the user
+     * @param topicId the id of the topic
+     * @returns a promise holding the percentage as a decimal i.e (0.993531) for 99.3531%
+     */
+  async receiveTopicPercentage (userId: number, topic: string): Promise<{ percentageLearned: number } | null> {
+    // Have to do * .1 otherwise it will try to do integer divinsion instead of giving us a float
+    const query = `SELECT (COUNT(cardAccountLinkageTable.id) * 1.0 / COUNT(cardsTable.id)) AS percentageLearned FROM ${this.topicTableName} topicTable INNER JOIN ${this.cardTableName} cardsTable ON topicTable.id = cardsTable.topicId LEFT JOIN ${this.cardAccountLinkageTableName} cardAccountLinkageTable on cardsTable.id = cardAccountLinkageTable.card_id  AND cardAccountLinkageTable.account_id = ${userId} WHERE topicTable.name = '${topic}' GROUP BY topicTable.id`
+    const rows = await new Promise<any>((resolve, reject) => {
+      this.database.all(query, (error, result) => {
+        if (error !== null) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+    if (rows.length === 0) {
+      return null
+    } else {
+      const percentageLearned = rows[0].percentageLearned
+      return { percentageLearned }
+    }
+  }
+
+  /**
+     * receiveTopicPractice gets the items a user has to practice of a  topic
+     * @param accountId the id of the user
+     * @param topic the name of the topic
+     * @returns a promise for an array containing the cards
+     */
+  async receiveTopicPractice (accountId: number, topic: string, amount: number): Promise<CardAccountType[] & CardType[]> {
+    // Have to do * .1 otherwise it will try to do integer divinsion instead of giving us a float
+    const query = `SELECT ${this.cardTableName}.id, ${this.cardTableName}.topicId as topicId, ${this.topicTableName}.name AS topic, ${this.cardTableName}.previewText AS previewText, ${this.cardTableName}.revealText AS revealText, ${this.cardTableName}.audioUrl AS audioUrl, ${this.cardTableName}.imageUrl AS imageUrl, ${this.cardTableName}.pronunciation AS pronunciation,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
+    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
+    INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
+    WHERE ${this.cardAccountLinkageTableName}.account_id = ${accountId}
+    ORDER BY ${this.cardAccountLinkageTableName}.repetitions ASC, ${this.cardAccountLinkageTableName}.easiness ASC
+    LIMIT ${amount}`
+    const topics = await new Promise<any>((resolve, reject) => {
       this.database.all(query, (error, result) => {
         if (error !== null) {
           reject(error)

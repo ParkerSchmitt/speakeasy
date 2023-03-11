@@ -1,97 +1,160 @@
-import React, { type ReactElement } from 'react'
+import React, { useEffect, useState, type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import {
+  MDBBadge,
+  MDBBtn,
   MDBCard,
   MDBCardBody,
-  MDBCardImage,
-  MDBCardText,
+  MDBCardHeader,
   MDBCardTitle,
   MDBCol,
-  MDBContainer,
-  MDBNavbar,
-  MDBNavbarBrand,
-  MDBRow
-} from 'mdb-react-ui-kit'
+  MDBRow,
+  MDBTabs,
+  MDBTabsItem,
+  MDBTabsLink
+}
+  from 'mdb-react-ui-kit'
+import { useNavigate } from 'react-router'
 
-export default function PageTopics (): ReactElement {
+function PageLogin (): ReactElement {
+  const topicName = 'Spanish'
+  const [percentage, setPercentage] = useState<number | null >(null)
+  const [practiceCards, setPracticeCards] = useState<any[] | null >(null)
+
+  const navigate = useNavigate()
+
+  /**
+     * Saves the memorization effectiveness of the card the user just flipped over.
+     * @param learnedScore The score of how well the user did learning
+     * @returns A void promise
+     */
+
+  // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    receiveTopicPercentage()
+    receiveTopicPracticeCards()
+  }, [])
+
+  const receiveTopicPercentage = (): void => {
+    fetch(`http://localhost:4000/topics/${topicName}/percentage`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(async (response) => {
+      if (response.status === 500) {
+        navigate('/login')
+      } else {
+        const json = await response.json()
+        setPercentage(Math.floor(json.response.percentageLearned * 100))
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
+  const receiveTopicPracticeCards = (): void => {
+    fetch(`http://localhost:4000/topics/${topicName}/practice`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(async (response) => {
+      if (response.status === 500) {
+        navigate('/login')
+      } else {
+        const json = await response.json()
+        setPracticeCards(json.response)
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
   return (
-    <>
-    <MDBNavbar expand='lg' light bgColor='light'>
-      <MDBContainer fluid>
-        <MDBNavbarBrand href='#' style={{ fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
-      </MDBContainer>
-    </MDBNavbar>
-    <h3 className="mt-5 text-center" style={{ fontFamily: '"Bevan", cursive' }}>select a language.</h3>
-    <MDBContainer className='p-5' fluid style={{ backgroundColor: '#fff8e3' }}>
-        <MDBCard className='p-5 w-100 d-flex flex-column'>
-            <MDBCardBody>
-                <MDBRow className='row-cols-1 row-cols-md-3 g-4'>
-                    <MDBCol>
-                        <MDBCard className='h-100'>
-                            <MDBCardImage
-                                src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/2560px-Flag_of_Italy.svg.png'
-                                alt='...'
-                                position='top'
-                            />
-                            <MDBCardBody>
-                                <MDBCardTitle>Italian</MDBCardTitle>
-                                <MDBCardText>
-                                This is a longer card with supporting text below as a natural lead-in to additional content.
-                                This content is a little bit longer.
-                                </MDBCardText>
-                            </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                        <MDBCol>
-            <MDBCard className='h-100'>
-            <MDBCardImage
-                src='https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Simplified_Flag_of_Spain_%28civil_variant%29.svg/1200px-Simplified_Flag_of_Spain_%28civil_variant%29.svg.png'
-                alt='...'
-                position='top'
-            />
-            <MDBCardBody>
-                <MDBCardTitle>Spanish</MDBCardTitle>
-                <MDBCardText>Learn spanish with over 500 vocabulary terms</MDBCardText>
-            </MDBCardBody>
-            </MDBCard>
+    <><div className="align-items-start mb-2">
+        <div className="d-flex">
+        <MDBCol md={4} className="p-5">
+          <h3 style={{ fontFamily: '"Bevan", cursive', float: 'left', display: 'inline', alignSelf: 'center', color: 'white', zIndex: '99', position: 'relative' }}>speakeasy.</h3>
         </MDBCol>
-        <MDBCol>
-            <MDBCard className='h-100'>
-            <MDBCardImage
-                src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/800px-Flag_of_France.svg.png'
-                alt='...'
-                position='top'
-            />
-            <MDBCardBody>
-                <MDBCardTitle>French</MDBCardTitle>
-                <MDBCardText>
-                Learn french with over 500 vocabulary terms
-                </MDBCardText>
-            </MDBCardBody>
-            </MDBCard>
+        <MDBCol md={8} className="p-5">
+            <div className="d-flex align-items-end" style={{ marginLeft: 'auto' }}>
+              <div className="d-flex align-items-center justify-content-center">
+                <MDBTabs justify className='mb-3 pl-5'>
+                <MDBTabsItem>
+                  <MDBTabsLink active={true} className="bg-transparent" style={{ backgroundColor: 'none !important' }} >
+                  español
+                  </MDBTabsLink>
+                </MDBTabsItem>
+                <MDBTabsItem>
+                  <MDBTabsLink active={false} className="bg-transparent">
+                  français
+                  </MDBTabsLink>
+                </MDBTabsItem>
+              </MDBTabs>
+            </div>
+          </div>
         </MDBCol>
-      <MDBCol>
-      <MDBCard className='h-100'>
-          <MDBCardImage
-            src='https://cdn.britannica.com/79/4479-050-6EF87027/flag-Stars-and-Stripes-May-1-1795.jpg'
-            alt='...'
-            position='top'
-          />
+      </div>
+    </div>
+    <div className="align-items-start mb-2">
+        <div className="d-flex">
+        <MDBCol md={4}>
+        <MDBCard background='primary' className='text-white' style={{ position: 'absolute', width: '25rem', height: '100vh', top: '0px' }}>
+        <MDBCardHeader class="text-center" style={{ marginTop: '10rem' }}>
+          <MDBCardTitle style={{ fontSize: '5rem' }}>
+            {percentage === null && <p className="placeholder-glow"><span className='placeholder w-25 placeholder-xs'></span>%</p>}
+            {percentage !== null && <p>{percentage}%</p>}
+          </MDBCardTitle>
+          <MDBCardTitle style={{ fontSize: '2rem' }}>complete with course</MDBCardTitle>
+          </MDBCardHeader>
           <MDBCardBody>
-            <MDBCardTitle>English</MDBCardTitle>
-            <MDBCardText>
-              This is a longer card with supporting text below as a natural lead-in to additional content.
-              This content is a little bit longer.
-            </MDBCardText>
+          <div className="d-grid gap-2" style={{ zIndex: '1' }}><MDBBtn className='me-1' style={{ fontSize: '1.5em' }} href="/learn" color='secondary'>RESUME</MDBBtn></div>
+    </MDBCardBody>
+      </MDBCard>
+        </MDBCol>
+        <MDBCol md={8} className="p-5">
+          <h2>Previously learned</h2>
+          <hr/>
+        <MDBRow>
+          {practiceCards?.map(item => (
+           <MDBCol key={item.previewText} xl={6} className='mb-4'>
+            <MDBCard>
+              <MDBCardBody>
+                <div className='d-flex justify-content-between align-items-center'>
+                  <div className='d-flex align-items-center'>
+                    <img
+                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/restrict-template-expressions
+                      src={`../../resources/images/${item.imageUrl!}`}
+                      alt=''
+                      style={{ width: '45px', height: '45px' }}
+                      className='rounded-circle'
+                    />
+                  <div className='ms-3'>
+                    <p className='fw-bold mb-1'>{item.previewText}</p>
+                    <p className='text-muted mb-0'>{item.revealText}</p>
+                  </div>
+                </div>
+              <MDBBadge pill color='primary' light>
+              /{item.pronunciation}/
+              </MDBBadge>
+            </div>
           </MDBCardBody>
         </MDBCard>
-      </MDBCol>
-    </MDBRow>
-
-    </MDBCardBody>
-  </MDBCard>
-  </MDBContainer>
-  </>
+          </MDBCol>
+          ))
+        }
+        </MDBRow>
+        </MDBCol>
+      </div>
+    </div>
+    </>
   )
 }
+
+export default PageLogin

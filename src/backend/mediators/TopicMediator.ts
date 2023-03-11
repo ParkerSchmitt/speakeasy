@@ -4,8 +4,10 @@ import { type ReportCardRequest } from '../controllers/viewmodels/ReportCardRequ
 import { type SaveCardRequest } from '../controllers/viewmodels/SaveCardRequest'
 import type TopicRepository from '../repositories/TopicRepository'
 import { type CardAccountType } from '../types/CardAccountType'
+import { type CardType } from '../types/CardType'
 export const InvalidCardAmount: Error = new Error('Requested invalid amount of cards')
 export const InvalidCredentialsError: Error = new Error('Not authorized')
+export const UnknownPercentageError: Error = new Error('Can not found a learned percentage.')
 
 export interface TopicMediatorConfig {
   Repository: TopicRepository
@@ -37,6 +39,45 @@ class TopicMediator {
       } else {
         return response
       }
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * GetReceiveTopicsPercentage receives the percentage learned of a topic from the database
+    * @returns a Promise with the information in JSON
+    */
+  async GetReceiveTopicsPercentage (userId: number, topic: string): Promise<{ percentageLearned: number }> {
+    try {
+      const response = await this.repository.receiveTopicPercentage(userId, topic)
+      if (response === null) {
+        throw UnknownPercentageError
+      }
+      return response
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * GetReceiveTopicsPractice receives the items a user needs to practice of a topic from the database
+    * @returns a Promise with the information in JSON
+    */
+  async GetReceiveTopicsPractice (userId: number, topic: string, amount: number): Promise<CardAccountType[] & CardType[]> {
+    try {
+      const response = await this.repository.receiveTopicPractice(userId, topic, amount)
+      return response
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {

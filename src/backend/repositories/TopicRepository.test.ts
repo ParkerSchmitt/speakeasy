@@ -17,7 +17,7 @@ describe('TopicRepository',  () => {
 
     // Makes sure it retrieves the topic form the database.
     it.each([
-        [[{id: 1, name: 'Test', description: 'Test Description', imageUrl: 'Test Image URL' }]],
+        [[{id: 1, name: 'Test', description: 'Test Description', imageUrl: 'Test Image URL'}]],
 
     ])(
         `should retrieve the topics from the database`,
@@ -27,6 +27,32 @@ describe('TopicRepository',  () => {
 
         }
     );
+
+    // Makes sure it retrieves the percentage for the topic
+    it.each([
+        [1,"Test", {percentageLearned: (1.0/3.0)}],
+
+    ])(
+        `should retrieve the percentage of learned cards of a topic from the database`,
+        async (userId, topicId,  topicObject) => {
+            const result = await TopicRepositoryCorrectTable.receiveTopicPercentage(userId, topicId);
+            expect(result).toEqual(topicObject);
+
+        }
+    );    
+
+    // Makes sure it retrieves the percentage for the topic
+    it.each([
+        [1,"Test", 3,  [{"audioUrl": "test/url.wav", "datetime": 1675734233, "easiness": 5.3, "id": 1, "imageUrl": "test/url.png", "interval": 5, "previewText": "Casa", "pronunciation": "cah-sah", "repetitions": 3, "revealText": "Home", "topic": "Test", "topicId": 1}]],
+    ])(
+        `should retrieve the cards to learn of a certian topic from the database`,
+        async (userId, topicId, amount,  topicObject) => {
+            const result = await TopicRepositoryCorrectTable.receiveTopicPractice(userId, topicId, amount);
+            expect(result).toEqual(topicObject);
+
+        }
+    );    
+    
 
     // Makes sure it retrieves the cards form the database.
     it.each([

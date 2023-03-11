@@ -11,6 +11,13 @@ interface ConfigInterface {
   CARD_ACCOUNT_LINKAGE_NAME: string
   CARD_TABLE_NAME: string
   CARD_REPORT_TABLE_NAME: string
+  SQL_CLIENT: string
+  SQL_HOST: string
+  SQL_PORT: number
+  SQL_USER: string
+  SQL_PASSWORD: string
+  SQL_DATABASE: string
+  SQL_FILENAME: string
   MAX_CARDS: number
   API_PORT: number
   CORS_ORIGIN: string
@@ -30,6 +37,13 @@ const getConfig = (): Partial<ConfigInterface> => {
     CARD_ACCOUNT_LINKAGE_NAME: (process.env.CARD_ACCOUNT_LINKAGE_NAME != null) ? String(process.env.CARD_ACCOUNT_LINKAGE_NAME) : undefined,
     CARD_TABLE_NAME: (process.env.CARD_TABLE_NAME != null) ? String(process.env.CARD_TABLE_NAME) : undefined,
     CARD_REPORT_TABLE_NAME: (process.env.CARD_REPORT_TABLE_NAME != null) ? String(process.env.CARD_REPORT_TABLE_NAME) : undefined,
+    SQL_CLIENT: (process.env.SQL_CLIENT != null) ? String(process.env.SQL_CLIENT) : undefined,
+    SQL_HOST: (process.env.SQL_HOST != null) ? String(process.env.SQL_HOST) : undefined,
+    SQL_PORT: (process.env.SQL_PORT != null) ? Number(process.env.SQL_PORT) : undefined,
+    SQL_USER: (process.env.SQL_USER != null) ? String(process.env.SQL_USER) : undefined,
+    SQL_PASSWORD: (process.env.SQL_PASSWORD != null) ? String(process.env.SQL_PASSWORD) : undefined,
+    SQL_DATABASE: (process.env.SQL_DATABASE != null) ? String(process.env.SQL_DATABASE) : undefined,
+    SQL_FILENAME: (process.env.SQL_FILENAME != null) ? String(process.env.SQL_FILENAME) : undefined,
     MAX_CARDS: (process.env.MAX_CARDS != null) ? Number(process.env.MAX_CARDS) : undefined,
     API_PORT: (process.env.API_PORT != null) ? Number(process.env.API_PORT) : undefined,
     CORS_ORIGIN: (process.env.CORS_ORIGIN != null) ? String(process.env.CORS_ORIGIN) : undefined,

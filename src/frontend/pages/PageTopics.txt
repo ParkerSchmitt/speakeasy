@@ -122,34 +122,99 @@ function PageLogin (): ReactElement {
           <h2>Previously learned</h2>
           <hr/>
         <MDBRow>
-          {practiceCards?.map(item => (
-           <MDBCol key={item.previewText} xl={6} className='mb-4'>
-            <MDBCard>
-              <MDBCardBody>
-                <div className='d-flex justify-content-between align-items-center'>
-                  <div className='d-flex align-items-center'>
-                    <img
-                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/restrict-template-expressions
-                      src={`../../resources/images/${item.imageUrl!}`}
-                      alt=''
-                      style={{ width: '45px', height: '45px' }}
-                      className='rounded-circle'
-                    />
-                  <div className='ms-3'>
-                    <p className='fw-bold mb-1'>{item.previewText}</p>
-                    <p className='text-muted mb-0'>{item.revealText}</p>
-                  </div>
+      <MDBCol xl={6} className='mb-4'>
+        <MDBCard>
+          <MDBCardBody>
+            <div className='d-flex justify-content-between align-items-center'>
+              <div className='d-flex align-items-center'>
+                <img
+                  src='../../resources/images/spanish/amigo.jpg'
+                  alt=''
+                  style={{ width: '45px', height: '45px' }}
+                  className='rounded-circle'
+                />
+                <div className='ms-3'>
+                  <p className='fw-bold mb-1'>amigo</p>
+                  <p className='text-muted mb-0'>friend</p>
                 </div>
-              <MDBBadge pill color='primary' light>
-              /{item.pronunciation}/
+              </div>
+              <MDBBadge pill color='success' light>
+                LEARNING
               </MDBBadge>
             </div>
           </MDBCardBody>
         </MDBCard>
-          </MDBCol>
-          ))
-        }
-        </MDBRow>
+      </MDBCol>
+      <MDBCol xl={6} className='mb-4'>
+        <MDBCard>
+          <MDBCardBody>
+            <div className='d-flex justify-content-between align-items-center'>
+              <div className='d-flex align-items-center'>
+                <img
+                  src='../../resources/images/spanish/calle.jpg'
+                  alt=''
+                  style={{ width: '45px', height: '45px' }}
+                  className='rounded-circle'
+                />
+                <div className='ms-3'>
+                  <p className='fw-bold mb-1'>calle</p>
+                  <p className='text-muted mb-0'>street</p>
+                </div>
+              </div>
+              <MDBBadge pill color='primary' light>
+                MASTERED
+              </MDBBadge>
+            </div>
+          </MDBCardBody>
+        </MDBCard>
+      </MDBCol>
+      <MDBCol xl={6} className='mb-4'>
+        <MDBCard>
+          <MDBCardBody>
+            <div className='d-flex justify-content-between align-items-center'>
+              <div className='d-flex align-items-center'>
+                <img
+                  src='../../resources/images/spanish/construir.jpg'
+                  alt=''
+                  style={{ width: '45px', height: '45px' }}
+                  className='rounded-circle'
+                />
+                <div className='ms-3'>
+                  <p className='fw-bold mb-1'>construir</p>
+                  <p className='text-muted mb-0'>construction</p>
+                </div>
+              </div>
+              <MDBBadge pill color='warning' light>
+                SEEN
+              </MDBBadge>
+            </div>
+          </MDBCardBody>
+        </MDBCard>
+      </MDBCol>
+      <MDBCol xl={6} className='mb-4'>
+        <MDBCard>
+          <MDBCardBody>
+            <div className='d-flex justify-content-between align-items-center'>
+              <div className='d-flex align-items-center'>
+                <img
+                  src='../../resources/images/spanish/juego.jpg'
+                  alt=''
+                  style={{ width: '45px', height: '45px' }}
+                  className='rounded-circle'
+                />
+                <div className='ms-3'>
+                  <p className='fw-bold mb-1'>juego</p>
+                  <p className='text-muted mb-0'>game</p>
+                </div>
+              </div>
+              <MDBBadge pill color='danger' light>
+                MASTERED
+              </MDBBadge>
+            </div>
+          </MDBCardBody>
+        </MDBCard>
+      </MDBCol>
+    </MDBRow>
         </MDBCol>
       </div>
     </div>

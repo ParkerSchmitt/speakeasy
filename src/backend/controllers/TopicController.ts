@@ -37,6 +37,58 @@ class TopicController {
   }
 
   /**
+     * GetRetreiveTopicsPercentage retrieves the current topic's percentage learned inside of the database and returns them to the user.
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise. Returns data directly to request as JSON i.e [percentageLearned : 0.93]
+     */
+  GetReceiveTopicsPercentage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (req.params.topicName == null) {
+      res.status(400).json({ code: 400, response: 'No topic found' })
+      return
+    }
+    if (req.session.accountId === undefined) {
+      res.status(500).json({ code: 500, response: 'Must be authorized' })
+    } else {
+      try {
+        const responseObj = await this.mediator.GetReceiveTopicsPercentage(req.session.accountId, req.params.topicName)
+        res.status(200).json({ code: 200, response: responseObj })
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).json({ code: 400, error: error.message })
+        }
+      }
+    }
+  }
+
+  /**
+     * GetRetreiveTopicsPractice retrieves the current topic's words that a user needs to practice the most.
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise. Returns data directly to request as JSON [{id: number, name: String, description: string, imageUrl: string},{...}]
+     */
+  GetReceiveTopicsPractice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (req.params.topicName == null) {
+      res.status(400).json({ code: 400, response: 'No topic found' })
+      return
+    }
+    if (req.session.accountId === undefined) {
+      res.status(500).json({ code: 500, response: 'Must be authorized' })
+    } else {
+      try {
+        const responseObj = await this.mediator.GetReceiveTopicsPractice(req.session.accountId, req.params.topicName, 6)
+        res.status(200).json({ code: 200, response: responseObj })
+      } catch (error) {
+        if (error instanceof Error) {
+          res.status(400).json({ code: 400, error: error.message })
+        }
+      }
+    }
+  }
+
+  /**
      * PostReceiveCards retrieves the current cards the user has to stufy from inside of the database and returns them to the user.
      * @param req the Express request
      * @param res the Express response

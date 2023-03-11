@@ -37,7 +37,9 @@ describe('TopicsController', () => {
     })
   })
 
-  app.get('/retrieveTopics', topicController.GetReceiveTopics)
+  app.get('/topics', topicController.GetReceiveTopics)
+  app.get('/topics/:topicName/percentage', topicController.GetReceiveTopicsPercentage)
+  app.get('/topics/:topicName/practice', topicController.GetReceiveTopicsPercentage)
   app.post('/retrieveCards', topicController.PostReceiveCards)
   app.post('/saveCard', topicController.PostSaveCard)
   app.post('/reportCard', topicController.PostReportCard)
@@ -49,13 +51,34 @@ describe('TopicsController', () => {
     async (status) => {
 
       const res = await request(app)
-        .get('/retrieveTopics')
+        .get('/topics')
       expect(res.status).toEqual(status);
       expect(res.body).toHaveProperty('code');
     }
   );
 
-  
+  it.each([500])(
+    `should return proper json structure given retrieveTopicsPercentageRequest request`,
+    async (status) => {
+
+      const res = await request(app)
+        .get('/topics/spanish/percentage')
+      expect(res.status).toEqual(status);
+      expect(res.body).toHaveProperty('code');
+    }
+  );
+
+    it.each([500])(
+    `should return proper json structure given retrieveTopicsPractice request`,
+    async (status) => {
+
+      const res = await request(app)
+        .get('/topics/spanish/practice')
+      expect(res.status).toEqual(status);
+      expect(res.body).toHaveProperty('code');
+    }
+  );
+
   it.each(
     [
       [ {}, 500 ] // Not logged in 500

@@ -11,9 +11,6 @@ import TopicMediator from './backend/mediators/TopicMediator'
 import TopicRepository from './backend/repositories/TopicRepository'
 import { type CardAccountType } from './backend/types/CardAccountType'
 import Config from './Config'
-// import TopicRepository from './backend/repositories/TopicRepository'
-// import TopicMediator from './backend/mediators/TopicsMediator'
-// import TopicsController from './backend/controllers/TopicsController'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
@@ -82,7 +79,11 @@ app.post('/authenticate', accountController.PostReceiveSignin)
 app.get('/isAuthenticated', accountController.GetIsAuthenticated)
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-app.get('/retrieveTopics', topicsController.GetReceiveTopics)
+app.get('/topics', topicsController.GetReceiveTopics)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.get('/topics/:topicName/percentage', topicsController.GetReceiveTopicsPercentage)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.get('/topics/:topicName/practice', topicsController.GetReceiveTopicsPractice)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.post('/retrieveCards', topicsController.PostReceiveCards)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises

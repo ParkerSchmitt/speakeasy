@@ -35,7 +35,6 @@ describe('TopicMediator',  () => {
     // Makes sure it retrieves the topic form the database.
     it.each([
         [[{id: 1, name: 'Test', description: 'Test Description', imageUrl: 'Test Image URL' }]],
-
     ])(
         `should retrieve the topics from the database`,
         async (topicObject) => {
@@ -44,6 +43,33 @@ describe('TopicMediator',  () => {
 
         }
     );
+
+    // Makes sure it retrieves the topic percentage form the database.
+    it.each([
+      [1, "Test", {percentageLearned: (1.0/3.0)}],
+  ])(
+      `should retrieve the topic percentage from the database`,
+      async (userId, topic, topicObject) => {
+
+          const result = await TopicMediatorCorrectTable.GetReceiveTopicsPercentage(userId, topic);
+          expect(result).toEqual(topicObject);
+
+      }
+  );   
+  
+    // Makes sure it retrieves the topic percentage form the database.
+    it.each([
+      [1,"Test", 3,  [{"audioUrl": "test/url.wav", "datetime": 1675734233, "easiness": 5.3, "id": 1, "imageUrl": "test/url.png", "interval": 5, "previewText": "Casa", "pronunciation": "cah-sah", "repetitions": 3, "revealText": "Home", "topic": "Test", "topicId": 1}]],
+  ])(
+      `should retrieve the practice cards for a topic from the database`,
+      async (userId, topic, amount, topicObject) => {
+
+          const result = await TopicMediatorCorrectTable.GetReceiveTopicsPractice(userId, topic, amount);
+          expect(result).toEqual(topicObject);
+
+      }
+  );      
+  
 
     // Makes sure it retrieves new (not learned) cards form the database.
     it.each([

@@ -17,7 +17,7 @@ on:
         description: Select environment to publish to
 env:
   INPUT_ENVKEY_API_PORT: ${{ vars.ENV_API_PORT }}
-  INPUT_ENVKEY_IMAGE_NAME: ${{ vars.ENV_IMAGE_NAME }} 
+  IMAGE_NAME: ${{ vars.ENV_IMAGE_NAME }} 
   INPUT_ENVKEY_ACCOUNT_TABLE_NAME: ${{ vars.ENV_ACCOUNT_TABLE_NAME }}
   INPUT_ENVKEY_TOPIC_TABLE_NAME: ${{ vars.ENV_TOPIC_TABLE_NAME }}
   INPUT_ENVKEY_CARD_ACCOUNT_LINKAGE_NAME: ${{ vars.ENV_CARD_ACCOUNT_LINKAGE_NAME }}
@@ -36,8 +36,8 @@ env:
   INPUT_ENVKEY_CORS_OPTIONS_SUCCESS_STATUS: ${{ vars.ENV_CORS_OPTIONS_SUCCESS_STATUS }}
   INPUT_ENVKEY_SESSION_SECRET: ${{ vars.ENV_SESSION_SECRET }}                 
   INPUT_ENVKEY_SESSION_RESAVE: ${{ vars.ENV_SESSION_RESAVE }}
-  INPUT_ENVKEY_SESSION_COOKIE_MAX_AGE: $ {{vars.ENV_SESSION_COOKIE_MAX_AGE }}
-  INPUT_ENVKEY_SESSION_SAVE_UNINITALIZED: $ {{ vars.ENV_SESSION_SAVE_UNINITALIZED }}
+  INPUT_ENVKEY_SESSION_COOKIE_MAX_AGE: ${{vars.ENV_SESSION_COOKIE_MAX_AGE }}
+  INPUT_ENVKEY_SESSION_SAVE_UNINITALIZED: ${{ vars.ENV_SESSION_SAVE_UNINITALIZED }}
 
 
 
@@ -56,7 +56,7 @@ jobs:
       - name: Verify .env was created
         run: cat src/.env
       - name: Build container image
-        run: docker build -t $(echo $REGISTRY)/$(echo $API_PORT):$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -t $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -69,7 +69,7 @@ jobs:
         run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
 
       - name: Push image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+        run: docker push $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
         
   deploy:
     runs-on: ubuntu-latest

@@ -16,8 +16,9 @@ on:
         type: environment
         description: Select environment to publish to
 env:
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }} 
+  REGISTRY: ${{ vars.REGISTRY }} 
   INPUT_ENVKEY_API_PORT: ${{ vars.ENV_API_PORT }}
-  IMAGE_NAME: ${{ vars.ENV_IMAGE_NAME }} 
   INPUT_ENVKEY_ACCOUNT_TABLE_NAME: ${{ vars.ENV_ACCOUNT_TABLE_NAME }}
   INPUT_ENVKEY_TOPIC_TABLE_NAME: ${{ vars.ENV_TOPIC_TABLE_NAME }}
   INPUT_ENVKEY_CARD_ACCOUNT_LINKAGE_NAME: ${{ vars.ENV_CARD_ACCOUNT_LINKAGE_NAME }}
@@ -56,7 +57,7 @@ jobs:
       - name: Verify .env was created
         run: cat src/.env
       - name: Build container image
-        run: docker build -t $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:

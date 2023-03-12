@@ -45,15 +45,14 @@ jobs:
   build_and_push:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    steps:
+    steps:  
+      - name: Checkout the repo 
+        uses: actions/checkout@v2
       - name: Create .env file
         uses: actually-colab/github-action-create-env-file@v2.3
         with:
           directory: 'src/'
           file_name: '.env'      
-      - name: Checkout the repo 
-        uses: actions/checkout@v2
-        
       - name: Build container image
         run: docker build -t $(echo $REGISTRY)/$(echo $API_PORT):$(echo $GITHUB_SHA | head -c7) .
       - name: Install doctl

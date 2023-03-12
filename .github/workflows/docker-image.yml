@@ -1,5 +1,9 @@
 name: Publish to Digital Ocean
 
+env:
+  # Setting an environment variable with the value of a configuration variable
+  env_var: ${{ vars.API_PORT }}
+
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

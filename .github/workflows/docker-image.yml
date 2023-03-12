@@ -14,7 +14,7 @@ on:
     inputs:
       environment:
         type: environment
-        description: Select to build/deploy to
+        description: Select environment to publish to
 env:
   API_PORT: ${{ vars.API_PORT }}
   REGISTRY: ${{ vars.API_PORT }}

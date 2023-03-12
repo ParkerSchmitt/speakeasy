@@ -52,7 +52,9 @@ jobs:
         uses: actually-colab/github-action-create-env-file@v2.3
         with:
           directory: 'src/'
-          file_name: '.env'      
+          file_name: '.env'  
+      - name: Verify .env was created
+        run: cat src/.env
       - name: Build container image
         run: docker build -t $(echo $REGISTRY)/$(echo $API_PORT):$(echo $GITHUB_SHA | head -c7) .
       - name: Install doctl

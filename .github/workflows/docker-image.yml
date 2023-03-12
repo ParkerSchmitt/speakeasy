@@ -16,37 +16,41 @@ on:
         type: environment
         description: Select environment to publish to
 env:
-  API_PORT: ${{ vars.API_PORT }}
-  IMAGE_NAME: ${{ vars.IMAGE_NAME }} 
-  ACCOUNT_TABLE_NAME: ${{ vars.ACCOUNT_TABLE_NAME }}
-  TOPIC_TABLE_NAME: ${{ vars.TOPIC_TABLE_NAME }}
-  CARD_ACCOUNT_LINKAGE_NAME: ${{ vars.CARD_ACCOUNT_LINKAGE_NAME }}
-  CARD_TABLE_NAME: ${{ vars.CARD_TABLE_NAME }}
-  CARD_REPORT_TABLE_NAME: ${{ vars.CARD_REPORT_TABLE_NAME }}
-  SQL_CLIENT: ${{ vars.SQL_CLIENT }}
-  SQL_HOST: ${{ vars.SQL_HOST }}
-  SQL_PORT: ${{ vars.SQL_PORT }}
-  SQL_USER: ${{ vars.SQL_USER }}
-  SQL_PASSWORD: ${{ vars.SQL_PASSWORD }}
-  SQL_DATABASE: ${{ vars.SQL_DATABASE }}
-  SQL_FILENAME: ${{ vars.SQL_FILENAME }}
-  MAX_CARDS: ${{ vars.MAX_CARDS }}
-  CORS_ORIGIN: ${{ vars.CORS_ORIGIN }}
-  CORS_CREDENTIALS: ${{ vars.CORS_ORIGIN }}
-  CORS_OPTIONS_SUCCESS_STATUS: ${{ vars.CORS_OPTIONS_SUCCESS_STATUS }}
-  SESSION_SECRET: ${{ vars.SESSION_SECRET }}                 
-  SESSION_RESAVE: ${{ vars.SESSION_RESAVE }}
-  SESSION_COOKIE_MAX_AGE: $ {{vars.SESSION_COOKIE_MAX_AGE }}
-  SESSION_SAVE_UNINITALIZED: $ {{ vars.SESSION_SAVE_UNINITALIZED }}
+  INPUT_ENVKEY_API_PORT: ${{ vars.ENV_API_PORT }}
+  INPUT_ENVKEY_IMAGE_NAME: ${{ vars.ENV_IMAGE_NAME }} 
+  INPUT_ENVKEY_ACCOUNT_TABLE_NAME: ${{ vars.ENV_ACCOUNT_TABLE_NAME }}
+  INPUT_ENVKEY_TOPIC_TABLE_NAME: ${{ vars.ENV_TOPIC_TABLE_NAME }}
+  INPUT_ENVKEY_CARD_ACCOUNT_LINKAGE_NAME: ${{ vars.ENV_CARD_ACCOUNT_LINKAGE_NAME }}
+  INPUT_ENVKEY_CARD_TABLE_NAME: ${{ vars.ENV_CARD_TABLE_NAME }}
+  INPUT_ENVKEY_CARD_REPORT_TABLE_NAME: ${{ vars.ENV_CARD_REPORT_TABLE_NAME }}
+  INPUT_ENVKEY_SQL_CLIENT: ${{ vars.ENV_SQL_CLIENT }}
+  INPUT_ENVKEY_SQL_HOST: ${{ vars.ENV_SQL_HOST }}
+  INPUT_ENVKEY_SQL_PORT: ${{ vars.ENV_SQL_PORT }}
+  INPUT_ENVKEY_SQL_USER: ${{ vars.ENV_SQL_USER }}
+  INPUT_ENVKEY_SQL_PASSWORD: ${{ vars.ENV_SQL_PASSWORD }}
+  INPUT_ENVKEY_SQL_DATABASE: ${{ vars.ENV_SQL_DATABASE }}
+  INPUT_ENVKEY_SQL_FILENAME: ${{ vars.ENV_SQL_FILENAME }}
+  INPUT_ENVKEY_MAX_CARDS: ${{ vars.ENV_MAX_CARDS }}
+  INPUT_ENVKEY_CORS_ORIGIN: ${{ vars.ENV_CORS_ORIGIN }}
+  INPUT_ENVKEY_CORS_CREDENTIALS: ${{ vars.ENV_CORS_ORIGIN }}
+  INPUT_ENVKEY_CORS_OPTIONS_SUCCESS_STATUS: ${{ vars.ENV_CORS_OPTIONS_SUCCESS_STATUS }}
+  INPUT_ENVKEY_SESSION_SECRET: ${{ vars.ENV_SESSION_SECRET }}                 
+  INPUT_ENVKEY_SESSION_RESAVE: ${{ vars.ENV_SESSION_RESAVE }}
+  INPUT_ENVKEY_SESSION_COOKIE_MAX_AGE: $ {{vars.ENV_SESSION_COOKIE_MAX_AGE }}
+  INPUT_ENVKEY_SESSION_SAVE_UNINITALIZED: $ {{ vars.ENV_SESSION_SAVE_UNINITALIZED }}
 
 
 
-#3
 jobs:
   build_and_push:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
+      - name: Create .env file
+        uses: actually-colab/github-action-create-env-file@v2.3
+        with:
+          directory: 'src/'
+          file_name: '.env'      
       - name: Checkout the repo 
         uses: actions/checkout@v2
         

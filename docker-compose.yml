@@ -36,7 +36,8 @@ services:
       - certbot-var:/var/lib/letsencrypt
       - dhparam:/etc/ssl/certs
     depends_on:
-      - nodejs
+      - frontend
+      - backend
     networks:
       - app-network
 

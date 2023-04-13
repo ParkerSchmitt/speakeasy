@@ -13,4 +13,4 @@ EXPOSE 4000
 EXPOSE 3000
 RUN chown -R node /usr/src/app
 USER node
-CMD ["serve", "-s", "build"]
+CMD ["serve", "-s", "build", "&", "node", "server/server.js"]

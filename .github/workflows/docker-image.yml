@@ -57,7 +57,7 @@ jobs:
       - name: Verify .env was created
         run: cat src/.env
       - name: Build container image
-        run: docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        run: docker compose build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:

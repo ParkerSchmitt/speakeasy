@@ -1,7 +1,6 @@
 FROM node:lts-alpine
 ENV NODE_ENV=development
 WORKDIR /usr/src/app
-
 COPY ["**/package.json", "**/package-lock.json*", "**/npm-shrinkwrap.json*", "../../"]
 COPY . .
 RUN chown -R node /usr/src/app
@@ -11,7 +10,6 @@ RUN npm install eslint --save-dev npm install eslint-config-standard --save-dev 
 COPY . .
 RUN npm run build-fe 
 RUN npm run build-be 
-EXPOSE 4000
 EXPOSE 3000
 RUN chown -R node /usr/src/app
 USER node

@@ -95,21 +95,14 @@ jobs:
           script: |
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop running container
-            docker stop $(echo $IMAGE_NAME)
+            # Stop running containers
+            docker compose down
             # Remove old container
-            docker rm $(echo $IMAGE_NAME)
-            # Run a new frontend container from a new image
-            docker run -d \ 
-            --network=app-network \
-            -itd \
-            --name frontend \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
-            # Run a new backend container from a new image
-            docker run -d \ 
-            --network=app-network \
-            -itd \
-            --name backend \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
-
+            docker rm frontend
+            docker rm backend
+            # Delete old images
+            docker rmi speakeasy-main:frontend
+            docker rmi speakeasy-main:backend
+            # Run composed containers from the new images
+            docker compose up -d
             

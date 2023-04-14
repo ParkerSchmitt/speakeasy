@@ -1,7 +1,9 @@
 services:
   frontend:
     container_name: frontend
-    build: ./src/frontend
+    build:
+      context: .
+      dockerfile: ./src/frontend/Dockerfile
     volumes:
         - .:/src/frontend
     ports:
@@ -12,7 +14,9 @@ services:
       - app-network
   backend:
     container_name: backend
-    build: ./src/backend
+    build:
+      context: .
+      dockerfile: ./src/backend/Dockerfile
     volumes:
         - .:/src/backend
     ports:

@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: ${$REGISTRY}${$IMAGE_NAME}:frontend
+    image: ${REGISTRY}${IMAGE_NAME}:frontend
     container_name: frontend
     build:
       context: .
@@ -14,7 +14,7 @@ services:
     networks: 
       - app-network
   backend:
-    image: ${$REGISTRY}${$IMAGE_NAME}:backend
+    image: ${REGISTRY}${IMAGE_NAME}:backend
     container_name: backend
     build:
       context: .

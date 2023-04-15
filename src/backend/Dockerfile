@@ -9,5 +9,6 @@ RUN npm install eslint --save-dev npm install eslint-config-standard --save-dev 
 COPY . .
 RUN npm run build-be 
 EXPOSE 4000
+RUN ls
 RUN chown -R node /usr/src/app
 USER node

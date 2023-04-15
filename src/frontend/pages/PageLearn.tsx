@@ -1,6 +1,7 @@
 import React, { useEffect, useState, type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import Config from '.././Config'
 import {
   MDBCard,
   MDBCardBody,
@@ -44,7 +45,7 @@ export default function PageTopics (): ReactElement {
   }, [])
 
   const receiveCards = (): void => {
-    fetch('http://localhost:4000/retrieveCards', {
+    fetch(`${Config.REACT_APP_API_URL}/retrieveCards`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -98,7 +99,7 @@ export default function PageTopics (): ReactElement {
   const nextCardHandler = (cardId: number, result: CardResponse): void => {
     // First save the card
 
-    fetch('http://localhost:4000/saveCard', {
+    fetch(`${Config.REACT_APP_API_URL}/saveCard`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -144,7 +145,7 @@ export default function PageTopics (): ReactElement {
   const submitReportDialogHandler = (type: string, reason: string, comment: string): void => {
     toggleFlagReportDialogShow()
 
-    fetch('http://localhost:4000/reportCard', {
+    fetch(`${Config.REACT_APP_API_URL}/reportCard`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',

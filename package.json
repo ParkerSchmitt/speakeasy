@@ -24,6 +24,7 @@
     "mdb-react-ui-kit": "^5.1.0",
     "node-fetch": "^3.3.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
+    "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -39,8 +40,10 @@
     "web-vitals": "^2.1.4",
     "web3": "^1.8.1"
   },
+
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"npx ts-node --esm ./src/server.ts\"",
+    "dev-start": "env $(cat .env | grep -v \"#\" | xargs) npm start",
     "build-be": "tsc --build",
     "build-fe": "react-scripts build",
     "test": "react-scripts test",

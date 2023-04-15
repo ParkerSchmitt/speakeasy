@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config()
-
 // Interface to load env variables
 // Note these variables can possibly be undefined
 // as someone could skip these varibales or not setup a .env file at all
@@ -20,6 +17,7 @@ interface ConfigInterface {
   SQL_FILENAME: string
   MAX_CARDS: number
   API_PORT: number
+  REACT_APP_API_URL: string
   CORS_ORIGIN: string
   CORS_CREDENTIALS: boolean
   CORS_OPTIONS_SUCCESS_STATUS: number
@@ -46,6 +44,7 @@ const getConfig = (): Partial<ConfigInterface> => {
     SQL_FILENAME: (process.env.SQL_FILENAME != null) ? String(process.env.SQL_FILENAME) : undefined,
     MAX_CARDS: (process.env.MAX_CARDS != null) ? Number(process.env.MAX_CARDS) : undefined,
     API_PORT: (process.env.API_PORT != null) ? Number(process.env.API_PORT) : undefined,
+    REACT_APP_API_URL: (process.env.REACT_APP_API_URL != null) ? String(process.env.REACT_APP_API_URL) : undefined,
     CORS_ORIGIN: (process.env.CORS_ORIGIN != null) ? String(process.env.CORS_ORIGIN) : undefined,
     CORS_CREDENTIALS: (process.env.CORS_CREDENTIALS != null) ? Boolean(process.env.CORS_CREDENTIALS) : undefined,
     CORS_OPTIONS_SUCCESS_STATUS: (process.env.CORS_OPTIONS_SUCCESS_STATUS != null) ? Number(process.env.CORS_OPTIONS_SUCCESS_STATUS) : undefined,

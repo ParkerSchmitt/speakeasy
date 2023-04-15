@@ -1,6 +1,7 @@
 import React, { useEffect, useState, type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import Config from '.././Config'
 import {
   MDBBadge,
   MDBBtn,
@@ -37,7 +38,7 @@ function PageLogin (): ReactElement {
   }, [])
 
   const receiveTopicPercentage = (): void => {
-    fetch(`http://localhost:4000/topics/${topicName}/percentage`, {
+    fetch(`${Config.REACT_APP_API_URL}/topics/${topicName}/percentage`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -49,7 +50,7 @@ function PageLogin (): ReactElement {
         navigate('/login')
       } else {
         const json = await response.json()
-        setPercentage(Math.floor(json.response.percentageLearned * 100))
+        setPercentage(Math.floor(json.response.percentageLearned * 100)) // Turn it into a whole number percentage to look nice
       }
     }).catch((error) => {
       console.log(error)
@@ -57,7 +58,7 @@ function PageLogin (): ReactElement {
   }
 
   const receiveTopicPracticeCards = (): void => {
-    fetch(`http://localhost:4000/topics/${topicName}/practice`, {
+    fetch(`${Config.REACT_APP_API_URL}/topics/${topicName}/practice`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

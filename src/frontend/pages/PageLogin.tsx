@@ -2,6 +2,7 @@ import React, { type FormEvent, useState, type ReactElement } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import Config from '.././Config'
 import {
   MDBBtn,
   MDBContainer,
@@ -23,7 +24,7 @@ function PageLogin (): ReactElement {
    * @param e  the form event.
    */
   const handleSubmission = (e: FormEvent<HTMLFormElement>): void => {
-    fetch('http://localhost:4000/authenticate', {
+    fetch(`${Config.REACT_APP_API_URL}/authenticate`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',

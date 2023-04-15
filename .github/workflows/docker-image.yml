@@ -52,10 +52,12 @@ jobs:
       - name: Create .env file
         uses: actually-colab/github-action-create-env-file@v2.3
         with:
-          directory: 'src/'
+          directory: './'
           file_name: '.env'  
       - name: Verify .env was created
-        run: cat src/.env
+        run: cat ./.env
+      - name: Verify .env is in right place
+        run: ls
       - name: Build container image
         run: docker compose build
       - name: Install doctl
@@ -101,8 +103,8 @@ jobs:
             docker rm frontend
             docker rm backend
             # Delete old images
-            docker rmi speakeasy-main:frontend
-            docker rmi speakeasy-main:backend
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
             # Run composed containers from the new images
             docker compose up -d
             

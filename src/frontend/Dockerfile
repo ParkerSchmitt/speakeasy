@@ -1,6 +1,6 @@
 FROM node:lts-alpine
 ENV NODE_ENV=development
-WORKDIR /usr/src/appgit
+WORKDIR /usr/src/app
 COPY ["**/package.json", "**/package-lock.json*", "**/npm-shrinkwrap.json*", "**/.env", "../../"]
 COPY . .
 RUN chown -R node /usr/src/app

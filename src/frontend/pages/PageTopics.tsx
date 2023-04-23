@@ -131,7 +131,7 @@ function PageLogin (): ReactElement {
                   <div className='d-flex align-items-center'>
                     <img
                       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/restrict-template-expressions
-                      src={`../../resources/images/${item.imageUrl!}`}
+                      src={Config.REACT_APP_MEDIA_URL + `/resources/images/${item.imageUrl!}`}
                       alt=''
                       style={{ width: '45px', height: '45px' }}
                       className='rounded-circle'

@@ -3,12 +3,14 @@
 // as someone could skip these varibales or not setup a .env file at all
 interface ConfigInterface {
   NODE_ENV: string
+  REACT_APP_MEDIA_URL: string
   REACT_APP_API_URL: string
 }
 // Loading process.env as ENV interface
 const getConfig = (): Partial<ConfigInterface> => {
   return {
     NODE_ENV: (process.env.NODE_ENV != null) ? String(process.env.NODE_ENV) : undefined,
+    REACT_APP_MEDIA_URL: (process.env.REACT_APP_MEDIA_URL != null) ? String(process.env.REACT_APP_MEDIA_URL) : undefined,
     REACT_APP_API_URL: (process.env.REACT_APP_API_URL != null) ? String(process.env.REACT_APP_API_URL) : undefined
   }
 }

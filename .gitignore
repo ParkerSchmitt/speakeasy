@@ -11,8 +11,6 @@
 # production
 /build
 /dist
-/public/resources/audio
-/public/resources/images
 
 
 # misc

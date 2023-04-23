@@ -25,6 +25,8 @@ env:
   INPUT_ENVKEY_SQL_HOST: ${{ vars.ENV_SQL_HOST }}
   INPUT_ENVKEY_SQL_PORT: ${{ vars.ENV_SQL_PORT }}
   INPUT_ENVKEY_REACT_APP_API_URL: ${{ vars.ENV_REACT_APP_API_URL }}
+  INPUT_ENVKEY_REACT_APP_API_URL: ${{ vars.ENV_REACT_APP_MEDIA_URL }}
+
   INPUT_ENVKEY_SQL_USER: ${{ vars.ENV_SQL_USER }}
   INPUT_ENVKEY_SQL_PASSWORD: ${{ vars.ENV_SQL_PASSWORD }}
   INPUT_ENVKEY_SQL_DATABASE: ${{ vars.ENV_SQL_DATABASE }}
@@ -84,7 +86,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: ".env"
+          source: "./.env"
           target: "./"    
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3

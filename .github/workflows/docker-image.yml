@@ -78,16 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push
     
-    steps:
-      - name: Copy over .env to the server      
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          source: "./.env"
-          target: "./"    
+    steps: 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         with:

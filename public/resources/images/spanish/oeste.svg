@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xml:space="preserve"
+   width="2835px"
+   height="2835px"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd"
+   viewBox="0 0 2836 2836"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45"
+   sodipodi:docname="BrújulaO.svg"
+   sodipodi:docbase="/home/andrew/temp"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true"><metadata
+   id="metadata149"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><sodipodi:namedview
+   inkscape:window-height="689"
+   inkscape:window-width="1024"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   guidetolerance="10.0"
+   gridtolerance="10000"
+   objecttolerance="10.0"
+   borderopacity="1.0"
+   bordercolor="#666666"
+   pagecolor="#ffffff"
+   id="base"
+   inkscape:zoom="0.13897707"
+   inkscape:cx="12.320246"
+   inkscape:cy="1255.8151"
+   inkscape:window-x="10"
+   inkscape:window-y="103"
+   inkscape:current-layer="svg2"
+   showgrid="true"
+   gridspacingx="1mm"
+   gridspacingy="1mm"
+   gridanglex="8.4666669mm"
+   gridanglez="8.4666669mm"
+   grid_units="mm"
+   inkscape:grid-points="true"
+   inkscape:document-units="mm" />
+ <defs
+   id="defs4"><linearGradient
+   id="linearGradient3754"><stop
+     style="stop-color:#fc0;stop-opacity:1;"
+     offset="0"
+     id="stop3756" /><stop
+     id="stop3760"
+     offset="0.2080541"
+     style="stop-color:#7f6e2a;stop-opacity:1;" /><stop
+     style="stop-color:#3f3715;stop-opacity:1;"
+     offset="0.49752066"
+     id="stop3762" /><stop
+     style="stop-color:black;stop-opacity:1;"
+     offset="1"
+     id="stop3758" /></linearGradient><linearGradient
+   id="linearGradient2847"><stop
+     style="stop-color:#806600;stop-opacity:1;"
+     offset="0"
+     id="stop2849" /><stop
+     id="stop2853"
+     offset="0.21818182"
+     style="stop-color:#403300;stop-opacity:1;" /><stop
+     style="stop-color:black;stop-opacity:1;"
+     offset="1"
+     id="stop2851" /></linearGradient><linearGradient
+   id="linearGradient2841"><stop
+     id="stop2843"
+     offset="0"
+     style="stop-color:#806600;stop-opacity:1;" /><stop
+     id="stop2845"
+     offset="1"
+     style="stop-color:#806600;stop-opacity:0;" /></linearGradient><linearGradient
+   id="linearGradient2900"><stop
+     style="stop-color:#5359b1;stop-opacity:1;"
+     offset="0"
+     id="stop2902" /><stop
+     id="stop4679"
+     offset="0.63636363"
+     style="stop-color:#4a85d3;stop-opacity:0.36458334;" /><stop
+     style="stop-color:#63b6d1;stop-opacity:0;"
+     offset="1"
+     id="stop2904" /></linearGradient>
+  <font
+   id="FontID0"
+   fullFontName="Arial"
+   fontVariant="normal"
+   fontWeight="400,700">
+	<font-face
+   font-family="Arial"
+   id="font-face7">
+	</font-face>
+   <missing-glyph
+   id="missing-glyph9"><path
+     d="M0 0z"
+     id="path11" /></missing-glyph>
+   <glyph
+   unicode="O"
+   horiz-adv-x="777"
+   id="glyph13"><path
+     d="M40 350c0,80 10,140 40,190 10,30 30,70 60,100 30,20 60,50 100,60 40,20 90,30 150,30 110,0 190,-30 250,-100 70,-70 100,-160 100,-270 0,-120 -30,-210 -100,-270 -60,-70 -140,-100 -250,-100 -100,0 -190,30 -250,100 -70,60 -100,150 -100,260zm150 10c0,-80 20,-140 60,-190 40,-40 80,-60 140,-60 60,0 110,20 140,60 40,50 60,110 60,190 0,80 -20,140 -60,180 -30,40 -80,60 -140,60 -60,0 -110,-20 -140,-60 -40,-40 -60,-100 -60,-180z"
+     id="path15" /></glyph>
+   <glyph
+   unicode="N"
+   horiz-adv-x="722"
+   id="glyph17"><path
+     d="M70 0l0 720 140 0 300 -480 0 480 130 0 0 -720 -140 0 -290 470 0 -470 -140 0z"
+     id="path19" /></glyph>
+   <glyph
+   unicode="W"
+   horiz-adv-x="943"
+   id="glyph21"><path
+     d="M170 0l-170 720 150 0 110 -500 130 500 170 0 130 -500 110 500 140 0 -170 -720 -150 0 -150 540 -140 -540 -160 0z"
+     id="path23" /></glyph>
+   <glyph
+   unicode="S"
+   horiz-adv-x="667"
+   id="glyph25"><path
+     d="M40 230l140 20c10,-50 20,-90 50,-110 20,-20 60,-30 100,-30 50,0 80,10 110,30 20,20 30,40 30,70 0,20 0,30 -10,40 -10,10 -30,20 -50,30 -20,10 -60,20 -120,30 -80,20 -130,50 -160,70 -50,40 -70,90 -70,150 0,30 10,70 30,100 20,30 50,60 90,70 40,20 90,30 140,30 90,0 160,-20 210,-60 40,-40 70,-90 70,-160l-150 -10c0,40 -20,70 -40,80 -20,20 -50,30 -90,30 -40,0 -70,-10 -100,-30 -10,-10 -20,-20 -20,-40 0,-20 10,-30 20,-50 20,-10 60,-30 130,-40 70,-20 130,-40 160,-50 30,-20 60,-50 80,-80 20,-30 30,-70 30,-110 0,-40 -10,-80 -40,-120 -20,-30 -50,-60 -90,-80 -40,-10 -100,-20 -160,-20 -90,0 -160,20 -210,60 -50,40 -70,100 -80,180z"
+     id="path27" /></glyph>
+  </font>
+  <style
+   type="text/css"
+   id="style29">
+   
+    @font-face { font-family:&quot;Arial&quot;;src:url(&quot;#FontID0&quot;) format(svg)}
+    .str0 {stroke:#1F1A17;stroke-width:4;stroke-linejoin:round}
+    .fil2 {fill:none}
+    .fil3 {fill:#1F1A17}
+    .fil1 {fill:#969594}
+    .fil0 {fill:#FAFBFB}
+    .fil5 {fill:#44A1CD}
+    .fil4 {fill:#D2DFE7}
+    .fnt2 {font-weight:bold;font-size:100;font-family:Arial}
+    .fnt1 {font-weight:normal;font-size:150;font-family:Arial}
+    .fnt0 {font-weight:bold;font-size:200;font-family:Arial}
+   
+  </style>
+ <radialGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient2900"
+   id="radialGradient2906"
+   cx="1410.802"
+   cy="1410.802"
+   fx="1410.802"
+   fy="1410.802"
+   r="771.03274"
+   gradientUnits="userSpaceOnUse" /><linearGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient2847"
+   id="linearGradient9131"
+   x1="1420"
+   y1="1471"
+   x2="353"
+   y2="1471"
+   gradientUnits="userSpaceOnUse" /><linearGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient3754"
+   id="linearGradient10024"
+   x1="1420"
+   y1="1418"
+   x2="979.7381"
+   y2="1418"
+   gradientUnits="userSpaceOnUse" />
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+ <linearGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient2847"
+   id="linearGradient9330"
+   gradientUnits="userSpaceOnUse"
+   x1="1420"
+   y1="1471"
+   x2="353"
+   y2="1471" /><linearGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient3754"
+   id="linearGradient9338"
+   gradientUnits="userSpaceOnUse"
+   x1="1420"
+   y1="1418"
+   x2="979.7381"
+   y2="1418" /></defs>
+ <path
+   sodipodi:type="arc"
+   style="opacity:1;fill:url(#radialGradient2906);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.69959927;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.66111109"
+   id="path2013"
+   sodipodi:cx="1410.802"
+   sodipodi:cy="1410.802"
+   sodipodi:rx="770.18274"
+   sodipodi:ry="770.18274"
+   d="M 2180.9847 1410.802 A 770.18274 770.18274 0 1 1  640.61926,1410.802 A 770.18274 770.18274 0 1 1  2180.9847 1410.802 z"
+   transform="matrix(1.35514,0,0,1.35514,-501.0325,-501.0325)" /><g
+   id="g32">
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path34"
+   d="M 1102,654 L 1463,1310 L 1418,1418 L 1310,1373 L 1102,654 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path36"
+   d="M 1734,2182 L 1526,1463 L 1418,1418 L 1373,1526 L 1734,2182 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path38"
+   d="M 654,1734 L 1310,1373 L 1418,1418 L 1373,1526 L 654,1734 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path40"
+   d="M 2182,1102 L 1463,1310 L 1418,1418 L 1526,1463 L 2182,1102 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path42"
+   d="M 1418,1418 L 1734,2182 L 1526,1463 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path44"
+   d="M 1418,1418 L 2182,1102 L 1526,1463 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:none;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path46"
+   d="M 1418,1418 L 1538,1468"
+   class="fil2 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path48"
+   d="M 1418,1418 L 1102,654 L 1463,1310 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path50"
+   d="M 1418,1418 L 654,1734 L 1373,1526 L 1418,1418 z "
+   class="fil1 str0" />
+  </g><g
+   id="g52">
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path54"
+   d="M 654,1102 L 1373,1310 L 1418,1418 L 1310,1463 L 654,1102 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path56"
+   d="M 2182,1734 L 1526,1373 L 1418,1418 L 1463,1526 L 2182,1734 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path58"
+   d="M 1102,2182 L 1310,1463 L 1418,1418 L 1463,1526 L 1102,2182 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path60"
+   d="M 1734,654 L 1373,1310 L 1418,1418 L 1526,1373 L 1734,654 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path62"
+   d="M 1418,1418 L 2182,1734 L 1526,1373 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path64"
+   d="M 1418,1418 L 1734,654 L 1526,1373 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:none;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path66"
+   d="M 1418,1418 L 1538,1368"
+   class="fil2 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path68"
+   d="M 1418,1418 L 654,1102 L 1373,1310 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path70"
+   d="M 1418,1418 L 1102,2182 L 1463,1526 L 1418,1418 z "
+   class="fil1 str0" />
+  </g><g
+   id="g72">
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path74"
+   d="M 2086,750 L 1552,1418 L 1418,1418 L 1418,1284 L 2086,750 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path76"
+   d="M 750,2086 L 1418,1552 L 1418,1418 L 1284,1418 L 750,2086 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path78"
+   d="M 750,750 L 1418,1284 L 1418,1418 L 1284,1418 L 750,750 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path80"
+   d="M 2086,2086 L 1552,1418 L 1418,1418 L 1418,1552 L 2086,2086 z "
+   class="fil0 str0" />
+   <path
+   style="fill:#806600;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path82"
+   d="M 1418,1418 L 750,2086 L 1418,1552 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path84"
+   d="M 1418,1418 L 2086,2086 L 1418,1552 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#806600;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path86"
+   d="M 1418,1418 L 2086,750 L 1552,1418 L 1418,1418 z "
+   class="fil1 str0" />
+   <path
+   style="fill:#aa8800;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path88"
+   d="M 1418,1418 L 750,750 L 1284,1418 L 1418,1418 z "
+   class="fil1 str0" />
+  </g><path
+   style="fill:none;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path90"
+   d="M 1405,1421 L 1405,1569"
+   class="fil2 str0" /><path
+   style="fill:#f5ff5d;fill-opacity:1;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path92"
+   d="M 1418,355 L 1524,1312 L 1418,1418 L 1312,1312 L 1418,355 z "
+   class="fil0 str0" /><path
+   style="fill:#fafbfb;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path94"
+   d="M 1418,2481 L 1524,1524 L 1418,1418 L 1312,1524 L 1418,2481 z "
+   class="fil0 str0" /><path
+   style="fill:url(#linearGradient9338);fill-opacity:1;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path96"
+   d="M 355,1418 L 1312,1312 L 1418,1418 L 1312,1524 L 355,1418 z "
+   class="fil0 str0" /><path
+   style="fill:#ffdd55;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path98"
+   d="M 2481,1418 L 1524,1312 L 1418,1418 L 1524,1524 L 2481,1418 z "
+   class="fil0 str0" /><path
+   style="fill:#969594;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path100"
+   d="M 1418,1418 L 1418,2481 L 1524,1524 L 1418,1418 z "
+   class="fil1 str0" /><path
+   style="fill:#806600;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path102"
+   d="M 1418,1418 L 2481,1418 L 1524,1524 L 1418,1418 z "
+   class="fil1 str0" /><path
+   style="fill:none;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path104"
+   d="M 1418,1418 L 1536,1536"
+   class="fil2 str0" /><path
+   style="fill:#806600;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path106"
+   d="M 1418,1418 L 1418,355 L 1524,1312 L 1418,1418 z "
+   class="fil1 str0" /><path
+   style="fill:url(#linearGradient9330);fill-opacity:1;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path108"
+   d="M 1418,1418 L 355,1418 L 1312,1524 L 1418,1418 z "
+   class="fil1 str0" /><text
+   style="font-size:200px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text110"
+   class="fil3 fnt0"
+   y="285"
+   x="1354">N</text>
+<text
+   style="font-size:200px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text112"
+   class="fil3 fnt0"
+   y="1490"
+   x="2561">E</text>
+<text
+   style="font-size:200px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text114"
+   class="fil3 fnt0"
+   y="2694"
+   x="1356">S</text>
+<text
+   style="font-size:150px;font-weight:normal;fill:#1f1a17;font-family:Arial"
+   id="text118"
+   class="fil3 fnt1"
+   y="2239"
+   x="2139">SE</text>
+<text
+   style="font-size:150px;font-weight:normal;fill:#1f1a17;font-family:Arial"
+   id="text122"
+   class="fil3 fnt1"
+   y="704"
+   x="2135">NE</text>
+<text
+   style="font-size:100px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text128"
+   class="fil3 fnt2"
+   y="501"
+   x="1734">NNE</text>
+<text
+   style="font-size:100px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text130"
+   class="fil3 fnt2"
+   y="1064"
+   x="2227">ENE</text>
+<text
+   style="font-size:100px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text132"
+   class="fil3 fnt2"
+   y="1844"
+   x="2227">ESE</text>
+<text
+   style="font-size:100px;font-weight:bold;fill:#1f1a17;font-family:Arial"
+   id="text134"
+   class="fil3 fnt2"
+   y="2406"
+   x="1740">SSE</text>
+<g
+   id="g142">
+   <path
+   style="fill:#786721;fill-opacity:1;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path144"
+   d="M 1418,2481 L 1312,1524 L 1418,1418 L 1524,1524 L 1418,2481 z "
+   class="fil4 str0" />
+   <path
+   style="fill:#ffdd55;fill-opacity:1;stroke:#1f1a17;stroke-width:4;stroke-linejoin:round"
+   id="path146"
+   d="M 1418,1418 L 1418,2481 L 1312,1524 L 1418,1418 z "
+   class="fil5 str0" />
+  </g>
+<text
+   style="font-size:200px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:end;line-height:125%;writing-mode:lr-tb;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8692"
+   class="fil3 fnt0"
+   y="1490.001"
+   x="255.68819"
+   sodipodi:linespacing="125%">W</text>
+<text
+   style="font-size:150px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:125%;writing-mode:lr-tb;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8694"
+   class="fil3 fnt1"
+   y="2239.0012"
+   x="680.07599"
+   sodipodi:linespacing="125%">SW</text>
+<text
+   style="font-size:150px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:125%;writing-mode:lr-tb;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8696"
+   class="fil3 fnt1"
+   y="704.00092"
+   x="684.07892"
+   sodipodi:linespacing="125%">NW</text>
+<text
+   style="font-size:100px;font-weight:bold;text-align:end;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8698"
+   class="fil3 fnt2"
+   y="501.00006"
+   x="1091.0792">NNW</text>
+<text
+   style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:end;line-height:125%;writing-mode:lr-tb;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8700"
+   class="fil3 fnt2"
+   y="2406.0012"
+   x="1087.2883"
+   sodipodi:linespacing="125%">SSW</text>
+<text
+   style="font-size:100px;font-weight:bold;text-align:end;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8702"
+   class="fil3 fnt2"
+   y="1844.001"
+   x="587.07733">WSW</text>
+<text
+   style="font-size:100px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:end;line-height:125%;writing-mode:lr-tb;text-anchor:end;fill:#1f1a17;fill-rule:evenodd;font-family:Arial"
+   id="text8704"
+   class="fil3 fnt2"
+   y="1064.0006"
+   x="591.98822"
+   sodipodi:linespacing="125%">WNW</text>
+</svg>

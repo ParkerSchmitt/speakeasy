@@ -1,7 +1,10 @@
 services:
   frontend:
+    image: ${REGISTRY}/${IMAGE_NAME}:frontend
     container_name: frontend
-    build: ./src/frontend
+    build:
+      context: .
+      dockerfile: ./src/frontend/Dockerfile
     volumes:
         - .:/src/frontend
     ports:
@@ -11,8 +14,11 @@ services:
     networks: 
       - app-network
   backend:
+    image: ${REGISTRY}/${IMAGE_NAME}:backend
     container_name: backend
-    build: ./src/backend
+    build:
+      context: .
+      dockerfile: ./src/backend/Dockerfile
     volumes:
         - .:/src/backend
     ports:
@@ -36,7 +42,8 @@ services:
       - certbot-var:/var/lib/letsencrypt
       - dhparam:/etc/ssl/certs
     depends_on:
-      - nodejs
+      - frontend
+      - backend
     networks:
       - app-network
 

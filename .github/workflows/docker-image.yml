@@ -1,13 +1,10 @@
-name: Publish to DO
+name: Publish to Digital Ocean
 
 
 
 # 1
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push events but only for the master branch
-  push:
-    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -27,6 +24,9 @@ env:
   INPUT_ENVKEY_SQL_CLIENT: ${{ vars.ENV_SQL_CLIENT }}
   INPUT_ENVKEY_SQL_HOST: ${{ vars.ENV_SQL_HOST }}
   INPUT_ENVKEY_SQL_PORT: ${{ vars.ENV_SQL_PORT }}
+  INPUT_ENVKEY_REACT_APP_API_URL: ${{ vars.ENV_REACT_APP_API_URL }}
+  INPUT_ENVKEY_REACT_APP_MEDIA_URL: ${{ vars.ENV_REACT_APP_MEDIA_URL }}
+
   INPUT_ENVKEY_SQL_USER: ${{ vars.ENV_SQL_USER }}
   INPUT_ENVKEY_SQL_PASSWORD: ${{ vars.ENV_SQL_PASSWORD }}
   INPUT_ENVKEY_SQL_DATABASE: ${{ vars.ENV_SQL_DATABASE }}
@@ -42,6 +42,7 @@ env:
 
 
 
+
 jobs:
   build_and_push:
     environment: ${{ inputs.environment }}
@@ -52,12 +53,12 @@ jobs:
       - name: Create .env file
         uses: actually-colab/github-action-create-env-file@v2.3
         with:
-          directory: 'src/'
+          directory: './'
           file_name: '.env'  
       - name: Verify .env was created
-        run: cat src/.env
+        run: cat ./.env
       - name: Build container image
-        run: docker compose build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        run: docker compose build
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -65,19 +66,19 @@ jobs:
     
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
-      
-      - name: Remove all old images
-        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+  
+      - name: Push frontend image to DigitalOcean Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
 
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+      - name: Push backend image to DigitalOcean Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
         
   deploy:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: build_and_push
     
-    steps:
+    steps: 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         with:
@@ -89,14 +90,13 @@ jobs:
           script: |
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop running container
-            docker stop $(echo $IMAGE_NAME)
+            # Stop running containers
+            docker compose down
             # Remove old container
-            docker rm $(echo $IMAGE_NAME)
-            # Run a new container from a new image
-            docker run -d \
-            --restart always \
-            --name $(echo $IMAGE_NAME) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
-
-            
+            docker rm frontend
+            docker rm backend
+            # Delete old images
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
+            # Run composed containers from the new images
+            docker compose up -d

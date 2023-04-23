@@ -17,6 +17,7 @@
     "crypto-browserify": "^3.12.0",
     "csv-parse": "^5.3.5",
     "email-validator": "^2.0.4",
+    "env-cmd": "^10.1.0",
     "eslint-config-standard": "^17.0.0",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
@@ -24,6 +25,7 @@
     "mdb-react-ui-kit": "^5.1.0",
     "node-fetch": "^3.3.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
+    "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -41,6 +43,7 @@
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"npx ts-node --esm ./src/server.ts\"",
+    "dev-start": "env $(cat .env | grep -v \"#\" | xargs) npm start",
     "build-be": "tsc --build",
     "build-fe": "react-scripts build",
     "test": "react-scripts test",

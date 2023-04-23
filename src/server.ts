@@ -10,7 +10,7 @@ import TopicController from './backend/controllers/TopicController'
 import TopicMediator from './backend/mediators/TopicMediator'
 import TopicRepository from './backend/repositories/TopicRepository'
 import { type CardAccountType } from './backend/types/CardAccountType'
-import Config from './Config'
+import Config from './backend/Config'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()

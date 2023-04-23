@@ -2,6 +2,7 @@ import React, { type ReactElement, useState, type FormEvent } from 'react'
 import * as EmailValidator from 'email-validator'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import Config from '.././Config'
 import {
   MDBBtn,
   MDBContainer,
@@ -52,7 +53,7 @@ function PageRegister (): ReactElement {
    * @param e  the form event.
    */
   const handleSubmission = (e: FormEvent<HTMLFormElement>): void => {
-    fetch('http://localhost:4000/register', {
+    fetch(`${Config.REACT_APP_API_URL}/register`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',

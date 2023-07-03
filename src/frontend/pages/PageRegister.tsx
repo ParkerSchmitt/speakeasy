@@ -1,5 +1,7 @@
 import React, { type ReactElement, useState, type FormEvent } from 'react'
 import * as EmailValidator from 'email-validator'
+import { useNavigate } from 'react-router-dom'
+
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import Config from '.././Config'
@@ -27,6 +29,7 @@ function PageRegister (): ReactElement {
   const [passwordFlag, setPasswordFlag] = useState(false)
   const [passwordRepeat, setPasswordRepeat] = useState('')
   const [passwordRepeatFlag, setPasswordRepeatFlag] = useState(false)
+  const navigate = useNavigate()
 
   /**
    * Validates the input to see if it is correct, and sets the state of the input
@@ -66,8 +69,11 @@ function PageRegister (): ReactElement {
         password
       })
     })
-      .then(async response => await response.json())
-      .then(response => { console.log(JSON.stringify(response)) }).catch((error) => {
+      .then(async response => {
+        if (response.status === 200) {
+          navigate('/login')
+        }
+      }).catch((error) => {
         throw error
       })
     e.preventDefault()
@@ -78,9 +84,7 @@ function PageRegister (): ReactElement {
 
       <MDBRow className='d-flex justify-content-center align-items-center h-100'>
         <MDBCol col='12'>
-
-        <h3 className="my-5 text-center" style={{ fontFamily: '"Bevan", cursive' }}>speakeasy.</h3>
-
+          <h3 className="my-5 text-center" style={{ color: '#3B71CA', fontFamily: '"Bevan", cursive' }}>speakeasy.</h3>
           <MDBCard className='bg-white my-5 mx-auto' style={{ borderRadius: '1rem', maxWidth: '500px' }}>
             <form onSubmit={handleSubmission}>
               <MDBCardBody className='p-5 w-100 d-flex flex-column'>

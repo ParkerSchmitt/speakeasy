@@ -1,7 +1,6 @@
 import React, { useState, type ReactElement } from 'react'
 
 import '@fortawesome/fontawesome-free/css/all.min.css'
-import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import {
   MDBBtn,
   MDBCard,
@@ -13,7 +12,6 @@ import {
   MDBTabsLink
 }
   from 'mdb-react-ui-kit'
-import { Footer } from '../components/Footer'
 
 function PageIndex (): ReactElement {
   const [currentTab, setCurrentTab] = useState('tabBefore')
@@ -28,22 +26,22 @@ function PageIndex (): ReactElement {
 
   return (
 
-        <><div className="d-flex align-items-start mb-2" style={{ height: '100vh' }}>
+        <><div className="d-flex align-items-start mb-2" id="above-fold-content">
           <MDBCol md={7} className="p-5">
 
               <div className="d-flex">
-                  <h3 style={{ fontFamily: '"Bevan", cursive', float: 'left', display: 'inline', alignSelf: 'center' }}>speakeasy.</h3>
-                  <div className="d-flex align-items-end flex-row-reverse" style={{ marginLeft: 'auto' }}>
-                      <div className="d-flex align-items-center justify-content-center"><MDBBtn color='dark' style={{ paddingTop: '14px', paddingBottom: '14px', paddingLeft: '30px', paddingRight: '30px', margin: '8px' }} href="/login">LOGIN</MDBBtn></div>
+                  <h3 className='title'>speakeasy.</h3>
+                  <div className="d-flex align-items-end flex-row-reverse" id="login-nav-container">
+                      <div className="d-flex align-items-center justify-content-center"><MDBBtn color='dark' href="/login">LOGIN</MDBBtn></div>
                   </div>
               </div>
-              <h2 className='py-5 text-center' style={{ fontFamily: "'Pontano Sans', sans-serif", fontWeight: 'bold', background: '-webkit-linear-gradient(94deg, rgb(255 176 176), rgb(255 96 11))', WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', fontSize: '3em' }}> We will teach you the words. You put them together. </h2>
+              <h2 className='py-5' style={{ fontFamily: "'Pontano Sans', sans-serif", fontWeight: 'bold', background: '-webkit-linear-gradient(94deg, #41D9FF, #3B71CA)', WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', fontSize: '3em' }}> We will teach you the words. You put them together. </h2>
               <p style={{ fontSize: '1.6em', fontFamily: "'Pontano Sans', sans-serif" }}> Speakeasy is reshaping the language learning industry by using technology to reintroduce the original way of learning a language- through memorization and contextual learning. </p>
               <div className="d-grid gap-2"><MDBBtn className='me-1' style={{ fontSize: '1.0em' }} outline href="/register" color='dark'>Create Account</MDBBtn></div>
           </MDBCol>
-          <MDBCol className="bg-light" style={{ height: '100vh', overflow: 'scroll' }} md={5}>
+          <MDBCol className="bg-light info-panel" style={{ height: '100vh' }} md={5}>
 
-              <MDBCard className='p-5 w-100 d-flex flex-column'>
+              <MDBCard className='p-5 w-100 d-flex flex-column' style={{ height: '100vh' }}>
                   <MDBTabs pills fill className='mb-3'>
                       <MDBTabsItem>
                           <MDBTabsLink onClick={(e) => { setCurrentTab('tabBefore') } } active={currentTab === 'tabBefore'}>
@@ -56,14 +54,18 @@ function PageIndex (): ReactElement {
                           </MDBTabsLink>
                       </MDBTabsItem>
                   </MDBTabs>
-                  <MDBCardBody><MDBCardTitle> Español </MDBCardTitle> <p style={{ fontFamily: "'Pontano Sans', sans-serif", fontSize: '1.8em' }}>
+                  <MDBCardBody style={{ overflow: 'scroll', height: '100vh' }}>
+                    <MDBCardTitle> Español </MDBCardTitle>
+                    <p style={{ fontFamily: "'Pontano Sans', sans-serif", fontSize: '1.8em' }}>
                       {renderText(currentTab === 'tabAfter')}
-                  </p>  </MDBCardBody></MDBCard>
+                    </p>
+                  </MDBCardBody>
+                </MDBCard>
 
           </MDBCol>
 
       </div>
-      <Footer/></>
+    </>
   )
 }
 

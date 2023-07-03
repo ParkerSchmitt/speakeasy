@@ -1,6 +1,5 @@
 import React, { useEffect, useState, type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
-import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import Config from '.././Config'
 import {
   MDBCard,
@@ -170,11 +169,9 @@ export default function PageTopics (): ReactElement {
 
   return (
     <>
-
         {flagReportDialog && <ReportDialog show={flagReportDialog} submitDialogHandler={submitReportDialogHandler} closeWindowHandler={toggleFlagReportDialogShow}/>}
-
-        <MDBNavbarBrand className="m-5" href='#' style={{ color: '#000000', fontFamily: '"Bevan", cursive' }}>speakeasy.</MDBNavbarBrand>
-        <MDBContainer className='' fluid style={{ paddingLeft: '20em', paddingRight: '20em', backgroundColor: '#fff8e3' }}>
+        <MDBNavbarBrand id='learn-title' className="mx-5 my-2" href='/topics'>speakeasy.</MDBNavbarBrand>
+        <MDBContainer className='card-container' fluid style={{}}>
             { /* if user makes it to the end of cards display message */ (cards.length === 0 && !endOfCardsFlag) && <div className="cardl"><MDBSpinner role='status'><span className='visually-hidden'>Loading...</span></MDBSpinner></div>}
             { /* if user makes it to the end of cards display message */ (cards.length === 0 && endOfCardsFlag) && <div className="cardl"><EndFlashcard/></div>}
 
@@ -185,18 +182,17 @@ export default function PageTopics (): ReactElement {
                       enterActive: 'animatein',
                       exitActive: 'animateout'
                     }} timeout={50}>
-                    <div className={`cardl ${flip ? 'flip' : ''}`}>
-                      <div className='front' onClick={() => { setFlip(!flip) }}>
-                        <FlashCard id={card.id} title='Spanish' text={ card.previewText } flagShowImage={showImage} pronunciation={ card.pronunciation } audio={ (!flip) ? card.audio : undefined } pressShowImageButtonHandler = {showImageHandler} pressReportButtonHandler = {toggleFlagReportDialogShow} />
+                      <div className={`cardl ${flip ? 'flip' : ''}`}>
+                        <div className='front' onClick={() => { setFlip(!flip) }}>
+                          <FlashCard id={card.id} title='Spanish' text={ card.previewText } flagShowImage={showImage} pronunciation={ card.pronunciation } audio={ (!flip) ? card.audio : undefined } pressShowImageButtonHandler = {showImageHandler} pressReportButtonHandler = {toggleFlagReportDialogShow} />
+                        </div>
+                        <div className='back' onClick={() => { setFlip(!flip) }}>
+                          <FlashCard id={card.id} title='Translation' text={ card.revealText } flagShowImage={showImage} image={(!showImage && flip) ? card.imageUrl : undefined } pressShowImageButtonHandler = {showImageHandler} pressReportButtonHandler = {toggleFlagReportDialogShow} />
+                        </div>
                       </div>
-                      <div className='back' onClick={() => { setFlip(!flip) }}>
-                        <FlashCard id={card.id} title='Translation' text={ card.revealText } flagShowImage={showImage} image={(!showImage && flip) ? card.imageUrl : undefined } pressShowImageButtonHandler = {showImageHandler} pressReportButtonHandler = {toggleFlagReportDialogShow} />
-                      </div>
-                    </div>
-            </CSSTransition>
+                    </CSSTransition>
                     )}
-</TransitionGroup>
-
+                </TransitionGroup>
                   }
          </MDBContainer>
          <br/>
@@ -204,7 +200,7 @@ export default function PageTopics (): ReactElement {
             flip && <MDBContainer className='px-5' fluid style={{ backgroundColor: '#fff8e3' }}>
             { currentCards.map((card) =>
 
-            <MDBRow key={card.id}>
+            <MDBRow className='options-container' key={card.id}>
                <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Mastered) }}>
                <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-success text-center'>

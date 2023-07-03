@@ -29,7 +29,7 @@ interface ConfigInterface {
 // Loading process.env as ENV interface
 const getConfig = (): Partial<ConfigInterface> => {
   return {
-    NODE_ENV: (process.env.NODE_ENV != null) ? String(process.env.NODE_ENV) : undefined,
+    NODE_ENV: (process.env.NODE_ENV != null) ? String(process.env.NODE_ENV) : 'dev',
     ACCOUNT_TABLE_NAME: (process.env.ACCOUNT_TABLE_NAME != null) ? String(process.env.ACCOUNT_TABLE_NAME) : undefined,
     TOPIC_TABLE_NAME: (process.env.TOPIC_TABLE_NAME != null) ? String(process.env.TOPIC_TABLE_NAME) : undefined,
     CARD_ACCOUNT_LINKAGE_NAME: (process.env.CARD_ACCOUNT_LINKAGE_NAME != null) ? String(process.env.CARD_ACCOUNT_LINKAGE_NAME) : undefined,

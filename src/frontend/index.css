@@ -109,17 +109,58 @@ code {
   border-radius: 0.5em;
 }
 
+.sidebar-nav {
+  position: absolute;
+  width: 25rem;
+  height: 100vh;
+  top: 0px; 
+}
 
+#topic-selection-nav {
+  display:inline;
+}
+
+#topics-header h3 {
+  font-family: "Bevan", cursive;
+  float: left;
+  display: inline;
+  align-self: center;
+  color: white;
+  z-index: 99;
+  position: relative;
+}
+
+#topics-previously-learned  {
+  display: inline;
+}
 
 /*
 PHONE
 */
 @media screen and (max-width: 480px) {
-  body {
-    padding: 1.5rem;
+  #topic-selection-nav {
+    display:none;
+  }
+  #topics-header {
+    width: 100%;
+    text-align: center;
+  }
+  #topics-header h3 {
+    width: 100%;
+    text-align: center;
+  }
+  #topics-previously-learned {
+    display: none;
+  }
+  
+  .sidebar-nav {
+    width: 100%;
+    display: block;
+    position: absolute;
   }
   #above-fold-content {
     display: block !important;
+    padding: 1.5rem;
   }
   #above-fold-content .col-md-7 {
     width: 100%;

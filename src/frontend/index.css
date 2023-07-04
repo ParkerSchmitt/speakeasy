@@ -115,6 +115,9 @@ code {
 PHONE
 */
 @media screen and (max-width: 480px) {
+  body {
+    padding: 1.5rem;
+  }
   #above-fold-content {
     display: block !important;
   }

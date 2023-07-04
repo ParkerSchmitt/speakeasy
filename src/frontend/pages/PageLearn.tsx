@@ -202,28 +202,28 @@ export default function PageTopics (): ReactElement {
 
             <MDBRow className='options-container' key={card.id}>
                <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Mastered) }}>
-               <MDBCard shadow='0' border='success' background='white' className='p-5 w-100 d-flex flex-column'>
+               <MDBCard shadow='0' border='success' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-success text-center'>
                        <MDBCardTitle>Mastered</MDBCardTitle>
                    </MDBCardBody>
                    </MDBCard>
                </MDBCol>
                <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Recognized) }}>
-                   <MDBCard shadow='0' border='secondary' background='white'className='p-5 w-100 d-flex flex-column'>
+                   <MDBCard shadow='0' border='secondary' background='white'className='learn-choice p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-secondary text-center'>
                            <MDBCardTitle>Recognized</MDBCardTitle>
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
                <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.Learning) }}>
-                   <MDBCard shadow='0' border='warning' background='white' className='p-5 w-100 d-flex flex-column'>
+                   <MDBCard shadow='0' border='warning' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-warning text-center'>
                            <MDBCardTitle>Learning</MDBCardTitle>
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
                <MDBCol onClick={() => { nextCardHandler(card.id, CardResponse.New) }}>
-                   <MDBCard shadow='0' border='danger' background='white' className='p-5 w-100 d-flex flex-column'>
+                   <MDBCard shadow='0' border='danger' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-danger text-center'>
                        <MDBCardTitle>New</MDBCardTitle>
                    </MDBCardBody>

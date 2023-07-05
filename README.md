@@ -4,7 +4,8 @@
 ## Introduction
 Speakeasy is a language learning tool designed for users who want to master a new language. It offers a bare-bones approach to language learning that includes memorization exercises for a language's most common vocabulary terms, using a spaced memorization learning algorithm.
 
-<img width="1280" alt="image" src="https://user-images.githubusercontent.com/25104076/218289639-c4183661-af20-43f7-9940-96a59a27d994.png">
+![image](https://github.com/ParkerSchmitt/speakeasy/assets/25104076/85ec86dd-38ef-4588-9b0d-896993736912)
+![image](https://github.com/ParkerSchmitt/speakeasy/assets/25104076/f250f932-f156-4bf7-9bd2-ea575a0ca6cb)
 
 
 ## Features

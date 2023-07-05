@@ -14,19 +14,20 @@ export const FlashCard = (props: { id: number, title: string, text: string, pron
   return (
     <MDBCard className='w-100 d-flex flex-column'>
     <div className='px-5'>
-    <div className="pt-3 d-flex align-items-end flex-row-reverse mb-3">
-    <div className="ps-2 "><div className="p-2 d-flex align-items-center justify-content-center eventButton" onClick={(e: any) => { e.stopPropagation(); props.pressReportButtonHandler() } }><MDBIcon fas icon='flag'/></div></div>
-    <div className="p-2 d-flex align-items-center justify-content-center eventButton"><MDBIcon fas icon='microphone'/></div>
-    <div className={`p-2 d-flex align-items-center justify-content-center eventButton ${(props.flagShowImage) ? '' : 'eventButtonActive'}`} onClick={(e: any) => { e.stopPropagation(); props.pressShowImageButtonHandler() } } ><MDBIcon fas icon='image'/></div>
-    </div>
-        <MDBRow className='pb-3'>
+        <MDBRow className='pb-3 pt-3 d-flex text-center align-items-center justify-content-center'>
             <MDBCol>
-                <MDBCardText>#{props.id}</MDBCardText>
+                <MDBCardText className='d-flex align-items-start'>#{props.id}</MDBCardText>
             </MDBCol>
             <MDBCol>
-                <MDBCardTitle className='text-center'>{props.title}</MDBCardTitle>
+                <MDBCardTitle className='text-center mb-0'>{props.title}</MDBCardTitle>
             </MDBCol>
-            <MDBCol></MDBCol>
+            <MDBCol>
+              <div className="d-flex align-items-end flex-row-reverse">
+                <div className="ps-2 "><div className="p-2 d-flex align-items-center justify-content-center eventButton" onClick={(e: any) => { e.stopPropagation(); props.pressReportButtonHandler() } }><MDBIcon fas icon='flag'/></div></div>
+                <div className="p-2 d-flex align-items-center justify-content-center eventButton"><MDBIcon fas icon='microphone'/></div>
+                <div className={`p-2 d-flex align-items-center justify-content-center eventButton ${(props.flagShowImage) ? '' : 'eventButtonActive'}`} onClick={(e: any) => { e.stopPropagation(); props.pressShowImageButtonHandler() } } ><MDBIcon fas icon='image'/></div>
+              </div>
+            </MDBCol>
         </MDBRow>
         </div>
         {props.image === undefined &&

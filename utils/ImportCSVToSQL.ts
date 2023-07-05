@@ -17,6 +17,12 @@ const filePath: string = process.argv[1]
 
 const db = new Database("../src/storage.db")
 
+db.run("DELETE FROM cards", {}, (err) => {
+  if (err) {
+      throw err
+  }
+  })
+
 
 fs.createReadStream("import.csv")
     .pipe(parse({ delimiter: ",", from_line: 2 }))
@@ -28,20 +34,21 @@ fs.createReadStream("import.csv")
     let audioUrl = row[3]
     let helpText = row[4]
 
-    let newImageUrl = `${topicName}/${preview}${path.extname(imageUrl)}`
+    let newImageUrl = `${topicName}/${preview}`
     let newAudioUrl = `${topicName}/${preview}${path.extname(audioUrl)}`
 
 
     try {
     //Lets download the image, compress it, and store it on our server.
-    await downloadFile(imageUrl, `../public/resources/images/${newImageUrl}`)
-    await downloadFile(audioUrl, `../public/resources/audio/${preview}${path.extname(audioUrl)}`)
-    db.run("INSERT INTO cards(topicId, name, targetLanguageWord, nativeLanguageWord, imageUrl, audioUrl, pronunciation) VALUES ($topicId, $name, $target, $native, $image, $audio, $pronunciation)", {
+    //await downloadFile(imageUrl, `../public/resources/images/${newImageUrl}.png`)
+    //await downloadFile(audioUrl, `../public/resources/audio/${preview}${path.extname(audioUrl)}`)
+
+    db.run("INSERT INTO cards(topicId, name, previewText, revealText, imageUrl, audioUrl, pronunciation) VALUES ($topicId, $name, $target, $native, $image, $audio, $pronunciation)", {
         $topicId: 1,
         $name: "Introductory",
         $target: preview,
         $native: reveal,
-        $image: newImageUrl,
+        $image: `${newImageUrl}.png`,
         $audio: newAudioUrl,
         $pronunciation: helpText
     }, (err) => {
@@ -54,22 +61,6 @@ fs.createReadStream("import.csv")
     } catch (error: any) {
         console.log(row + error);
     }
-    //Lets download the audio, compress it, and store it on our server.
-    /*
-    client.get(audioUrl, (res: Response) => {
-        if (res.statusCode === 200) {
-            res..pipe(fs.createWriteStream(`../public/resources/audio/${topicName}/${preview}${path.extname(audioUrl)}`))
-                .on('error', (error: Error)=> {
-                    console.log(error)
-                })
-                .once('close', ()=> {
-
-                });
-        } else {
-            // Consume response data to free up memory
-            res.resume();
-        }
-    });*/
 
     
     
@@ -100,7 +91,7 @@ async function downloadFile (url:string, targetFile :string) {
     Https.get(url, {
         rejectUnauthorized: false,
         headers:  {
-            'User-Agent': 'PostmanRuntime/7.30.0',
+            'User-Agent': 'Chrome/7.30.0',
         }
         
     }, response => {

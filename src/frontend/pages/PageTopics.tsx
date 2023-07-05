@@ -80,10 +80,10 @@ function PageLogin (): ReactElement {
   return (
     <><div className="align-items-start mb-2">
         <div className="d-flex">
-        <MDBCol md={4} className="p-5">
-          <h3 style={{ fontFamily: '"Bevan", cursive', float: 'left', display: 'inline', alignSelf: 'center', color: 'white', zIndex: '99', position: 'relative' }}>speakeasy.</h3>
+        <MDBCol id="topics-header" md={4} className="p-5">
+          <h3>speakeasy.</h3>
         </MDBCol>
-        <MDBCol md={8} className="p-5">
+        <MDBCol md={8} id="topic-selection-nav" className="p-5">
             <div className="d-flex align-items-end" style={{ marginLeft: 'auto' }}>
               <div className="d-flex align-items-center justify-content-center">
                 <MDBTabs justify className='mb-3 pl-5'>
@@ -106,7 +106,7 @@ function PageLogin (): ReactElement {
     <div className="align-items-start mb-2">
         <div className="d-flex">
         <MDBCol md={4}>
-        <MDBCard background='primary' className='text-white' style={{ position: 'absolute', width: '25rem', height: '100vh', top: '0px' }}>
+        <MDBCard background='primary' className='sidebar-nav text-white'>
         <MDBCardHeader class="text-center" style={{ marginTop: '10rem' }}>
           <MDBCardTitle style={{ fontSize: '5rem' }}>
             {percentage === null && <p className="placeholder-glow"><span className='placeholder w-25 placeholder-xs'></span>%</p>}
@@ -119,7 +119,7 @@ function PageLogin (): ReactElement {
     </MDBCardBody>
       </MDBCard>
         </MDBCol>
-        <MDBCol md={8} className="p-5">
+        <MDBCol md={8} id="topics-previously-learned" className="p-5">
           <h2>Previously learned</h2>
           <hr/>
         <MDBRow>

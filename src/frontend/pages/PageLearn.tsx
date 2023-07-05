@@ -1,9 +1,6 @@
 import React, { useEffect, useState, type ReactElement } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
-<<<<<<< HEAD
-=======
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
->>>>>>> 0c0191a6ba6446223759aca80af1c12cd2c90ddd
 import Config from '.././Config'
 import {
   MDBCard,

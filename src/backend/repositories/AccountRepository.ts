@@ -1,13 +1,13 @@
-import type { Database } from 'sqlite3'
+import { type Client } from 'pg'
 
 export interface AccountRepositoryConfig {
   tableName: string
-  database: Database
+  client: Client
 }
 
 class AccountRepository {
   tableName: string
-  database: Database
+  client: Client
 
   /**
      * Creates the SignUpRepository
@@ -15,7 +15,7 @@ class AccountRepository {
      */
   constructor (config: AccountRepositoryConfig) {
     this.tableName = config.tableName
-    this.database = config.database
+    this.client = config.client
   }
 
   /**
@@ -24,19 +24,11 @@ class AccountRepository {
      * @returns a boolean promise. TRUE if there is an email found, FALSE if there isn't.
      */
   async emailExists (email: string): Promise<boolean> {
-    const query = `SELECT id FROM ${this.tableName} WHERE email=$value`
-    const rowCount = await new Promise<any[]>((resolve, reject) => {
-      this.database.all(query, {
-        $value: email
-      }, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
-    if (rowCount.length > 0) {
+    const query = `SELECT id FROM ${this.tableName} WHERE email=$1`
+    const values = [email]
+    const result = await this.client.query(query, values)
+    // there must be a email that exists already in the database.
+    if (result.rowCount !== 0) {
       return true
     } else {
       return false
@@ -49,24 +41,15 @@ class AccountRepository {
      * @returns a object, OR null if there is nothing for the given email (email doesn't exist). {hash: string, salt: string}
      */
   async retrieveHashAndSalt (email: string): Promise<{ id: number, hash: string, salt: string } | null> {
-    const query = `SELECT id, passwordHash, passwordSalt FROM ${this.tableName} WHERE email=$value`
-    const row = await new Promise<any[]>((resolve, reject) => {
-      this.database.all(query, {
-        $value: email
-      }, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
-    if (row.length === 0) {
+    const query = `SELECT id, "passwordHash", "passwordSalt" FROM ${this.tableName} WHERE email=$1`
+    const values = [email]
+    const result = await this.client.query(query, values)
+    if (result.rowCount === 0) {
       return null
     } else {
-      const id = row[0].id
-      const hash = row[0].passwordHash
-      const salt = row[0].passwordSalt
+      const id = result.rows[0].id
+      const hash = result.rows[0].passwordHash
+      const salt = result.rows[0].passwordSalt
       return { id, hash, salt }
     }
   }
@@ -80,15 +63,10 @@ class AccountRepository {
      * @param passwordSalt the salt for the password to insert
      */
   async insertAccount (email: string, firstName: string, lastName: string, passwordHash: string, passwordSalt: string): Promise<void> {
-    const query = `INSERT INTO ${this.tableName}(email, firstName, lastName, passwordHash, passwordSalt) VALUES($email, $firstName, $lastName, $passwordHash, $passwordSalt)`
+    const query = `INSERT INTO ${this.tableName}(email, "firstName", "lastName", "passwordHash", "passwordSalt") VALUES($1, $2, $3, $4, $5)`
+    const values = [email, firstName, lastName, passwordHash, passwordSalt]
     await new Promise<void>((resolve, reject) => {
-      this.database.run(query, {
-        $email: email,
-        $firstName: firstName,
-        $lastName: lastName,
-        $passwordHash: passwordHash,
-        $passwordSalt: passwordSalt
-      }, (err) => {
+      this.client.query(query, values, (err, res) => {
         if (err !== null) {
           reject(err)
         } else {

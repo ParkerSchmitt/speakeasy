@@ -5,10 +5,11 @@ import TopicRepository from "../repositories/TopicRepository";
 import TopicController from "./TopicController";
 import request from 'supertest';
 import session, { Cookie, Session } from "express-session";
+import { type Client } from "pg";
 
 describe('TopicsController', () => {
 
-  let database = new DatabaseMock()
+  let client = new DatabaseMock() as Client
 
   const app = express();
   const port = 8080; // default port to listen
@@ -28,7 +29,7 @@ describe('TopicsController', () => {
     Mediator: new TopicMediator({
       MaxCards: 5,
       Repository: new TopicRepository({
-        database: database,
+        client: client,
         cardAccountLinkageTableName: "cards_accounts",
         topicTableName: "topics",
         cardTableName: "cards",

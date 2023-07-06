@@ -27,6 +27,8 @@
     "node-polyfill-webpack-plugin": "^2.0.1",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
+    "pg": "^8.11.1",
+    "pg-mem": "^2.6.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
@@ -71,6 +73,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.13",
     "@types/express-session": "^1.17.5",
+    "@types/pg": "^8.10.2",
     "@types/react-transition-group": "^4.4.5",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@webpack-cli/generators": "^3.0.1",

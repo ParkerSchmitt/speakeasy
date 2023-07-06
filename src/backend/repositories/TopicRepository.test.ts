@@ -1,9 +1,10 @@
+import { Client } from 'pg';
 import DatabaseMock from '../mocks/DatabaseMock'; /*eslint: ignore */
 import TopicRepository from './TopicRepository';
 
 describe('TopicRepository',  () => {
     let TopicRepositoryCorrectTable : TopicRepository
-    let database = new DatabaseMock()
+    let client = new DatabaseMock() as Client
 
     it('should create repository in memory', async () => {
      TopicRepositoryCorrectTable = new TopicRepository({
@@ -11,7 +12,7 @@ describe('TopicRepository',  () => {
         cardTableName: 'cards',
         cardAccountLinkageTableName: 'cards_accounts',
         cardReportTableName: 'cards_reports',
-        database: database,
+        client: client,
     })
     });
 
@@ -122,25 +123,16 @@ describe('TopicRepository',  () => {
             await TopicRepositoryCorrectTable.updateLearnedCard(cardId, accountId, easiness, interval, repetitions, date);
             
             //Now query the database and see if it updated
-            const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$cardId AND account_id = $accountId `;
-            let rows  = await new Promise<any[]>((resolve,reject) => {database.all(query,{
-                '$cardId': cardId,
-                '$accountId': accountId
-            }, (error, result) => {
-                if (error) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-            })
-        })
-            expect(rows.length).toEqual(1);
-            expect(rows[0].card_id).toEqual(cardId);
-            expect(rows[0].account_id).toEqual(accountId);
-            expect(rows[0].easiness).toEqual(easiness);
-            expect(rows[0].interval).toEqual(interval);
-            expect(rows[0].repetitions).toEqual(repetitions);
-            expect(rows[0].datetime).toEqual(date);
+            const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$1 AND account_id = $2 `;
+            const values = [cardId,accountId]
+            let results  = await client.query(query,values)
+            expect(results.rowCount).toEqual(1);
+            expect(results.rows[0].card_id).toEqual(cardId);
+            expect(results.rows[0].account_id).toEqual(accountId);
+            expect(results.rows[0].easiness).toEqual(easiness);
+            expect(results.rows[0].interval).toEqual(interval);
+            expect(results.rows[0].repetitions).toEqual(repetitions);
+            expect(results.rows[0].datetime).toEqual(date);
         }
     );
 
@@ -154,25 +146,16 @@ describe('TopicRepository',  () => {
                 await TopicRepositoryCorrectTable.insertLearnedCard(cardId, accountId, easiness, interval, repetitions, date);
                 
                 //Now query the database and see if it updated
-                const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$cardId AND account_id = $accountId `;
-                let rows  = await new Promise<any[]>((resolve,reject) => {database.all(query,{
-                    '$cardId': cardId,
-                    '$accountId': accountId
-                }, (error, result) => {
-                    if (error) {
-                        reject(error)
-                      } else {
-                        resolve(result)
-                      }
-                })
-            })
-                expect(rows.length).toEqual(1);
-                expect(rows[0].card_id).toEqual(cardId);
-                expect(rows[0].account_id).toEqual(accountId);
-                expect(rows[0].easiness).toEqual(easiness);
-                expect(rows[0].interval).toEqual(interval);
-                expect(rows[0].repetitions).toEqual(repetitions);
-                expect(rows[0].datetime).toEqual(date);
+                const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$1 AND account_id = $2 `;
+                const values = [cardId,accountId]
+                let results  = await client.query(query,values)
+                expect(results.rowCount).toEqual(1);
+                expect(results.rows[0].card_id).toEqual(cardId);
+                expect(results.rows[0].account_id).toEqual(accountId);
+                expect(results.rows[0].easiness).toEqual(easiness);
+                expect(results.rows[0].interval).toEqual(interval);
+                expect(results.rows[0].repetitions).toEqual(repetitions);
+                expect(results.rows[0].datetime).toEqual(date);
             }
         );
 
@@ -185,24 +168,15 @@ describe('TopicRepository',  () => {
             await TopicRepositoryCorrectTable.insertReportCart(cardId, accountId, type, reason, comment);
             
             //Now query the database and see if it updated
-            const query = `SELECT card_id, account_id, type, reason, comment FROM ${TopicRepositoryCorrectTable.cardReportTableName} WHERE card_id =$cardId AND account_id = $accountId `;
-            let rows  = await new Promise<any[]>((resolve,reject) => {database.all(query,{
-                '$cardId': cardId,
-                '$accountId': accountId
-            }, (error, result) => {
-                if (error) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-            })
-        })
-            expect(rows.length).toEqual(1);
-            expect(rows[0].card_id).toEqual(cardId);
-            expect(rows[0].account_id).toEqual(accountId);
-            expect(rows[0].type).toEqual(type);
-            expect(rows[0].reason).toEqual(reason);
-            expect(rows[0].comment).toEqual(comment);
+            const query = `SELECT card_id, account_id, type, reason, comment FROM ${TopicRepositoryCorrectTable.cardReportTableName} WHERE card_id =$1 AND account_id = $2 `;
+            const values = [cardId,accountId]
+            let results  = await client.query(query,values)
+            expect(results.rows.length).toEqual(1);
+            expect(results.rows[0].card_id).toEqual(cardId);
+            expect(results.rows[0].account_id).toEqual(accountId);
+            expect(results.rows[0].type).toEqual(type);
+            expect(results.rows[0].reason).toEqual(reason);
+            expect(results.rows[0].comment).toEqual(comment);
         }
     );
         

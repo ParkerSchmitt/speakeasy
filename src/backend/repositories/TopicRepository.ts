@@ -1,4 +1,4 @@
-import type { Database } from 'sqlite3'
+import { type Client } from 'pg'
 import { type CardAccountType } from '../types/CardAccountType'
 import { type CardType } from '../types/CardType'
 
@@ -8,7 +8,7 @@ export interface TopicRepositoryConfig {
   cardAccountLinkageTableName: string
   cardReportTableName: string
 
-  database: Database
+  client: Client
 }
 
 class TopicRepository {
@@ -16,7 +16,7 @@ class TopicRepository {
   cardTableName: string
   cardAccountLinkageTableName: string
   cardReportTableName: string
-  database: Database
+  client: Client
 
   /**
      * Creates the SignUpRepository
@@ -27,7 +27,7 @@ class TopicRepository {
     this.cardTableName = config.cardTableName
     this.cardAccountLinkageTableName = config.cardAccountLinkageTableName
     this.cardReportTableName = config.cardReportTableName
-    this.database = config.database
+    this.client = config.client
   }
 
   /**
@@ -35,17 +35,9 @@ class TopicRepository {
      * @returns a promise with the resulting topic information
      */
   async receiveTopics (): Promise<Array<{ id: number, name: string, description: string, imageUrl: string }>> {
-    const query = `SELECT id, name, description, imageUrl FROM ${this.topicTableName}`
-    const topics = await new Promise<any[]>((resolve, reject) => {
-      this.database.all(query, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
-    return topics
+    const query = `SELECT id, name, description, "imageUrl" FROM ${this.topicTableName}`
+    const topics = await this.client.query(query)
+    return topics.rows
   }
 
   /**
@@ -56,20 +48,12 @@ class TopicRepository {
      */
   async receiveTopicPercentage (userId: number, topic: string): Promise<{ percentageLearned: number } | null> {
     // Have to do * .1 otherwise it will try to do integer divinsion instead of giving us a float
-    const query = `SELECT (COUNT(cardAccountLinkageTable.id) * 1.0 / COUNT(cardsTable.id)) AS percentageLearned FROM ${this.topicTableName} topicTable INNER JOIN ${this.cardTableName} cardsTable ON topicTable.id = cardsTable.topicId LEFT JOIN ${this.cardAccountLinkageTableName} cardAccountLinkageTable on cardsTable.id = cardAccountLinkageTable.card_id  AND cardAccountLinkageTable.account_id = ${userId} WHERE topicTable.name = '${topic}' GROUP BY topicTable.id`
-    const rows = await new Promise<any>((resolve, reject) => {
-      this.database.all(query, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
-    if (rows.length === 0) {
+    const query = `SELECT (COUNT(cardAccountLinkageTable.id) * 1.0 / COUNT(cardsTable.id)) AS "percentageLearned" FROM ${this.topicTableName} topicTable INNER JOIN ${this.cardTableName} cardsTable ON topicTable.id = cardsTable."topicId" LEFT JOIN ${this.cardAccountLinkageTableName} cardAccountLinkageTable on cardsTable.id = cardAccountLinkageTable.card_id  AND cardAccountLinkageTable.account_id = ${userId} WHERE topicTable.name = '${topic}' GROUP BY topicTable.id`
+    const result = await this.client.query(query)
+    if (result.rowCount === 0) {
       return null
     } else {
-      const percentageLearned = rows[0].percentageLearned
+      const percentageLearned = result.rows[0].percentageLearned
       return { percentageLearned }
     }
   }
@@ -82,21 +66,13 @@ class TopicRepository {
      */
   async receiveTopicPractice (accountId: number, topic: string, amount: number): Promise<CardAccountType[] & CardType[]> {
     // Have to do * .1 otherwise it will try to do integer divinsion instead of giving us a float
-    const query = `SELECT ${this.cardTableName}.id, ${this.cardTableName}.topicId as topicId, ${this.topicTableName}.name AS topic, ${this.cardTableName}.previewText AS previewText, ${this.cardTableName}.revealText AS revealText, ${this.cardTableName}.audioUrl AS audioUrl, ${this.cardTableName}.imageUrl AS imageUrl, ${this.cardTableName}.pronunciation AS pronunciation,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
-    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
+    const query = `SELECT ${this.cardTableName}.id, ${this.cardTableName}."topicId" as "topicId", ${this.topicTableName}.name AS topic, ${this.cardTableName}."previewText" AS "previewText", ${this.cardTableName}."revealText" AS "revealText", ${this.cardTableName}."audioUrl" AS "audioUrl", ${this.cardTableName}."imageUrl" AS "imageUrl", ${this.cardTableName}.pronunciation AS pronunciation,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
+    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id 
     INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
     WHERE ${this.cardAccountLinkageTableName}.account_id = ${accountId}
     ORDER BY ${this.cardAccountLinkageTableName}.repetitions ASC, ${this.cardAccountLinkageTableName}.easiness ASC
     LIMIT ${amount}`
-    const topics = await new Promise<any>((resolve, reject) => {
-      this.database.all(query, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
+    const topics = (await this.client.query(query)).rows
     return topics
   }
 
@@ -108,16 +84,8 @@ class TopicRepository {
      * @returns a promise for an array containing the cards
      */
   async receiveNewCards (topic: string, amount: number, offset: number): Promise<CardType[]> {
-    const query = `SELECT ${this.cardTableName}.id, topicId, previewText, revealText, pronunciation, audioUrl, ${this.cardTableName}.imageUrl AS imageUrl FROM ${this.cardTableName} INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id WHERE ${this.topicTableName}.name = "${topic}" ORDER BY ${this.cardTableName}.id ASC LIMIT ${amount} OFFSET ${offset}`
-    const cards = await new Promise<any[]>((resolve, reject) => {
-      this.database.all(query, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
+    const query = `SELECT ${this.cardTableName}.id, "topicId", "previewText", "revealText", pronunciation, "audioUrl", ${this.cardTableName}."imageUrl" AS "imageUrl" FROM ${this.cardTableName} INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id WHERE ${this.topicTableName}.name = '${topic}' ORDER BY ${this.cardTableName}.id ASC LIMIT ${amount} OFFSET ${offset}`
+    const cards = (await this.client.query(query)).rows
     return cards
   }
 
@@ -128,24 +96,16 @@ class TopicRepository {
      * @returns a promise for the card, or null if it doesn't exist yet.
      */
   async receiveStoredCard (accountId: number, cardId: number): Promise< CardAccountType | null> {
-    const query = `SELECT ${this.cardTableName}.id, ${this.cardTableName}.topicId as topicId, ${this.topicTableName}.name AS topic, ${this.cardTableName}.previewText AS previewText, ${this.cardTableName}.revealText AS revealText, ${this.cardTableName}.audioUrl AS audioUrl, ${this.cardTableName}.imageUrl AS imageUrl, ${this.cardTableName}.pronunciation AS pronunciation,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
-                      INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
+    const query = `SELECT ${this.cardTableName}.id, ${this.cardTableName}."topicId" as "topicId", ${this.topicTableName}.name AS topic, ${this.cardTableName}."previewText" AS "previewText", ${this.cardTableName}."revealText" AS "revealText", ${this.cardTableName}."audioUrl" AS "audioUrl", ${this.cardTableName}."imageUrl" AS "imageUrl", ${this.cardTableName}.pronunciation AS pronunciation,  ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName} 
+                      INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id 
                       INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
                       WHERE ${this.cardAccountLinkageTableName}.card_id = ${cardId} AND ${this.cardAccountLinkageTableName}.account_id = ${accountId} 
                       LIMIT 1`
-    const cards = await new Promise<any | null>((resolve, reject) => {
-      this.database.get(query, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          if (result === undefined) {
-            resolve(null)
-          }
-          resolve(result)
-        }
-      })
-    })
-    return cards
+    const cards = await this.client.query(query)
+    if (cards.rowCount === 0) {
+      return null
+    }
+    return cards.rows[0]
   }
 
   /**
@@ -157,21 +117,13 @@ class TopicRepository {
      * @returns a promise for an array containing the cards
      */
   async receiveStoredCards (topic: string, accountId: number, amount: number, date: number): Promise<CardType[]> {
-    const query = `SELECT ${this.cardTableName}.id, topicId, previewText, revealText, ${this.cardTableName}.imageUrl, audioUrl, pronunciation FROM ${this.cardTableName} 
-                    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
+    const query = `SELECT ${this.cardTableName}.id, "topicId", "previewText", "revealText", ${this.cardTableName}."imageUrl", "audioUrl", pronunciation FROM ${this.cardTableName} 
+                    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id 
                     INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
                     WHERE ${this.cardAccountLinkageTableName}.datetime < ${date} AND ${this.cardAccountLinkageTableName}.account_id = ${accountId} 
                     ORDER BY ${this.cardAccountLinkageTableName}.datetime ASC 
                     LIMIT ${amount}`
-    const cards = await new Promise<any[]>((resolve, reject) => {
-      this.database.all(query, (error, result) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result)
-        }
-      })
-    })
+    const cards = (await this.client.query(query)).rows
     return cards
   }
 
@@ -183,19 +135,14 @@ class TopicRepository {
      */
   async receiveMaxCardReached (topic: string, accountId: number): Promise<number> {
     const query = `SELECT MAX(${this.cardTableName}.id) as max FROM ${this.cardTableName} 
-                    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}.topicId = ${this.topicTableName}.id 
+                    INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id 
                     INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
                     WHERE ${this.cardAccountLinkageTableName}.account_id = ${accountId}`
-    const max = await new Promise<any>((resolve, reject) => {
-      this.database.get(query, (error: Error, result: { max: number }) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve(result.max)
-        }
-      })
-    })
-    return max
+    const max = await this.client.query(query)
+    if (max.rowCount === 0) {
+      return 0
+    }
+    return max.rows[0].max
   }
 
   /**
@@ -211,24 +158,10 @@ class TopicRepository {
      */
   async updateLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
     const query = `UPDATE ${this.cardAccountLinkageTableName} 
-                  SET easiness=$easiness, interval=$interval, repetitions=$repetitions, datetime=$date
-                  WHERE ${this.cardAccountLinkageTableName}.card_id = $cardId AND ${this.cardAccountLinkageTableName}.account_id = $accountId`
-    await new Promise<void>((resolve, reject) => {
-      this.database.get(query, {
-        $cardId: cardId,
-        $accountId: accountId,
-        $easiness: easiness,
-        $interval: interval,
-        $repetitions: repetitions,
-        $date: date
-      }, (error: Error) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
-    })
+                  SET easiness=$1, interval=$2, repetitions=$3, datetime=$4
+                  WHERE ${this.cardAccountLinkageTableName}.card_id = $6 AND ${this.cardAccountLinkageTableName}.account_id = $6`
+    const values = [easiness, interval, repetitions, date, cardId, accountId]
+    await this.client.query(query, values)
   }
 
   /**
@@ -242,23 +175,9 @@ class TopicRepository {
      * @returns a promise containing a integer representing the highest card a user has learned, or null
      */
   async insertLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
-    const query = `INSERT INTO ${this.cardAccountLinkageTableName} (card_id, account_id, easiness, interval, repetitions, datetime) VALUES ($cardId,$accountId,$easiness,$interval,$repetitions,$date)`
-    await new Promise<void>((resolve, reject) => {
-      this.database.get(query, {
-        $cardId: cardId,
-        $accountId: accountId,
-        $easiness: easiness,
-        $interval: interval,
-        $repetitions: repetitions,
-        $date: date
-      }, (error: Error) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
-    })
+    const query = `INSERT INTO ${this.cardAccountLinkageTableName} (card_id, account_id, easiness, interval, repetitions, datetime) VALUES ($1,$2,$3,$4,$5,$6)`
+    const values = [cardId, accountId, easiness, interval, repetitions, date]
+    await this.client.query(query, values)
   }
 
   /**
@@ -271,22 +190,9 @@ class TopicRepository {
      * @returns a void promise
      */
   async insertReportCart (cardId: number, accountId: number, type: string, reason: string, comment: string): Promise<void> {
-    const query = `INSERT INTO ${this.cardReportTableName} (card_id, account_id, type, reason, comment) VALUES ($cardId,$accountId,$type,$reason,$comment)`
-    await new Promise<void>((resolve, reject) => {
-      this.database.get(query, {
-        $cardId: cardId,
-        $accountId: accountId,
-        $type: type,
-        $reason: reason,
-        $comment: comment
-      }, (error: Error) => {
-        if (error !== null) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
-    })
+    const query = `INSERT INTO ${this.cardReportTableName} (card_id, account_id, type, reason, comment) VALUES ($1,$2,$3,$4,$5)`
+    const values = [cardId, accountId, type, reason, comment]
+    await this.client.query(query, values)
   }
 }
 

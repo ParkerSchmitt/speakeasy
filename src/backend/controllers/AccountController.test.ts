@@ -5,10 +5,11 @@ import AccountRepository from "../repositories/AccountRepository";
 import AccountController from "./AccountController";
 import request from 'supertest';
 import session from "express-session";
+import { type Client } from "pg";
 
 describe('AccountController', () => {
 
-  let database = new DatabaseMock()
+  let client: Client = new DatabaseMock() as Client
 
   const app = express();
   const port = 8080; // default port to listen
@@ -26,7 +27,7 @@ describe('AccountController', () => {
   accountController = new AccountController({
     Mediator: new AccountMediator({
       Repository: new AccountRepository({
-        database: database,
+        client: client,
         tableName: "accounts"
       })
     })

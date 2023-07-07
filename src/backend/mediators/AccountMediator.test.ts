@@ -5,6 +5,7 @@ import DatabaseMock from '../mocks/DatabaseMock'; /*eslint: ignore */
 import AccountRepository from '../repositories/AccountRepository';
 import { CardAccountType } from '../types/CardAccountType';
 import AccountMediator, { AccountExistsError, InvalidCredentialsError } from './AccountMediator'
+import { type Client } from 'pg';
 
 declare module 'express-session' {
     interface SessionData {
@@ -17,19 +18,19 @@ describe('AccountMediator',  () => {
     let AccountMediatorCorrectTable : AccountMediator
     let AccountMediatorInvalidTable : AccountMediator
 
-    let database = new DatabaseMock()
+    let client : Client = new DatabaseMock() as Client
 
       AccountMediatorCorrectTable = new AccountMediator({
         Repository:  new AccountRepository ({
         tableName: 'accounts',
-        database: database,
+        client: client,
         })
       })
 
       AccountMediatorInvalidTable = new AccountMediator({
         Repository:  new AccountRepository ({
         tableName: 'badTable',
-        database: database,
+        client: client,
         })
       })
 

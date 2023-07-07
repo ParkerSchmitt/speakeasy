@@ -7,6 +7,7 @@ import TopicRepository from '../repositories/TopicRepository';
 import { CardAccountType } from '../types/CardAccountType';
 import TopicMediator from './TopicMediator';
 import TopicsMediator from './TopicMediator';
+import { type Client } from 'pg';
 
 declare module 'express-session' {
     interface SessionData {
@@ -17,7 +18,7 @@ declare module 'express-session' {
 
 describe('TopicMediator',  () => {
     let TopicMediatorCorrectTable : TopicsMediator
-    let database = new DatabaseMock()
+    let client = new DatabaseMock() as Client
 
     it('should create repository in memory', async () => {
      TopicMediatorCorrectTable = new TopicMediator({
@@ -27,7 +28,7 @@ describe('TopicMediator',  () => {
         cardTableName: 'cards',
         cardAccountLinkageTableName: 'cards_accounts',
         cardReportTableName: 'cards_reports',
-        database: database,
+        client: client,
         })
     })
     });
@@ -241,32 +242,11 @@ describe('TopicMediator',  () => {
                 topic: 'Test'
             }
 
-              const rowAmountBefore = await new Promise<any[]>((resolve, reject) => {
-                database.all("SELECT * FROM cards_accounts WHERE account_id = $accountId", {
-                  $accountId: accountId
-                }, (error, result) => {
-                  if (error !== null) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-                })
-              })
-
+            const rowAmountBefore = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
             await TopicMediatorCorrectTable.PostSaveCard(session, 1875734233, request);
-
-            const rowAmountAfter = await new Promise<any[]>((resolve, reject) => {
-                database.all("SELECT * FROM cards_accounts WHERE account_id = $accountId", {
-                  $accountId: accountId
-                }, (error, result) => {
-                  if (error !== null) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-                })
-              })
-              expect(rowAmountAfter.length).toBe(rowAmountBefore.length+1);        
+            const rowAmountAfter = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
+            
+            expect(rowAmountAfter).toBe(rowAmountBefore+1);        
         }
     );    
 
@@ -310,32 +290,11 @@ describe('TopicMediator',  () => {
             }
 
 
-              const rowAmountBefore = await new Promise<any[]>((resolve, reject) => {
-                database.all("SELECT * FROM cards_accounts WHERE account_id = $accountId", {
-                  $accountId: accountId
-                }, (error, result) => {
-                  if (error !== null) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-                })
-              })
-
+            const rowAmountBefore = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
             await TopicMediatorCorrectTable.PostSaveCard(session, 1875734233, request);
-
-            const rowAmountAfter = await new Promise<any[]>((resolve, reject) => {
-                database.all("SELECT * FROM cards_accounts WHERE account_id = $accountId", {
-                  $accountId: accountId
-                }, (error, result) => {
-                  if (error !== null) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-                })
-              })
-              expect(rowAmountAfter.length).toBe(rowAmountBefore.length);        
+            const rowAmountAfter = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
+            
+            expect(rowAmountAfter).toBe(rowAmountBefore);        
         }
     );    
 
@@ -377,33 +336,12 @@ describe('TopicMediator',  () => {
                 reason: reason,
                 comment: comment
             }
-
-              const rowAmountBefore = await new Promise<any[]>((resolve, reject) => {
-                database.all("SELECT * FROM cards_reports WHERE account_id = $accountId", {
-                  $accountId: accountId
-                }, (error, result) => {
-                  if (error !== null) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-                })
-              })
-
+            
+            const rowAmountBefore = (await (client.query("SELECT * FROM cards_reports WHERE account_id = $1", [accountId]))).rowCount
             await TopicMediatorCorrectTable.PostReportCard(session, request);
+            const rowAmountAfter = (await (client.query("SELECT * FROM cards_reports WHERE account_id = $1", [accountId]))).rowCount
 
-            const rowAmountAfter = await new Promise<any[]>((resolve, reject) => {
-                database.all("SELECT * FROM cards_reports WHERE account_id = $accountId", {
-                  $accountId: accountId
-                }, (error, result) => {
-                  if (error !== null) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-                })
-              })
-              expect(rowAmountAfter.length).toBe(rowAmountBefore.length + 1);        
+              expect(rowAmountAfter).toBe(rowAmountBefore + 1);        
         }
     );    
 

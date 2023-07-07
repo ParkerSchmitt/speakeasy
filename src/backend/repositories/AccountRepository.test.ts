@@ -1,33 +1,25 @@
-import { Database } from 'sqlite3'; /*eslint: ignore */
 import AccountRepository from './AccountRepository';
+import { newDb } from 'pg-mem';
+const { Client } = newDb().adapters.createPg();
 
 describe('AccountRepository',  () => {
     let AccountRepositoryCorrectTable : AccountRepository
-    let database = new Database(':memory:')
+    const client = new Client;
 
     it('should create database in memory', async () => {
+        await client.query('CREATE TABLE accounts (id SERIAL, email character varying(320), "firstName" character varying(255), "lastName" character varying(255), "passwordHash" character varying(255), "passwordSalt" character varying(32))')
+        await client.query(`INSERT INTO accounts (email, "firstName", "lastName", "passwordHash", "passwordSalt") VALUES('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f')`)
 
-    await new Promise<void>((resolve,reject) => {database.exec("CREATE TABLE accounts (id INTEGER PRIMARY KEY, email varchar(255), firstName varchar(255), lastName varchar(255), passwordHash varchar(255), passwordSalt varchar(32))", (err) => {
-        if (err) {
-            reject(err)
-        } else {
-            resolve()
-        }})
-    })
-
-    await new Promise<void>((resolve,reject) => { database.exec("INSERT INTO accounts (email, firstName, lastName, passwordHash, passwordSalt) VALUES('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f')", (err) => {
-        if (err) {
-            reject(err)
-        } else {
-            resolve()
-        }})
-    })
-
-
-     AccountRepositoryCorrectTable = new AccountRepository({
-        tableName: 'accounts',
-        database: database,
-    })
+        AccountRepositoryCorrectTable = new AccountRepository({
+            tableName: 'accounts',
+            client: new Client({
+                user: 'test',
+                host: 'localhost',
+                database: 'postgres',
+                password: 'test',
+                port: 5432,
+            }),
+        })
     });
 
     // Makes sure all requests are interpreted correctly
@@ -52,23 +44,16 @@ describe('AccountRepository',  () => {
         `should insert values into database`,
         async (email, firstName, lastName, passwordHash, passwordSalt) => {
             const insert = await AccountRepositoryCorrectTable.insertAccount(email, firstName, lastName, passwordHash, passwordSalt);
-            const query = `SELECT email, firstName, lastName, passwordHash, passwordSalt FROM ${AccountRepositoryCorrectTable.tableName} WHERE email=$value`;
-            let rows  = await new Promise<any[]>((resolve,reject) => {database.all(query,{
-                '$value': email
-            }, (error, result) => {
-                if (error) {
-                    reject(error)
-                  } else {
-                    resolve(result)
-                  }
-            })
-        })
-            expect(rows.length).toEqual(1);
-            expect(rows[0].email).toEqual(email);
-            expect(rows[0].firstName).toEqual(firstName);
-            expect(rows[0].lastName).toEqual(lastName);
-            expect(rows[0].passwordHash).toEqual(passwordHash);
-            expect(rows[0].passwordSalt).toEqual(passwordSalt);
+            const query = `SELECT email, "firstName", "lastName", "passwordHash", "passwordSalt" FROM ${AccountRepositoryCorrectTable.tableName} WHERE email=$1`;
+            const values = [email]
+            let result = await client.query(query,values)
+
+            expect(result.rowCount).toEqual(1);
+            expect(result.rows[0].email).toEqual(email);
+            expect(result.rows[0].firstName).toEqual(firstName);
+            expect(result.rows[0].lastName).toEqual(lastName);
+            expect(result.rows[0].passwordHash).toEqual(passwordHash);
+            expect(result.rows[0].passwordSalt).toEqual(passwordSalt);
         }
     );
 

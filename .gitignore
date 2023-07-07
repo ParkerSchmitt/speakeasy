@@ -12,7 +12,7 @@
 /build
 /dist
 /build/resources
-
+/public/resources/
 # misc
 .DS_Store
 .env.local

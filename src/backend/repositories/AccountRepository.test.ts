@@ -12,7 +12,13 @@ describe('AccountRepository',  () => {
 
         AccountRepositoryCorrectTable = new AccountRepository({
             tableName: 'accounts',
-            client: client
+            client: new Client({
+                user: 'test',
+                host: 'localhost',
+                database: 'postgres',
+                password: 'test',
+                port: 5432,
+            }),
         })
     });
 
@@ -41,7 +47,7 @@ describe('AccountRepository',  () => {
             const query = `SELECT email, "firstName", "lastName", "passwordHash", "passwordSalt" FROM ${AccountRepositoryCorrectTable.tableName} WHERE email=$1`;
             const values = [email]
             let result = await client.query(query,values)
-            console.log(result);
+
             expect(result.rowCount).toEqual(1);
             expect(result.rows[0].email).toEqual(email);
             expect(result.rows[0].firstName).toEqual(firstName);

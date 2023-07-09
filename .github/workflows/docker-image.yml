@@ -58,12 +58,16 @@ jobs:
       - name: Verify .env was created
         run: cat ./.env
 
-      - name: Setup SSH Keys and known_hosts
+      - name: Add SSH key
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
-          ssh-add - <<< "${{ secrets.SSHKEY }}"
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          mkdir -p /home/runner/.ssh
+          ssh-keyscan speakeasy.cards >> /home/runner/.ssh/known_hosts
+          echo "${{ secrets.SSHKEY }}" > /home/runner/.ssh/github_actions
+          chmod 600 /home/runner/.ssh/github_actions
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null	
+          ssh-add /home/runner/.ssh/github_actions
 
       - name: Build container image
         run: docker compose build

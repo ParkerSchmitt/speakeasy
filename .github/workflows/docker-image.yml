@@ -59,7 +59,7 @@ jobs:
         run: cat ./.env
       - name: Create SSH file to send over docker images
         run: |
-          apk add openssh-client
+          sudo apt-get install openssh-client
           eval $(ssh-agent -s)
           echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
           mkdir -p ~/.ssh

@@ -62,8 +62,9 @@ jobs:
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-add - <<< "${{ secrets.SSHKEY }}"
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+
       - name: Build container image
         run: docker compose build
       - name: Install doctl

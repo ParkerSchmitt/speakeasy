@@ -11,6 +11,7 @@ import TopicRepository from './backend/repositories/TopicRepository'
 import { type CardAccountType } from './backend/types/CardAccountType'
 import Config from './backend/Config'
 import { Client } from 'pg'
+import { resourceLimits } from 'worker_threads'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
@@ -22,36 +23,39 @@ declare module 'express-session' {
   }
 }
 
-try {
-  app.use(session({
-    secret: Config.SESSION_SECRET,
-    resave: Config.SESSION_RESAVE,
-    cookie: { maxAge: Config.SESSION_COOKIE_MAX_AGE },
-    saveUninitialized: Config.SESSION_SAVE_UNINITALIZED
-  }))
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const setup = async (): Promise<void> => {
+  try {
+    app.use(session({
+      secret: Config.SESSION_SECRET,
+      resave: Config.SESSION_RESAVE,
+      cookie: { maxAge: Config.SESSION_COOKIE_MAX_AGE },
+      saveUninitialized: Config.SESSION_SAVE_UNINITALIZED
+    }))
 
-  const corsOptions = {
-    origin: Config.CORS_ORIGIN,
-    credentials: Config.CORS_CREDENTIALS,
-    optionsSuccessStatus: Config.CORS_OPTIONS_SUCCESS_STATUS // some legacy browsers (IE11, various SmartTVs) choke on 204
-  }
-  app.use(cors(corsOptions))
-  app.use(express.json())
+    const corsOptions = {
+      origin: Config.CORS_ORIGIN,
+      credentials: Config.CORS_CREDENTIALS,
+      optionsSuccessStatus: Config.CORS_OPTIONS_SUCCESS_STATUS // some legacy browsers (IE11, various SmartTVs) choke on 204
+    }
+    app.use(cors(corsOptions))
+    app.use(express.json())
 
-  app.use((req: any, res: { set: (arg0: string, arg1: string) => void }, next: () => void) => {
-    res.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-    res.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
-    next()
-  })
+    app.use((req: any, res: { set: (arg0: string, arg1: string) => void }, next: () => void) => {
+      res.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+      res.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
+      next()
+    })
 
-  const client = new Client({
-    user: Config.SQL_USER,
-    host: Config.SQL_HOST,
-    database: Config.SQL_DATABASE,
-    password: Config.SQL_PASSWORD,
-    port: Config.SQL_PORT
-  })
-  client.connect(() => {
+    const client = new Client({
+      user: Config.SQL_USER,
+      host: Config.SQL_HOST,
+      database: Config.SQL_DATABASE,
+      password: Config.SQL_PASSWORD,
+      port: Config.SQL_PORT
+    })
+    await client.connect()
+
     const accountController = new AccountController({
       Mediator: new AccountMediator({
         Repository: new AccountRepository({
@@ -92,13 +96,17 @@ try {
     app.post('/saveCard', topicsController.PostSaveCard)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.post('/reportCard', topicsController.PostReportCard)
-
-    // start the Express server
-    app.listen(Config.API_PORT, () => {
-      console.log(`API server running on ${Config.API_PORT}`)
-    })
-  })
-} catch (err) {
-  console.log(err)
-  throw err
+  } catch (err) {
+    console.log(err)
+    throw err
+  }
 }
+
+setup().then(() => {
+  // start the Express server
+  app.listen(Config.API_PORT, () => {
+    console.log(`API server running on ${Config.API_PORT}`)
+  })
+}).catch((error) => {
+  console.log(error)
+})

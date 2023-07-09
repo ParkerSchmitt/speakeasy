@@ -70,7 +70,7 @@ jobs:
       - name: Push frontend image to DigitalOcean Container Registry
         run: |
           mkdir build
-          docker save$(echo $REGISTRY)/$(echo $IMAGE_NAME):backend | gzip > build/app_backend.tar.gz 
+          docker save $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend | gzip > build/app_backend.tar.gz 
           docker save $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend | gzip > build/app_frontend.tar.gz 
 
       - name: ssh deploy

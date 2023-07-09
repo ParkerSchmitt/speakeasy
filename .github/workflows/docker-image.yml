@@ -57,11 +57,13 @@ jobs:
           file_name: '.env'  
       - name: Verify .env was created
         run: cat ./.env
-      - name: Create SSH file to send over docker images
+
+      - name: Setup SSH Keys and known_hosts
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
-          echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add - <<< "${{ secrets.SSHKEY }}"
       - name: Build container image
         run: docker compose build
       - name: Install doctl

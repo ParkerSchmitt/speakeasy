@@ -57,33 +57,43 @@ jobs:
           file_name: '.env'  
       - name: Verify .env was created
         run: cat ./.env
-
-      - name: Add SSH key
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-          mkdir -p /home/runner/.ssh
-          ssh-keyscan speakeasy.cards >> /home/runner/.ssh/known_hosts
-          echo "${{ secrets.SSHKEY }}" > /home/runner/.ssh/github_actions
-          chmod 600 /home/runner/.ssh/github_actions
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null	
-          ssh-add /home/runner/.ssh/github_actions
-
       - name: Build container image
         run: docker compose build
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - name: Stop container
-        run: ssh -C $(echo secrets.USERNAME )@$(secrets.HOST) docker compose down
-      - name: Remove old frontend
-        run: ssh -C $(echo secrets.USERNAME )@$(secrets.HOST) docker rm frontend
-      - name: Remove old backend
-        run: ssh -C $(echo secrets.USERNAME )@$(secrets.HOST) docker rm backend        
+    
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+  
       - name: Push frontend image to DigitalOcean Container Registry
-        run: docker save $(echo $IMAGE_NAME):frontend | ssh -C $(echo secrets.USERNAME )@$(secrets.HOST) docker load
-      - name: Push backend image to DigitalOcean Container Registry
-        run: docker save $(echo $IMAGE_NAME):backend | ssh -C $(echo secrets.USERNAME )@$(secrets.HOST) docker load
-      - name: start container
-        run: ssh -C $(echo secrets.USERNAME )@$(secrets.HOST) docker compose up -d        
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):app
+        
+  deploy:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    
+    steps: 
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
+          script: |
+            # Login to registry
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            # Stop running containers
+            docker compose down
+            # Remove old container
+            docker rm frontend
+            docker rm backend
+            # Delete old images
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
+            # Run composed containers from the new images
+            docker compose up -d

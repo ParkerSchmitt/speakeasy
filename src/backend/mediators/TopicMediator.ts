@@ -5,6 +5,7 @@ import { type SaveCardRequest } from '../controllers/viewmodels/SaveCardRequest'
 import type TopicRepository from '../repositories/TopicRepository'
 import { type CardAccountType } from '../types/CardAccountType'
 import { type CardType } from '../types/CardType'
+import { logger } from '../Logger'
 export const InvalidCardAmount: Error = new Error('Requested invalid amount of cards')
 export const InvalidCredentialsError: Error = new Error('Not authorized')
 export const UnknownPercentageError: Error = new Error('Can not found a learned percentage.')
@@ -42,6 +43,7 @@ class TopicMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`TopicMediator.GetReceiveTopics error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)
@@ -63,6 +65,7 @@ class TopicMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`TopicMediator.GetReceiveTopicsPercentage error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)
@@ -81,6 +84,7 @@ class TopicMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`TopicMediator.GetReceiveTopicsPractice error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)
@@ -124,6 +128,7 @@ class TopicMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`TopicMediator.PostReceiveCards error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)
@@ -223,6 +228,7 @@ class TopicMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`TopicMediator.PostSaveCard error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)
@@ -245,6 +251,7 @@ class TopicMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`TopicMediator.PostReportCard error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)

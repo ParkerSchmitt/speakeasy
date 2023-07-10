@@ -20,4 +20,3 @@ Track your progress and receive feedback on your performance.
 
 ## Support
 If you have any questions or feedback about Speakeasy, please reach out!
-

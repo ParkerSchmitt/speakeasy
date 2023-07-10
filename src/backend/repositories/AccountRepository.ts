@@ -1,4 +1,5 @@
 import { type Client } from 'pg'
+import { logger } from '../Logger'
 
 export interface AccountRepositoryConfig {
   tableName: string
@@ -68,6 +69,7 @@ class AccountRepository {
     await new Promise<void>((resolve, reject) => {
       this.client.query(query, values, (err, res) => {
         if (err !== null) {
+          logger.error(`AccountRepository.insertAccount error ${err.toString()}`)
           reject(err)
         } else {
           resolve()

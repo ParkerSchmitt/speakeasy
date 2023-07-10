@@ -4,6 +4,7 @@ import type TopicsMediator from '../mediators/TopicMediator'
 import { ReceiveCardsRequest } from './viewmodels/ReceiveCardsRequest'
 import { ReportCardRequest } from './viewmodels/ReportCardRequest'
 import { SaveCardRequest } from './viewmodels/SaveCardRequest'
+import { logger } from '../Logger'
 
 export interface TopicControllerConfig {
   Mediator: TopicsMediator
@@ -30,7 +31,8 @@ class TopicController {
     let responseObj: any[] = []
     try {
       responseObj = await this.mediator.GetReceiveTopics()
-    } catch (error) {
+    } catch (error: any) {
+      logger.error(`TopicController.GetReceiveTopics error ${String(error)}`)
       res.status(500).json({ code: 500, responsse: 'Could not process request' })
     }
     res.status(200).json({ code: 200, response: responseObj })
@@ -56,6 +58,7 @@ class TopicController {
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
+          logger.error(`TopicController.GetReceiveTopicsPercentage error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }
       }
@@ -82,6 +85,7 @@ class TopicController {
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
+          logger.error(`TopicController.GetReceiveTopicsPractice error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }
       }
@@ -112,9 +116,11 @@ class TopicController {
       } catch (error) {
         if (error instanceof Error) {
           if (error === InvalidCredentialsError) {
+            logger.warn(`TopicController.PostReceiveCards invalid-login ${error.toString()}`)
             res.status(401).json({ code: 500, response: 'Must be authorized.' })
             return
           }
+          logger.error(`TopicController.PostReceiveCards error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }
       }
@@ -137,6 +143,7 @@ class TopicController {
         res.status(200).json({ code: 200, response: 'Saved' })
       } catch (error) {
         if (error instanceof Error) {
+          logger.error(`TopicController.PostSaveCard error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }
       }
@@ -159,6 +166,7 @@ class TopicController {
         res.status(200).json({ code: 200, response: 'Saved' })
       } catch (error) {
         if (error instanceof Error) {
+          logger.error(`TopicController.PostReportCard error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }
       }

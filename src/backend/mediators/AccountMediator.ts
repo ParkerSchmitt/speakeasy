@@ -2,6 +2,7 @@ import { type SignUpRequest } from '../controllers/viewmodels/SignUpRequest'
 import { type SignInRequest } from '../controllers/viewmodels/SignInRequest'
 import type AccountRepository from '../repositories/AccountRepository'
 import { createHash, randomBytes } from 'crypto'
+import { logger } from '../Logger'
 export const AccountExistsError: Error = new Error('Account already exists')
 export const InvalidCredentialsError: Error = new Error('Invalid email or password')
 
@@ -39,6 +40,7 @@ class AccountMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`AccountMediator.PostReceiveSignup error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)
@@ -68,6 +70,7 @@ class AccountMediator {
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {
+        logger.error(`AccountMediator.PostReceiveSignin error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)

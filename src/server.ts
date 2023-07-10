@@ -11,7 +11,7 @@ import TopicRepository from './backend/repositories/TopicRepository'
 import { type CardAccountType } from './backend/types/CardAccountType'
 import Config from './backend/Config'
 import { Client } from 'pg'
-import { resourceLimits } from 'worker_threads'
+import { logger } from './backend/Logger'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
@@ -96,17 +96,21 @@ const setup = async (): Promise<void> => {
     app.post('/saveCard', topicsController.PostSaveCard)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.post('/reportCard', topicsController.PostReportCard)
-  } catch (err) {
-    console.log(err)
-    throw err
+  } catch (error) {
+    logger.error(error)
+    throw error
   }
 }
 
 setup().then(() => {
   // start the Express server
   app.listen(Config.API_PORT, () => {
-    console.log(`API server running on ${Config.API_PORT}`)
+    logger.info(`API server running on ${Config.API_PORT}`)
   })
 }).catch((error) => {
-  console.log(error)
+  logger.error(error)
+})
+
+process.on('SIGINT', function () {
+  process.exit()
 })

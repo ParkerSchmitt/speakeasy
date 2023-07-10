@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.37.1",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.41.0",
+    "@opentelemetry/instrumentation-winston": "^0.31.4",
+    "@opentelemetry/sdk-node": "^0.41.0",
     "@react-spring/web": "^9.6.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -40,10 +44,11 @@
     "url": "^0.11.0",
     "util": "^0.12.5",
     "web-vitals": "^2.1.4",
-    "web3": "^1.8.1"
+    "web3": "^1.8.1",
+    "winston": "^3.9.0"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"npx ts-node --esm ./src/server.ts\"",
+    "start": "concurrently \"react-scripts start\" \"./otelcol-contrib --config=file:otel-collector-config.yaml\" \"npx ts-node --esm --require ./src/backend/Tracing.ts ./src/server.ts\"",
     "dev-start": "env $(cat .env | grep -v \"#\" | xargs) npm start",
     "build-be": "tsc --build",
     "build-fe": "react-scripts build",

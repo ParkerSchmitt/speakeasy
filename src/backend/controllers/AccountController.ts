@@ -3,6 +3,7 @@ import type SignUpMediator from '../mediators/AccountMediator'
 import { AccountExistsError, InvalidCredentialsError } from '../mediators/AccountMediator'
 import { SignUpRequest } from './viewmodels/SignUpRequest'
 import { SignInRequest } from './viewmodels/SignInRequest'
+import { logger } from '../Logger'
 
 export interface AccountControllerConfig {
   Mediator: SignUpMediator
@@ -42,7 +43,7 @@ class AccountController {
           res.status(200).json({ code: 200, response: 'Signed up' })
           return
         }
-
+        logger.error(`AccountController.PostReceiveSignup error ${error.toString()}`)
         res.status(400).json({ code: 400, error: error.message })
         return
       }
@@ -50,7 +51,6 @@ class AccountController {
       res.status(500).json({ code: 500, error: message })
       return
     }
-
     res.status(200).json({ code: 200, response: 'Signed up' })
   }
 
@@ -80,10 +80,10 @@ class AccountController {
           res.status(401).json({ code: 401, response: 'Invalid username or password' })
           return
         }
+        logger.error(`AccountController.PostReceiveSignin error ${error.toString()}`)
         res.status(400).json({ code: 400, error: error.message })
         return
       }
-
       res.status(500).json({ code: 500, error: message })
       return
     }

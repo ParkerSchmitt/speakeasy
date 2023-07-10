@@ -13,6 +13,7 @@
 /dist
 /build/resources
 /public/resources
+/logs
 # misc
 .DS_Store
 .env.local

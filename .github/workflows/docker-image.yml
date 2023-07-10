@@ -28,7 +28,7 @@ env:
   INPUT_ENVKEY_REACT_APP_MEDIA_URL: ${{ vars.ENV_REACT_APP_MEDIA_URL }}
 
   INPUT_ENVKEY_SQL_USER: ${{ vars.ENV_SQL_USER }}
-  INPUT_ENVKEY_SQL_PASSWORD: ${{ vars.ENV_SQL_PASSWORD }}
+  INPUT_ENVKEY_SQL_PASSWORD: ${{ secrets.ENV_SQL_PASSWORD }}
   INPUT_ENVKEY_SQL_DATABASE: ${{ vars.ENV_SQL_DATABASE }}
   INPUT_ENVKEY_SQL_FILENAME: ${{ vars.ENV_SQL_FILENAME }}
   INPUT_ENVKEY_MAX_CARDS: ${{ vars.ENV_MAX_CARDS }}
@@ -68,11 +68,22 @@ jobs:
         run: doctl registry login --expiry-seconds 600
   
       - name: Push frontend image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
+        run: |
+          mkdir build
+          docker save $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend | gzip > build/app_backend.tar.gz 
+          docker save $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend | gzip > build/app_frontend.tar.gz 
 
-      - name: Push backend image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
-        
+      - name: ssh deploy
+        uses: easingthemes/ssh-deploy@v4.1.8
+        env:
+            SSH_PRIVATE_KEY: ${{ secrets.SSHKEY_DEPLOY }}
+            ARGS: "-rlgoDzvc -i --delete"
+            SOURCE: "build/"
+            REMOTE_HOST: ${{ secrets.HOST }}
+            REMOTE_USER: ${{ secrets.USERNAME }}
+            TARGET: "build"
+
+
   deploy:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
@@ -88,15 +99,15 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
-            # Login to registry
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop running containers
+            # Delete old images
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
+            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
             docker compose down
             # Remove old container
             docker rm frontend
             docker rm backend
-            # Delete old images
-            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):frontend
-            docker rmi $(echo $REGISTRY)/$(echo $IMAGE_NAME):backend
+            # Login to registry
+            docker load < build/app_backend.tar.gz 
+            docker load < build/app_frontend.tar.gz 
             # Run composed containers from the new images
             docker compose up -d

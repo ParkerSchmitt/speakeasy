@@ -48,7 +48,7 @@ class TopicRepository {
      */
   async receiveTopicPercentage (userId: number, topic: string): Promise<{ percentageLearned: number } | null> {
     // Have to do * .1 otherwise it will try to do integer divinsion instead of giving us a float
-    const query = `SELECT (COUNT(cardAccountLinkageTable.id) * 1.0 / COUNT(cardsTable.id)) AS "percentageLearned" FROM ${this.topicTableName} topicTable INNER JOIN ${this.cardTableName} cardsTable ON topicTable.id = cardsTable."topicId" LEFT JOIN ${this.cardAccountLinkageTableName} cardAccountLinkageTable on cardsTable.id = cardAccountLinkageTable.card_id  AND cardAccountLinkageTable.account_id = ${userId} WHERE topicTable.name = '${topic}' GROUP BY topicTable.id`
+    const query = `SELECT (COUNT("cardAccountLinkageTable".id) * 1.0 / COUNT("cardsTable".id)) AS "percentageLearned" FROM ${this.topicTableName} "topicTable" INNER JOIN ${this.cardTableName} "cardsTable" ON "topicTable".id = "cardsTable"."topicId" LEFT JOIN ${this.cardAccountLinkageTableName} "cardAccountLinkageTable" on "cardsTable".id = "cardAccountLinkageTable".card_id  AND "cardAccountLinkageTable".account_id = ${userId} WHERE "topicTable".name = '${topic}' GROUP BY "topicTable".id`
     const result = await this.client.query(query)
     if (result.rowCount === 0) {
       return null

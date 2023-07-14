@@ -25,8 +25,9 @@ db.run("DELETE FROM cards", {}, (err) => {
 
 
 fs.createReadStream("import.csv")
-    .pipe(parse({ delimiter: ",", from_line: 2 }))
+    .pipe(parse({ delimiter: ",", from_line: 1 }))
     .on("data", async function (row: string[]) {
+      console.log(row)
     // 0: preview, 1: reveal,2: imageUrl,3: audioUrl,4: helpText
     let preview = row[0]
     let reveal = row[1]
@@ -91,14 +92,14 @@ async function downloadFile (url:string, targetFile :string) {
     Https.get(url, {
         rejectUnauthorized: false,
         headers:  {
-            'User-Agent': 'Chrome/7.30.0',
+            'User-Agent': 'Chrome/8.30.0',
         }
         
     }, response => {
       const code = response.statusCode ?? 0
 
       if (code >= 400) {
-        return reject(new Error(response.statusMessage))
+        return reject(new Error('code: ' + code + ' status message: ' + response.statusMessage))
       }
 
       // handle redirects

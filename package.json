@@ -48,7 +48,7 @@
     "winston": "^3.9.0"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"./otelcol-contrib --config=file:otel-collector-config.yaml\" \"npx ts-node --esm --require ./src/backend/Tracing.ts ./src/server.ts\"",
+    "start": "concurrently \"react-scripts start\" \"npx ts-node --esm --require ./src/backend/Tracing.ts ./src/server.ts\"",
     "dev-start": "env $(cat .env | grep -v \"#\" | xargs) npm start",
     "build-be": "tsc --build",
     "build-fe": "react-scripts build",

@@ -74,7 +74,7 @@ export default function PageTopics (): ReactElement {
             revealText: json.response[i].revealText,
             pronunciation: json.response[i].pronunciation,
             imageUrl: Config.REACT_APP_MEDIA_URL + (json.response[i].imageUrl as string),
-            audio: new Audio(Config.REACT_APP_MEDIA_URL + '/resources/audio/' + (json.response[i].audioUrl as string))
+            audio: new Audio(Config.REACT_APP_MEDIA_URL + (json.response[i].audioUrl as string))
           }
           newCards.push(card)
         }

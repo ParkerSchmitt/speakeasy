@@ -9,6 +9,7 @@
     "@opentelemetry/instrumentation-winston": "^0.31.4",
     "@opentelemetry/sdk-node": "^0.41.0",
     "@react-spring/web": "^9.6.1",
+    "@sendgrid/mail": "^7.7.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

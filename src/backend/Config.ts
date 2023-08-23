@@ -27,6 +27,7 @@ interface ConfigInterface {
   SESSION_SAVE_UNINITALIZED: boolean
   OTEL_RESOURCE_ATTRIBUTES: string
   OTEL_EXPORT_URL: string
+  SENDGRID_API_KEY: string
 }
 // Loading process.env as ENV interface
 const getConfig = (): Partial<ConfigInterface> => {
@@ -55,8 +56,8 @@ const getConfig = (): Partial<ConfigInterface> => {
     SESSION_COOKIE_MAX_AGE: (process.env.SESSION_COOKIE_MAX_AGE != null) ? Number(process.env.SESSION_COOKIE_MAX_AGE) : undefined,
     SESSION_SAVE_UNINITALIZED: (process.env.SESSION_SAVE_UNINITALIZED != null) ? Boolean(process.env.SESSION_SAVE_UNINITALIZED) : undefined,
     OTEL_RESOURCE_ATTRIBUTES: (process.env.OTEL_RESOURCE_ATTRIBUTES != null) ? String(process.env.OTEL_RESOURCE_ATTRIBUTES) : undefined,
-    OTEL_EXPORT_URL: (process.env.OTEL_EXPORT_URL != null) ? String(process.env.OTEL_EXPORT_URL) : undefined
-
+    OTEL_EXPORT_URL: (process.env.OTEL_EXPORT_URL != null) ? String(process.env.OTEL_EXPORT_URL) : undefined,
+    SENDGRID_API_KEY: (process.env.SENDGRID_API_KEY != null) ? String(process.env.SENDGRID_API_KEY) : undefined
   }
 }
 // Throwing an Error if any field was undefined we don't

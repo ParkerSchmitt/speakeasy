@@ -6,6 +6,8 @@ import AccountController from "./AccountController";
 import request from 'supertest';
 import session from "express-session";
 import { type Client } from "pg";
+import { MailerMock } from "../mocks/MailerMock";
+import { type Mailer } from "../utils/mailer/Mailer";
 
 describe('AccountController', () => {
 
@@ -29,12 +31,14 @@ describe('AccountController', () => {
       Repository: new AccountRepository({
         client: client,
         tableName: "accounts"
-      })
+      }),
+      Mailer: new MailerMock({SENDGRID_API_KEY: "testKey"}) as Mailer
     })
   })
 
   app.post('/register', accountController.PostReceiveSignup)
   app.post('/authenticate', accountController.PostReceiveSignin)
+  app.get('/account/verify/:verificationToken', accountController.GetVerifyEmail)
 
   // Makes sure all requests are interpreted correctly
   it.each([
@@ -88,4 +92,19 @@ describe('AccountController', () => {
     }
   );
 
+  // Makes sure all requests are interpreted correctly
+  it.each([
+    ["testToken", 200],
+    [null, 400],
+    ["noAccountHasThisToken", 401],
+  ])(
+    `should return proper structure given authenticate request`,
+    async (token, status) => {
+
+      const res = await request(app)
+        .get(`/account/verify/${token}`)
+      expect(res.status).toEqual(status);
+      expect(res.body).toHaveProperty('code');
+    }
+  );
 })

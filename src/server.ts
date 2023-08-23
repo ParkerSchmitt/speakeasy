@@ -12,6 +12,7 @@ import { type CardAccountType } from './backend/types/CardAccountType'
 import Config from './backend/Config'
 import { Client } from 'pg'
 import { logger } from './backend/Logger'
+import { Mailer } from './backend/utils/mailer/Mailer'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
@@ -61,6 +62,9 @@ const setup = async (): Promise<void> => {
         Repository: new AccountRepository({
           tableName: Config.ACCOUNT_TABLE_NAME,
           client
+        }),
+        Mailer: new Mailer({
+          SENDGRID_API_KEY: Config.SENDGRID_API_KEY
         })
       })
     })
@@ -83,6 +87,8 @@ const setup = async (): Promise<void> => {
     app.post('/authenticate', accountController.PostReceiveSignin)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/isAuthenticated', accountController.GetIsAuthenticated)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.get('/account/verify/:verificationToken', accountController.GetVerifyEmail)
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/topics', topicsController.GetReceiveTopics)

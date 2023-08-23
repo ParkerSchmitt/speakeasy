@@ -3,15 +3,20 @@ import { type SignInRequest } from '../controllers/viewmodels/SignInRequest'
 import type AccountRepository from '../repositories/AccountRepository'
 import { createHash, randomBytes } from 'crypto'
 import { logger } from '../Logger'
+import { SignupTemplate } from '../utils/mailer/templates/SignupTemplate'
+import { type Mailer } from '../utils/mailer/Mailer'
 export const AccountExistsError: Error = new Error('Account already exists')
 export const InvalidCredentialsError: Error = new Error('Invalid email or password')
+export const InvalidTokenError: Error = new Error('Invalid token')
 
 export interface AccountMediatorConfig {
   Repository: AccountRepository
+  Mailer: Mailer
 }
 
 class AccountMediator {
   repository: AccountRepository
+  mailer: Mailer
 
   /**
     * Creates the AccountMediator
@@ -19,6 +24,7 @@ class AccountMediator {
     */
   constructor (config: AccountMediatorConfig) {
     this.repository = config.Repository
+    this.mailer = config.Mailer
   }
 
   /**
@@ -33,9 +39,11 @@ class AccountMediator {
       } else {
         // Generate hash and salt for password for security
         const passwordSalt = randomBytes(32).toString('hex')
-
         const passwordHash: string = createHash('sha256').update(request.password + passwordSalt, 'utf8').digest('hex')
-        await this.repository.insertAccount(request.email, request.firstName, request.lastName, passwordHash, passwordSalt)
+
+        const verifyToken = randomBytes(128).toString('utf8')
+        await this.mailer.sendTemplatedEmail(new SignupTemplate(request, verifyToken), request.email)
+        await this.repository.insertAccount(request.email, request.firstName, request.lastName, passwordHash, passwordSalt, verifyToken, false)
       }
     } catch (error) {
       const message = 'Unknown Error'
@@ -71,6 +79,29 @@ class AccountMediator {
       const message = 'Unknown Error'
       if (error instanceof Error) {
         logger.error(`AccountMediator.PostReceiveSignin error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * GetVerifyEmail attempts to authenticate the user's email from a given token from a signup email
+    * @param token - the token from the signup request,
+    * @returns void - updates the email to be verified.
+    */
+  async GetVerifyEmail (token: string): Promise<void> {
+    try {
+      const accountId = await this.repository.retrieveAccountIdFromToken(token)
+      if (accountId === null) {
+        throw InvalidTokenError
+      }
+      await this.repository.setEmailVerified(accountId, true)
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetVerifyEmail error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)

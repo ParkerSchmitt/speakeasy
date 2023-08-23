@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import type SignUpMediator from '../mediators/AccountMediator'
-import { AccountExistsError, InvalidCredentialsError } from '../mediators/AccountMediator'
+import { AccountExistsError, InvalidCredentialsError, InvalidTokenError } from '../mediators/AccountMediator'
 import { SignUpRequest } from './viewmodels/SignUpRequest'
 import { SignInRequest } from './viewmodels/SignInRequest'
 import { logger } from '../Logger'
@@ -104,6 +104,33 @@ class AccountController {
       res.status(200).json({ code: 200, response: true })
     } else {
       res.status(200).json({ code: 200, response: false })
+    }
+  }
+
+  /**
+     * GetVerifyEmail sees if there exist a email corresponding to the verification token sent. If there is update the database.
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+  GetVerifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (req.params.verificationToken !== undefined && req.params.verificationToken !== null) {
+        await this.mediator.GetVerifyEmail(req.params.verificationToken)
+        res.status(200).json({ code: 200, response: true })
+      } else {
+        res.status(200).json({ code: 400, response: false })
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error === InvalidTokenError) {
+          res.status(401).json({ code: 401, response: 'Invalid authentication token' })
+        } else {
+          logger.error(`AccountController.GetVerifyEmail error ${error.toString()}`)
+          res.status(400).json({ code: 400, error: error.message })
+        }
+      }
     }
   }
 }

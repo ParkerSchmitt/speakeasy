@@ -1,4 +1,4 @@
-import * as sendgrid from '@sendgrid/mail'
+import sgMail from '@sendgrid/mail'
 import { type Template } from './templates/TemplateInterface'
 import { logger } from '../../Logger'
 
@@ -8,18 +8,26 @@ export interface MailerConfig {
 
 export class Mailer {
   constructor (config: MailerConfig) {
-    sendgrid.setApiKey(config.SENDGRID_API_KEY)
+    try {
+      sgMail.setApiKey(config.SENDGRID_API_KEY)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async sendTemplatedEmail (template: Template, toEmailAddress: string): Promise<void> {
-    sendgrid.send({
+    sgMail.send({
       to: toEmailAddress,
       from: template.fromEmailAddress,
       subject: template.title,
       text: template.displayMessage,
       templateId: template.id,
-      dynamicTemplateData: template.injectedValues
+      dynamicTemplateData: template.injectedValues,
+      html: '&nbsp;'
+    }).then(() => {
+      console.log('Sent!')
     }).catch((error) => {
+      console.log(error)
       logger.info('Mailer.sendTemplatedEmail', error)
     })
   }

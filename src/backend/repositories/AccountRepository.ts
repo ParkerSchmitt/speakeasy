@@ -1,5 +1,6 @@
 import { type Client } from 'pg'
 import { logger } from '../Logger'
+import { type AccountType } from '../types/AccountType'
 
 export interface AccountRepositoryConfig {
   tableName: string
@@ -37,21 +38,18 @@ class AccountRepository {
   }
 
   /**
-     * retrieveHashAndSalt attempts to find the given hash and salt for a certain email
+     * retrieveAccountDTO attempts to find the given account information given an email
      * @param email the email to check for
      * @returns a object, OR null if there is nothing for the given email (email doesn't exist). {hash: string, salt: string}
      */
-  async retrieveHashAndSalt (email: string): Promise<{ id: number, hash: string, salt: string } | null> {
-    const query = `SELECT id, "passwordHash", "passwordSalt" FROM ${this.tableName} WHERE email=$1`
+  async retrieveAccountDTO (email: string): Promise<AccountType | null> {
+    const query = `SELECT id, "email", "firstName", "lastName", "passwordHash", "passwordSalt", "emailVerificationToken", "isEmailAuthenticated" FROM ${this.tableName} WHERE email=$1`
     const values = [email]
     const result = await this.client.query(query, values)
     if (result.rowCount === 0) {
       return null
     } else {
-      const id = result.rows[0].id
-      const hash = result.rows[0].passwordHash
-      const salt = result.rows[0].passwordSalt
-      return { id, hash, salt }
+      return { ...result.rows[0] }
     }
   }
 

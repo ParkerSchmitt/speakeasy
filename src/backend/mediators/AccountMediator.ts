@@ -5,7 +5,9 @@ import { createHash, randomBytes } from 'crypto'
 import { logger } from '../Logger'
 import { SignupTemplate } from '../utils/mailer/templates/SignupTemplate'
 import { type Mailer } from '../utils/mailer/Mailer'
+import { type AccountType } from '../types/AccountType'
 export const AccountExistsError: Error = new Error('Account already exists')
+export const AccountNotCreatedError: Error = new Error('Can not retrieve account credentials after creation')
 export const InvalidCredentialsError: Error = new Error('Invalid email or password')
 export const InvalidTokenError: Error = new Error('Invalid token')
 
@@ -31,7 +33,7 @@ class AccountMediator {
     * PostReceiveSignup registers an account inside the database
     * @param request the viewmodel of the POST request. Includes email, first name, last name, and password.
     */
-  async PostReceiveSignup (request: SignUpRequest): Promise<void> {
+  async PostReceiveSignup (request: SignUpRequest): Promise<number> {
     try {
       const exists = await this.repository.emailExists(request.email)
       if (exists) {
@@ -41,9 +43,24 @@ class AccountMediator {
         const passwordSalt = randomBytes(32).toString('hex')
         const passwordHash: string = createHash('sha256').update(request.password + passwordSalt, 'utf8').digest('hex')
 
-        const verifyToken = randomBytes(128).toString('utf8')
-        await this.mailer.sendTemplatedEmail(new SignupTemplate(request, verifyToken), request.email)
+        // Create base64 url safe string
+        const verifyToken = randomBytes(64).toString('base64').replace(/\//g, '_').replace(/\+/g, '-')
+
+        await this.mailer.sendTemplatedEmail(
+          new SignupTemplate(
+            {
+              firstName: request.firstName,
+              lastName: request.lastName,
+              verifyToken
+            }
+          ),
+          request.email)
         await this.repository.insertAccount(request.email, request.firstName, request.lastName, passwordHash, passwordSalt, verifyToken, false)
+        const accountDTO = await this.repository.retrieveAccountDTO(request.email)
+        if (accountDTO === null) {
+          throw AccountNotCreatedError
+        }
+        return accountDTO.id
       }
     } catch (error) {
       const message = 'Unknown Error'
@@ -63,12 +80,12 @@ class AccountMediator {
     */
   async PostReceiveSignin (request: SignInRequest): Promise<number> {
     try {
-      const retrieveObj = await this.repository.retrieveHashAndSalt(request.email)
+      const retrieveObj = await this.repository.retrieveAccountDTO(request.email)
       if (retrieveObj === null) {
         throw InvalidCredentialsError
       }
-      const hash: string = retrieveObj.hash
-      const salt: string = retrieveObj.salt
+      const hash: string = retrieveObj.passwordHash
+      const salt: string = retrieveObj.passwordSalt
 
       const passwordAttemptHash: string = createHash('sha256').update(request.password + salt, 'utf8').digest('hex')
       if (passwordAttemptHash !== hash) {
@@ -98,6 +115,34 @@ class AccountMediator {
         throw InvalidTokenError
       }
       await this.repository.setEmailVerified(accountId, true)
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetVerifyEmail error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * GetResendVerifyEmail attempts to authenticate the user's email from a given token from a signup email
+    * @param token - the recreated signup request the user made.
+    * @param token - the token from the signup request,
+    * @returns void - updates the email to be verified.
+    */
+  async GetResendVerifyEmail (user: AccountType): Promise<void> {
+    try {
+      await this.mailer.sendTemplatedEmail(
+        new SignupTemplate(
+          {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            verifyToken: user.emailVerificationToken
+          }
+        ),
+        user.email)
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import { type Request, type Response, type NextFunction } from 'express'
 import type SignUpMediator from '../mediators/AccountMediator'
 import { AccountExistsError, InvalidCredentialsError, InvalidTokenError } from '../mediators/AccountMediator'
@@ -33,7 +34,10 @@ class AccountController {
     }
     try {
       const requestObj = SignUpRequest.parse(req.body)
-      await this.mediator.PostReceiveSignup(requestObj)
+      const accountId = await this.mediator.PostReceiveSignup(requestObj)
+      const session = req.session
+      session.accountId = accountId
+      session.isVerified = false
     } catch (error) {
       const message = 'Could not process request'
       if (error instanceof Error) {
@@ -100,7 +104,7 @@ class AccountController {
      */
   GetIsAuthenticated = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const session = req.session
-    if (session.accountId !== undefined) {
+    if (session.accountId !== undefined && session.isVerified !== undefined && session.isVerified) {
       res.status(200).json({ code: 200, response: true })
     } else {
       res.status(200).json({ code: 200, response: false })
@@ -116,11 +120,11 @@ class AccountController {
      */
   GetVerifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      if (req.params.verificationToken !== undefined && req.params.verificationToken !== null) {
+      if (req.params.verificationToken.length > 0 && req.params.verificationToken !== null) {
         await this.mediator.GetVerifyEmail(req.params.verificationToken)
         res.status(200).json({ code: 200, response: true })
       } else {
-        res.status(200).json({ code: 400, response: false })
+        res.status(400).json({ code: 400, response: false })
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -130,6 +134,29 @@ class AccountController {
           logger.error(`AccountController.GetVerifyEmail error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }
+      }
+    }
+  }
+
+  /**
+   * GetResendVerifyEmail attempts to resend an email to a user's email
+   * @param req the Express request
+   * @param res the Express response
+   * @param next the next middleware
+   * @returns a void promise
+   */
+  GetResendVerifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const session = req.session
+      if (session.accountId !== undefined) {
+        res.status(200).json({ code: 200, response: 'Verification has been resent' })
+      } else {
+        res.status(401).json({ code: 401, response: 'No active session to resend verifcation for' })
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+          logger.error(`AccountController.GetResendVerifyEmail error ${error.toString()}`)
+          res.status(500).json({ code: 500, error: error.message })
       }
     }
   }

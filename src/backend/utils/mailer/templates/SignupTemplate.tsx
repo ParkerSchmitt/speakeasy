@@ -1,17 +1,23 @@
-import { type SignUpRequest } from '../../../controllers/viewmodels/SignUpRequest'
 import { type Template } from './TemplateInterface'
+
+export interface SignupTemplateConfig {
+  firstName: string
+  lastName: string
+  verifyToken: string
+}
 
 export class SignupTemplate implements Template {
   fromEmailAddress: string = 'no-reply@speakeasy.cards'
   title: string = 'Signup Template'
-  id: string = 'testId'
+  id: string = 'd-a860a1d4c0b740e693b31e17ac6aff98'
   displayMessage: string = 'Thank you for joining! Please verify your account below'
   injectedValues: Record<string, any> | undefined = undefined
 
-  constructor (request: SignUpRequest, verifyToken: string) {
+  constructor (request: SignupTemplateConfig) {
     this.injectedValues = {
-      request,
-      verifyToken
+      first_name: request.firstName,
+      last_name: request.lastName,
+      button_href: `https://speakeasy.cards/account/verify/${request.verifyToken}`
     }
   }
 }

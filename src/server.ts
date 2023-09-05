@@ -21,6 +21,7 @@ declare module 'express-session' {
   interface SessionData {
     accountId: number
     activeReviews: Record<string, CardAccountType[]> // topic: string, Cards to review: CardType[]:
+    isVerified: boolean
   }
 }
 
@@ -56,6 +57,9 @@ const setup = async (): Promise<void> => {
       port: Config.SQL_PORT
     })
     await client.connect()
+      .catch((err) => {
+        logger.error('server.setup error', err)
+      })
 
     const accountController = new AccountController({
       Mediator: new AccountMediator({
@@ -68,6 +72,7 @@ const setup = async (): Promise<void> => {
         })
       })
     })
+
     const topicsController = new TopicController({
       Mediator: new TopicMediator({
         MaxCards: Config.MAX_CARDS,
@@ -88,7 +93,9 @@ const setup = async (): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/isAuthenticated', accountController.GetIsAuthenticated)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    app.get('/account/verify/:verificationToken', accountController.GetVerifyEmail)
+    app.put('/account/verify/:verificationToken', accountController.GetVerifyEmail)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.post('/account/verify/resend', accountController.GetResendVerifyEmail)
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/topics', topicsController.GetReceiveTopics)

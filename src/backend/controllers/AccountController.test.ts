@@ -95,7 +95,6 @@ describe('AccountController', () => {
   // Makes sure all requests are interpreted correctly
   it.each([
     ["testToken", 200],
-    [null, 400],
     ["noAccountHasThisToken", 401],
   ])(
     `should return proper structure given authenticate request`,

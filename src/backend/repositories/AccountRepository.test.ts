@@ -8,7 +8,7 @@ describe('AccountRepository',  () => {
 
     it('should create database in memory', async () => {
         await client.query('CREATE TABLE accounts (id SERIAL, email character varying(320), "firstName" character varying(255), "lastName" character varying(255), "passwordHash" character varying(255), "passwordSalt" character varying(32), "emailVerificationToken" character varying (128), "isEmailAuthenticated" boolean)')
-        await client.query(`INSERT INTO accounts (email, "firstName", "lastName", "passwordHash", "passwordSalt", "emailVerificationToken", "isEmailAuthenticated") VALUES('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f', '', true)`)
+        await client.query(`INSERT INTO accounts (email, "firstName", "lastName", "passwordHash", "passwordSalt", "emailVerificationToken", "isEmailAuthenticated") VALUES('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f', 'testToken', false)`)
 
         AccountRepositoryCorrectTable = new AccountRepository({
             tableName: 'accounts',
@@ -59,16 +59,23 @@ describe('AccountRepository',  () => {
 
      // Makes sure that we can retrieve the email and hash
      it.each([
-        ["abc@test.com",2 ,"asnkfjdksfkdsnkj12334231", "dsfdsf13e423"], //from previous test
+        ["abc@test.com",2 ,"asnkfjdksfkdsnkj12334231", "dsfdsf13e423", "John", "Smith", false, "testToken"], //from previous test
     ])(
         `should retrieve correct email and hash`,
-        async (email, correctAccountId, correctHash,correctSalt) => {
-            const responseObj = await AccountRepositoryCorrectTable.retrieveHashAndSalt(email)
+        async (email, correctAccountId, correctHash,correctSalt, correctFirstName, correctLastName, correctIsEmailAuthenticated, correctEmailVerificationToken) => {
+            const responseObj = await AccountRepositoryCorrectTable.retrieveAccountDTO(email)
     
             expect(responseObj).not.toBeNull()
             expect(responseObj!.id).toEqual(correctAccountId)
-            expect(responseObj!.hash).toEqual(correctHash)
-            expect(responseObj!.salt).toEqual(correctSalt)
+            expect(responseObj!.passwordHash).toEqual(correctHash)
+            expect(responseObj!.passwordSalt).toEqual(correctSalt)
+            expect(responseObj!.email).toEqual(email)
+            expect(responseObj!.firstName).toEqual(correctFirstName)
+            expect(responseObj!.lastName).toEqual(correctLastName)
+            expect(responseObj!.isEmailAuthenticated).toEqual(correctIsEmailAuthenticated)
+            expect(responseObj!.emailVerificationToken).toEqual(correctEmailVerificationToken)
+
+
         }
     );
 
@@ -101,5 +108,5 @@ describe('AccountRepository',  () => {
             expect(result.rows[0].emailVerificationToken).toEqual("")
             expect(result.rows[0].isEmailAuthenticated).toEqual(verifiedStatus)
         }
-    );    
+    ); 
 });

@@ -33,7 +33,7 @@ class AccountMediator {
     * PostReceiveSignup registers an account inside the database
     * @param request the viewmodel of the POST request. Includes email, first name, last name, and password.
     */
-  async PostReceiveSignup (request: SignUpRequest): Promise<number> {
+  async PostReceiveSignup (request: SignUpRequest): Promise< AccountType > {
     try {
       const exists = await this.repository.emailExists(request.email)
       if (exists) {
@@ -60,7 +60,7 @@ class AccountMediator {
         if (accountDTO === null) {
           throw AccountNotCreatedError
         }
-        return accountDTO.id
+        return accountDTO
       }
     } catch (error) {
       const message = 'Unknown Error'
@@ -76,9 +76,9 @@ class AccountMediator {
   /**
     * PostReceiveSignin attempts to authenticate the user with the repository.
     * @param request the viewmodel of the POST request. Includes email, and password.
-    * @returns the userid if successful login
+    * @returns the accountDTO
     */
-  async PostReceiveSignin (request: SignInRequest): Promise<number> {
+  async PostReceiveSignin (request: SignInRequest): Promise<AccountType> {
     try {
       const retrieveObj = await this.repository.retrieveAccountDTO(request.email)
       if (retrieveObj === null) {
@@ -91,7 +91,7 @@ class AccountMediator {
       if (passwordAttemptHash !== hash) {
         throw InvalidCredentialsError
       }
-      return retrieveObj.id
+      return retrieveObj
     } catch (error) {
       const message = 'Unknown Error'
       if (error instanceof Error) {

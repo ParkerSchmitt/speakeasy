@@ -6,5 +6,5 @@ export interface AccountType {
   passwordHash: string
   passwordSalt: string
   emailVerificationToken: string
-  isEmailAuthenticated: string
+  isEmailAuthenticated: boolean
 }

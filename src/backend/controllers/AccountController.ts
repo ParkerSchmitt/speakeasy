@@ -34,10 +34,9 @@ class AccountController {
     }
     try {
       const requestObj = SignUpRequest.parse(req.body)
-      const accountId = await this.mediator.PostReceiveSignup(requestObj)
+      const account = await this.mediator.PostReceiveSignup(requestObj)
       const session = req.session
-      session.accountId = accountId
-      session.isVerified = false
+      session.account = account
     } catch (error) {
       const message = 'Could not process request'
       if (error instanceof Error) {
@@ -73,10 +72,10 @@ class AccountController {
     let requestObj: SignInRequest
     try {
       requestObj = SignInRequest.parse(req.body)
-      const accountId = await this.mediator.PostReceiveSignin(requestObj)
+      const account = await this.mediator.PostReceiveSignin(requestObj)
       // No errors were thrown. user successfully authenticated.
       const session = req.session
-      session.accountId = accountId
+      session.account = account
     } catch (error) {
       const message = 'Could not process request'
       if (error instanceof Error) {
@@ -104,7 +103,7 @@ class AccountController {
      */
   GetIsAuthenticated = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const session = req.session
-    if (session.accountId !== undefined && session.isVerified !== undefined && session.isVerified) {
+    if ((session.account?.isEmailAuthenticated) !== null && (session.account?.isEmailAuthenticated) === true) {
       res.status(200).json({ code: 200, response: true })
     } else {
       res.status(200).json({ code: 200, response: false })
@@ -122,6 +121,12 @@ class AccountController {
     try {
       if (req.params.verificationToken.length > 0 && req.params.verificationToken !== null) {
         await this.mediator.GetVerifyEmail(req.params.verificationToken)
+
+        // If they have a current session (which they should if they verified right after signup, make access easy)
+        if (req.session.account?.isEmailAuthenticated !== undefined) {
+          req.session.account.isEmailAuthenticated = true
+        }
+
         res.status(200).json({ code: 200, response: true })
       } else {
         res.status(400).json({ code: 400, response: false })
@@ -148,7 +153,8 @@ class AccountController {
   GetResendVerifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const session = req.session
-      if (session.accountId !== undefined) {
+      if (session.account !== undefined) {
+        await this.mediator.GetResendVerifyEmail(session.account)
         res.status(200).json({ code: 200, response: 'Verification has been resent' })
       } else {
         res.status(401).json({ code: 401, response: 'No active session to resend verifcation for' })

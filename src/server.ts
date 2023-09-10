@@ -13,15 +13,15 @@ import Config from './backend/Config'
 import { Client } from 'pg'
 import { logger } from './backend/Logger'
 import { Mailer } from './backend/utils/mailer/Mailer'
+import { type AccountType } from './backend/types/AccountType'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
 
 declare module 'express-session' {
   interface SessionData {
-    accountId: number
+    account: AccountType
     activeReviews: Record<string, CardAccountType[]> // topic: string, Cards to review: CardType[]:
-    isVerified: boolean
   }
 }
 

@@ -8,16 +8,20 @@ import { CardAccountType } from '../types/CardAccountType';
 import TopicMediator from './TopicMediator';
 import TopicsMediator from './TopicMediator';
 import { type Client } from 'pg';
+import {type AccountType } from './../types/AccountType'
 
 declare module 'express-session' {
     interface SessionData {
-      accountId: number
-      activeReviews: Record<string, CardAccountType[]> // topic: string, Cards to review: CardType[]:
+        account: AccountType
+        activeReviews: Record<string, CardAccountType[]> // topic: string, Cards to review: CardType[]:
     }
   }
 
 describe('TopicMediator',  () => {
     let TopicMediatorCorrectTable : TopicsMediator
+    const testAccount1 = { id: 1, email: "test@test.com", firstName: "Apple", lastName: "Rose", passwordHash: "xyz", passwordSalt: "abc", emailVerificationToken: "123", isEmailAuthenticated: true }
+    const testAccount2 = { id: 2, email: "john.smith@test.com", firstName: "John", lastName: "Smith", passwordHash: "xyz", passwordSalt: "abc", emailVerificationToken: "123", isEmailAuthenticated: true }
+
     let client = new DatabaseMock() as Client
 
     it('should create repository in memory', async () => {
@@ -81,7 +85,7 @@ describe('TopicMediator',  () => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
-                accountId: 2,
+                account: testAccount2,
                 activeReviews: undefined,
                 cookie: new Cookie,
                 regenerate: function (callback: (err: any) => void): session.Session {
@@ -111,20 +115,21 @@ describe('TopicMediator',  () => {
 
             const result = await TopicMediatorCorrectTable.PostReceiveCards(session, 1775734233, request);
             expect(result).toEqual(expectedObject);
-
         }
     );
 
     // Makes sure it retrieves a existing (learned) cardform the database.
     it.each([
-        [ 1, 1, [{"audioUrl": "test/url.wav", "id": 1, "imageUrl": "test/url.png", "previewText": "Casa", "pronunciation": "cah-sah", "revealText": "Home", "scheduledCard": true, "topicId": 1}]],
+        [ testAccount1,
+         1,
+         [{"audioUrl": "test/url.wav", "id": 1, "imageUrl": "test/url.png", "previewText": "Casa", "pronunciation": "cah-sah", "revealText": "Home", "scheduledCard": true, "topicId": 1}]],
        ])(
         `should retrieve a single learned card from the database`,
-        async (accountId, amount, expectedObbject) => {
+        async (account, amount, expectedObbject) => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
-                accountId: accountId,
+                account: account,
                 activeReviews: undefined,
                 cookie: new Cookie,
                 regenerate: function (callback: (err: any) => void): session.Session {
@@ -158,19 +163,19 @@ describe('TopicMediator',  () => {
 
     // Makes sure it inserts a learned card into reviewed storage if quality is 0 or 1
     it.each([
-        [ 1, 1, 0, undefined,    { "audioUrl": "test/url.wav",
+        [ testAccount1, 1, 0, undefined,    { "audioUrl": "test/url.wav",
         "datetime": 1675734233, "easiness": 5.3, "id": 1, "imageUrl": "test/url.png", "interval": 5, "previewText": "Casa", "pronunciation": "cah-sah", "repetitions": 3, "revealText": "Home", "topicId": 1, "topic": "Test"}],
       //Make sure duplicates don't get added.
-        [ 1, 1, 0, {"Test": [{ "audioUrl": "test/url.wav",
+        [ testAccount1, 1, 0, {"Test": [{ "audioUrl": "test/url.wav",
       "datetime": 1675734233, "easiness": 5.3, "id": 1, "imageUrl": "test/url.png", "interval": 5, "previewText": "Casa", "pronunciation": "cah-sah", "repetitions": 3, "revealText": "Home", "topicId": 1, "topic": "Test"}]},  { "audioUrl": "test/url.wav",
        "datetime": 1675734233, "easiness": 5.3, "id": 1, "imageUrl": "test/url.png", "interval": 5, "previewText": "Casa", "pronunciation": "cah-sah", "repetitions": 3, "revealText": "Home", "topicId": 1, "topic": "Test"}],
     ])(
         `should insert a single learned card into the session review storage`,
-        async (accountId, cardId, quality, startingActiveReviews, expectedObject) => {
+        async (account, cardId, quality, startingActiveReviews, expectedObject) => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
-                accountId: accountId,
+                account: account,
                 activeReviews: startingActiveReviews,
                 cookie: new Cookie,
                 regenerate: function (callback: (err: any) => void): session.Session {
@@ -205,16 +210,16 @@ describe('TopicMediator',  () => {
 
      // Makes sure it updates a card if it is learned into the db
      it.each([
-        [ 1, 2, 3, 1],
-        [ 1, 3, 3, 1],
+        [ testAccount1, 2, 3, 1],
+        [ testAccount1, 3, 3, 1],
 
     ])(
         `should insert a single learned card into the data review storage`,
-        async (accountId, cardId, quality) => {
+        async (account, cardId, quality) => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
-                accountId: accountId,
+                account: account,
                 activeReviews: undefined,
                 cookie: new Cookie,
                 regenerate: function (callback: (err: any) => void): session.Session {
@@ -242,9 +247,9 @@ describe('TopicMediator',  () => {
                 topic: 'Test'
             }
 
-            const rowAmountBefore = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
+            const rowAmountBefore = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [account.id]))).rowCount
             await TopicMediatorCorrectTable.PostSaveCard(session, 1875734233, request);
-            const rowAmountAfter = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
+            const rowAmountAfter = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [account.id]))).rowCount
             
             expect(rowAmountAfter).toBe(rowAmountBefore+1);        
         }
@@ -252,16 +257,16 @@ describe('TopicMediator',  () => {
 
     // Makes sure it doesn't insert a new card (because it should exist already)
     it.each([
-        [ 1, 2, 3, 1],
-        [ 1, 3, 3, 1],
+        [ testAccount1, 2, 3, 1],
+        [ testAccount1, 3, 3, 1],
 
     ])(
         `should not insert a duplicate learned card into the data review storage`,
-        async (accountId, cardId, quality) => {
+        async (account, cardId, quality) => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
-                accountId: accountId,
+                account: account,
                 activeReviews: undefined,
                 cookie: new Cookie,
                 regenerate: function (callback: (err: any) => void): session.Session {
@@ -290,9 +295,9 @@ describe('TopicMediator',  () => {
             }
 
 
-            const rowAmountBefore = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
+            const rowAmountBefore = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [account.id]))).rowCount
             await TopicMediatorCorrectTable.PostSaveCard(session, 1875734233, request);
-            const rowAmountAfter = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [accountId]))).rowCount
+            const rowAmountAfter = (await (client.query("SELECT * FROM cards_accounts WHERE account_id = $1", [account.id]))).rowCount
             
             expect(rowAmountAfter).toBe(rowAmountBefore);        
         }
@@ -300,14 +305,14 @@ describe('TopicMediator',  () => {
 
        // Makes sure it adds a new report card
        it.each([
-        ['test', 1,1,'reveal','incorrect','Spelled wrong'],
+        ['test',testAccount1,1,'reveal','incorrect','Spelled wrong'],
     ])(
         `shouldd insert a users report for a card`,
-        async (topic, accountId, cardId, type, reason, comment) => {
+        async (topic, account, cardId, type, reason, comment) => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
-                accountId: accountId,
+                account: account,
                 activeReviews: undefined,
                 cookie: new Cookie,
                 regenerate: function (callback: (err: any) => void): session.Session {
@@ -337,9 +342,9 @@ describe('TopicMediator',  () => {
                 comment: comment
             }
             
-            const rowAmountBefore = (await (client.query("SELECT * FROM cards_reports WHERE account_id = $1", [accountId]))).rowCount
+            const rowAmountBefore = (await (client.query("SELECT * FROM cards_reports WHERE account_id = $1", [account.id]))).rowCount
             await TopicMediatorCorrectTable.PostReportCard(session, request);
-            const rowAmountAfter = (await (client.query("SELECT * FROM cards_reports WHERE account_id = $1", [accountId]))).rowCount
+            const rowAmountAfter = (await (client.query("SELECT * FROM cards_reports WHERE account_id = $1", [account.id]))).rowCount
 
               expect(rowAmountAfter).toBe(rowAmountBefore + 1);        
         }

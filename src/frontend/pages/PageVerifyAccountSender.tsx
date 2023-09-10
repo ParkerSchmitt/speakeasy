@@ -42,10 +42,7 @@ function PageVerifyAccount (): ReactElement {
         .then(async response => {
           if (response.status === 200) {
             setIsVerified(true)
-            const timer = setTimeout(() => {
-              navigate('/topics')
-            }, 1000) // Navigate after one second
-            clearTimeout(timer)
+            navigate('/topics')
           } else {
             toast.error("Error verifying email", {
               position: toast.POSITION.TOP_CENTER,

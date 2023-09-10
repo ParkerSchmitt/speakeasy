@@ -7,6 +7,8 @@ import PageTopics from './pages/PageTopics'
 // import { ProtectedRoute } from './components/ProtectedRoute'
 import PageLearn from './pages/PageLearn'
 import PageIndex from './pages/PageIndex'
+import PageVerifyAccount from './pages/PageVerifyAccountAlert'
+import PageVerifyAccountSender from './pages/PageVerifyAccountSender'
 
 function Router (): ReactElement {
   return (
@@ -14,6 +16,8 @@ function Router (): ReactElement {
       <Route path="/" element={ <PageIndex /> } />
       <Route path="/login" element={ <PageLogin /> } />
       <Route path="/register" element={ <PageRegister /> } />
+      <Route path="/account/verify/:token" element={<PageVerifyAccountSender/>} />
+      <Route path="/account/verify/" element={<PageVerifyAccount/>} />
         <Route path="/topics" element={
     //      <ProtectedRoute>
             <PageTopics/>

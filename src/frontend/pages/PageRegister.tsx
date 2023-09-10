@@ -62,6 +62,7 @@ function PageRegister (): ReactElement {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
+      credentials: 'include',
       body: JSON.stringify({
         email,
         firstName,
@@ -71,7 +72,7 @@ function PageRegister (): ReactElement {
     })
       .then(async response => {
         if (response.status === 200) {
-          navigate('/login')
+          navigate('/account/verify')
         }
       }).catch((error) => {
         throw error

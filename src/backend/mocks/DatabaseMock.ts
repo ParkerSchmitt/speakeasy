@@ -8,10 +8,10 @@ export default class DatabaseMock extends Client {
     })
     // Account SQL
 
-    this.query('CREATE TABLE accounts (id SERIAL, email character varying(320), "firstName" character varying(255), "lastName" character varying(255), "passwordHash" character varying(255), "passwordSalt" character varying(64))')
+    this.query('CREATE TABLE accounts (id SERIAL, email character varying(320), "firstName" character varying(255), "lastName" character varying(255), "passwordHash" character varying(255), "passwordSalt" character varying(64), "emailVerificationToken" character varying (128), "isEmailAuthenticated" boolean)')
 
     // eslint-disable-next-line @typescript-eslint/quotes
-    this.query(`INSERT INTO accounts (email, "firstName", "lastName", "passwordHash", "passwordSalt") VALUES('passwordis1234@itis.true','Joe','Adams','fe21dda9e3f5ae922a237f1a8e5d6bc9edde35da229694bec8939c1275cd2748','ad9318d8ddafd4310565870e81e792d6746e05a20f8665d48dfeea3847ff2e53'), ('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f')`)
+    this.query(`INSERT INTO accounts (email, "firstName", "lastName", "passwordHash", "passwordSalt", "emailVerificationToken", "isEmailAuthenticated") VALUES('passwordis1234@itis.true','Joe','Adams','fe21dda9e3f5ae922a237f1a8e5d6bc9edde35da229694bec8939c1275cd2748','ad9318d8ddafd4310565870e81e792d6746e05a20f8665d48dfeea3847ff2e53', 'testToken', false), ('duplicate@test.com','Adam','Smith','AAfnsadjni123huh2f3i23r23','sdfdsfds122121f', '', true)`)
     // Topic SQL
 
     // eslint-disable-next-line @typescript-eslint/quotes

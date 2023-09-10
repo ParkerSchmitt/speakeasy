@@ -50,11 +50,11 @@ class TopicController {
       res.status(400).json({ code: 400, response: 'No topic found' })
       return
     }
-    if (req.session.accountId === undefined) {
+    if (req.session.account === undefined || !req.session.account.isEmailAuthenticated) {
       res.status(500).json({ code: 500, response: 'Must be authorized' })
     } else {
       try {
-        const responseObj = await this.mediator.GetReceiveTopicsPercentage(req.session.accountId, req.params.topicName)
+        const responseObj = await this.mediator.GetReceiveTopicsPercentage(req.session.account.id, req.params.topicName)
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
@@ -77,11 +77,11 @@ class TopicController {
       res.status(400).json({ code: 400, response: 'No topic found' })
       return
     }
-    if (req.session.accountId === undefined) {
+    if (req.session.account === undefined || !req.session.account.isEmailAuthenticated) {
       res.status(500).json({ code: 500, response: 'Must be authorized' })
     } else {
       try {
-        const responseObj = await this.mediator.GetReceiveTopicsPractice(req.session.accountId, req.params.topicName, 6)
+        const responseObj = await this.mediator.GetReceiveTopicsPractice(req.session.account.id, req.params.topicName, 6)
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
@@ -104,7 +104,7 @@ class TopicController {
       res.status(400).json({ code: 400, response: 'No body found' })
       return
     }
-    if (req.session.accountId === undefined) {
+    if (req.session.account === undefined || !req.session.account.isEmailAuthenticated) {
       res.status(500).json({ code: 500, response: 'Must be authorized' })
     } else {
       let requestObj: ReceiveCardsRequest
@@ -132,7 +132,7 @@ class TopicController {
       res.status(400).json({ code: 400, response: 'No body found' })
       return
     }
-    if (req.session.accountId === undefined) {
+    if (req.session.account === undefined || !req.session.account.isEmailAuthenticated) {
       res.status(500).json({ code: 500, response: 'Must be authorized' })
     } else {
       let requestObj: SaveCardRequest
@@ -155,7 +155,7 @@ class TopicController {
       res.status(400).json({ code: 400, response: 'No body found' })
       return
     }
-    if (req.session.accountId === undefined) {
+    if (req.session.account === undefined || !req.session.account.isEmailAuthenticated) {
       res.status(500).json({ code: 500, response: 'Must be authorized' })
     } else {
       let requestObj: ReportCardRequest

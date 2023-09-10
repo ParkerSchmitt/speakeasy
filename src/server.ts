@@ -12,13 +12,15 @@ import { type CardAccountType } from './backend/types/CardAccountType'
 import Config from './backend/Config'
 import { Client } from 'pg'
 import { logger } from './backend/Logger'
+import { Mailer } from './backend/utils/mailer/Mailer'
+import { type AccountType } from './backend/types/AccountType'
 console.log(process.env) // remove this after you've confirmed it is working
 
 export const app = express()
 
 declare module 'express-session' {
   interface SessionData {
-    accountId: number
+    account: AccountType
     activeReviews: Record<string, CardAccountType[]> // topic: string, Cards to review: CardType[]:
   }
 }
@@ -55,15 +57,22 @@ const setup = async (): Promise<void> => {
       port: Config.SQL_PORT
     })
     await client.connect()
+      .catch((err) => {
+        logger.error('server.setup error', err)
+      })
 
     const accountController = new AccountController({
       Mediator: new AccountMediator({
         Repository: new AccountRepository({
           tableName: Config.ACCOUNT_TABLE_NAME,
           client
+        }),
+        Mailer: new Mailer({
+          SENDGRID_API_KEY: Config.SENDGRID_API_KEY
         })
       })
     })
+
     const topicsController = new TopicController({
       Mediator: new TopicMediator({
         MaxCards: Config.MAX_CARDS,
@@ -83,6 +92,10 @@ const setup = async (): Promise<void> => {
     app.post('/authenticate', accountController.PostReceiveSignin)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/isAuthenticated', accountController.GetIsAuthenticated)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.put('/account/verify/:verificationToken', accountController.GetVerifyEmail)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.post('/account/verify/resend', accountController.GetResendVerifyEmail)
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/topics', topicsController.GetReceiveTopics)

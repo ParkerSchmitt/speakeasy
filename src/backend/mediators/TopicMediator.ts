@@ -102,7 +102,7 @@ class TopicMediator {
       if (request.amount > this.maxCards || request.amount < 0) {
         throw InvalidCardAmount
       }
-      if (session.accountId == null) {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
         throw InvalidCredentialsError
       }
 
@@ -113,11 +113,11 @@ class TopicMediator {
 
       // First lets grab cards that the user is scheduled to learn- stored in the linkages table
 
-      const scheduledCardsResponse = await this.repository.receiveStoredCards(request.topic, session.accountId, request.amount, time)
+      const scheduledCardsResponse = await this.repository.receiveStoredCards(request.topic, session.account.id, request.amount, time)
       const scheduledCards = scheduledCardsResponse.map(cardData => ({ ...cardData, scheduledCard: true }))
 
       const leftover: number = request.amount - scheduledCardsResponse.length
-      const offset: number = await this.repository.receiveMaxCardReached(request.topic, session.accountId) ?? 0
+      const offset: number = await this.repository.receiveMaxCardReached(request.topic, session.account.id) ?? 0
 
       if (leftover > 0) {
         const newCardsResponse = await this.repository.receiveNewCards(request.topic, leftover, offset)
@@ -165,12 +165,12 @@ class TopicMediator {
     */
   async PostSaveCard (session: Session & Partial<SessionData>, time: number, request: SaveCardRequest): Promise<void> {
     try {
-      if (session.accountId == null) {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
         throw InvalidCredentialsError
       }
 
       // First see if a card already exists
-      const card = await this.repository.receiveStoredCard(session.accountId, request.cardId)
+      const card = await this.repository.receiveStoredCard(session.account.id, request.cardId)
 
       /**
        * This inline method calculates SM2 information about a card in order to space it correctly for a user to learn effectively.
@@ -208,7 +208,7 @@ class TopicMediator {
       // The card already exists. Let's calculate new property values for it and update the record
       if (card !== null) {
         const { easiness, interval, repetitions, date } = calculateSM2Variables(request.quality, card.easiness, card.interval, card.repetitions, Date.now())
-        await this.repository.updateLearnedCard(request.cardId, session.accountId, easiness, interval, repetitions, date)
+        await this.repository.updateLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
         // Per the SM2 algorithm, we also want the user to review the card until they recognize it.
         if (request.quality < 2) {
           this.saveCardToReviewStack(session, request.topic, card)
@@ -217,9 +217,9 @@ class TopicMediator {
       // The card doesn't exist. Lets insert a new card in memory with inital properties
       } else {
         const { easiness, interval, repetitions, date } = calculateSM2Variables(request.quality, 2.5, 0, 0, time)
-        await this.repository.insertLearnedCard(request.cardId, session.accountId, easiness, interval, repetitions, date)
+        await this.repository.insertLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
         // Now it exists
-        const card = await this.repository.receiveStoredCard(session.accountId, request.cardId)
+        const card = await this.repository.receiveStoredCard(session.account.id, request.cardId)
 
         if (request.quality < 2 && card !== null) {
           this.saveCardToReviewStack(session, request.topic, card)
@@ -243,10 +243,10 @@ class TopicMediator {
     */
   async PostReportCard (session: Session & Partial<SessionData>, request: ReportCardRequest): Promise<void> {
     try {
-      if (session.accountId == null) {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
         throw InvalidCredentialsError
       } else {
-        await this.repository.insertReportCart(request.cardId, session.accountId, request.type, request.reason, request.comment)
+        await this.repository.insertReportCart(request.cardId, session.account.id, request.type, request.reason, request.comment)
       }
     } catch (error) {
       const message = 'Unknown Error'

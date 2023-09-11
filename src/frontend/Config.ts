@@ -5,13 +5,15 @@ interface ConfigInterface {
   NODE_ENV: string
   REACT_APP_MEDIA_URL: string
   REACT_APP_API_URL: string
+  REACT_APP_MAX_CARDS: number
 }
 // Loading process.env as ENV interface
 const getConfig = (): Partial<ConfigInterface> => {
   return {
     NODE_ENV: (process.env.NODE_ENV != null) ? String(process.env.NODE_ENV) : undefined,
     REACT_APP_MEDIA_URL: (process.env.REACT_APP_MEDIA_URL != null) ? String(process.env.REACT_APP_MEDIA_URL) : undefined,
-    REACT_APP_API_URL: (process.env.REACT_APP_API_URL != null) ? String(process.env.REACT_APP_API_URL) : undefined
+    REACT_APP_API_URL: (process.env.REACT_APP_API_URL != null) ? String(process.env.REACT_APP_API_URL) : undefined,
+    REACT_APP_MAX_CARDS: (process.env.REACT_APP_MAX_CARDS != null) ? Number(process.env.REACT_APP_MAX_CARDS) : undefined
   }
 }
 // Throwing an Error if any field was undefined we don't

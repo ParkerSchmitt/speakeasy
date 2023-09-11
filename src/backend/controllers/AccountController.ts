@@ -94,6 +94,24 @@ class AccountController {
     res.status(200).json({ code: 200, response: 'Signed in' })
   }
 
+    /**
+     * PostSignout attempts to sign a user out.
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+    PostSignout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const session = req.session
+        session.destroy((error) => {
+          throw error
+        })
+      } catch (error) {
+        res.status(200).json({ code: 400, response: 'No session to sign out.' })
+      }
+    }
+
   /**
      * GetIsAuthenticated sees if there exist a email under the users session, indicating they are logged in.
      * @param req the Express request

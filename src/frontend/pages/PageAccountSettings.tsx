@@ -11,14 +11,38 @@ import {
   MDBCard,
   MDBCardBody,
   MDBInput,
-  MDBCheckbox
+  MDBCheckbox,
+  MDBValidation,
+  MDBValidationItem
 }
   from 'mdb-react-ui-kit'
 
 function PageLogin (): ReactElement {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [firstNameFlag, setFirstNameFlag] = useState(false)
+  const [lastName, setLastName] = useState('')
+  const [lastNameFlag, setLastNameFlag] = useState(false)
+  const [newCardsFlag, setNewCardsFlag] = useState(false)
+  const [newCards, setNewCards] = useState('')
+
   const navigate = useNavigate()
+
+  /**
+   * Validates the input to see if it is correct, and sets the state of the input
+   * @param indicator boolean, if it is valid or not
+   * @param target the event target to set the valadility of.
+   * @param funcSetInput the value that we are changing the state of
+   * @param funcSetInputFlag the flag that corresponds to the input. Used to determine input is modified and if a warning should even be displayed.
+   */
+  const validateInput = (indicator: boolean, target: HTMLInputElement, funcSetInput: (val: string) => void, funcSetInputFlag: (val: boolean) => void): void => {
+    if (indicator) {
+      funcSetInput(target.value)
+      funcSetInputFlag(true)
+    } else {
+      funcSetInputFlag(false)
+      funcSetInput(target.value)
+    }
+  }
 
   /**
    * Handles form submission from the login sceen and attempts to login the user.
@@ -33,8 +57,6 @@ function PageLogin (): ReactElement {
       },
       credentials: 'include',
       body: JSON.stringify({
-        email,
-        password
       })
     })
       .then(async response => {
@@ -62,7 +84,11 @@ function PageLogin (): ReactElement {
 
                 <h2 className=" mt-0 mb-0 text-center">Lesson Settings</h2>
                 <br/>
-                <MDBInput wrapperClass='mb-4 w-100' label='New Words Per Day' id='newWords' min={1} max={Config.REACT_APP_MAX_CARDS} defaultValue={10} onChange={ (e) => { setEmail(e.target.value) } } type='number' size="lg"/>
+                <MDBValidation className={'row g-3 ' + ((newCardsFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
+                        <MDBInput wrapperClass='mb-4 w-100' label='New Words Per Day' id='newWords' min={1} max={Config.REACT_APP_MAX_CARDS} defaultValue={newCards} onChange={ (e) => { validateInput((Number(e.target.value) < 1 || Number(e.target.value) > 100), e.target, setNewCards, setNewCardsFlag) } } type='number' size="lg" required/>
+                    </MDBValidationItem>
+                </MDBValidation>
                 <MDBCheckbox name='flagShowAddedTime' value='' id='flagShowAddedTime' label='Show added time in rememberance buttons' />
                 <MDBCheckbox name='flagVaryCardSides' value='' id='flagVaryCardSides' label='Vary target/orign language sides' />
                 <br/>
@@ -77,8 +103,16 @@ function PageLogin (): ReactElement {
 
                 <h2 className=" mt-0 mb-0 text-center">Account Settings</h2>
                 <br/>
-                <MDBInput wrapperClass='mb-4 w-100' label='First Name' id='formControlLg' defaultValue={email} onChange={ (e) => { setEmail(e.target.value) } } type='text' size="lg"/>
-                <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='formControlLg' defaultValue={password} onChange={ (e) => { setPassword(e.target.value) } } type='text' size="lg"/>
+                <MDBValidation className={'row g-3 ' + ((firstNameFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={firstNameFlag && 'Please enter your first name.'} invalid={firstNameFlag}>
+                        <MDBInput wrapperClass='mb-4 w-100' label='First Name' id='firstName' defaultValue={firstName} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setFirstName, setFirstNameFlag) } } type='text' size="lg" required/>
+                    </MDBValidationItem>
+                </MDBValidation>
+                <MDBValidation className={'row g-3 ' + ((lastNameFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={lastNameFlag && 'Please enter your last name.'} invalid={lastNameFlag}>
+                        <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='lastName' defaultValue={lastName} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) } } type='text' size="lg" required/>
+                    </MDBValidationItem>
+                </MDBValidation>
                 <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Send email notificatons for lesson absesnce' />
                 <br/>
                 <MDBBtn color="secondary" size='lg'>

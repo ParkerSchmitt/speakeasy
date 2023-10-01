@@ -91,11 +91,17 @@ const setup = async (): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.post('/authenticate', accountController.PostReceiveSignin)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.post('/signout', accountController.PostSignout)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/isAuthenticated', accountController.GetIsAuthenticated)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.put('/account/verify/:verificationToken', accountController.GetVerifyEmail)
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.post('/account/verify/resend', accountController.GetResendVerifyEmail)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.post('/account/verify/resend', accountController.GetResendVerifyEmail)
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    app.patch('/account/update', accountController.GetResendVerifyEmail)
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.get('/topics', topicsController.GetReceiveTopics)

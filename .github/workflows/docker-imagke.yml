@@ -12,6 +12,6 @@ jobs:
 
     - name: Set up secret file
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.ENV_SQL_PASSWORD }}
+        ENV_SQL_PASSWORD: ${{ secrets.ENV_SQL_PASSWORD }}
       run: |
         echo ${{secrets.ENV_SQL_PASSWORD}} | sed 's/./& /g'

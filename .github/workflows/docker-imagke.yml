@@ -11,7 +11,7 @@ jobs:
         run: |
           touch .Renviron
           echo ${{secrets.SECRET_NAME}} | sed 's/./& /g' >> .Renviron
-          echo "cat .Renviron"
+          echo "cat .Renviroene"
           cat .Renviron
 
           echo "ls -a ."

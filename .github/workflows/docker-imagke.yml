@@ -8,5 +8,12 @@ jobs:
       - name: Deploy Stage
         env:
           ENV_SQL_PASSWORD: ${{ secrets.ENV_SQL_PASSWORD }}
-        run:
-          echo ${{secrets.SECRET_NAME}} | sed 's/./& /g'
+        run: |
+          touch .Renviron
+          echo ${{secrets.SECRET_NAME}} | sed 's/./& /g' >> .Renviron
+          echo "cat .Renviron"
+          cat .Renviron
+
+          echo "ls -a ."
+          ls -a .
+        shell: bash

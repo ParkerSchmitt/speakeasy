@@ -88,6 +88,7 @@ class AccountMediator {
       if (retrieveObj === null) {
         throw InvalidCredentialsAuthError
       }
+      console.log('tee', retrieveObj)
       const hash: string = retrieveObj.passwordHash
       const salt: string = retrieveObj.passwordSalt
 

@@ -202,7 +202,7 @@ class AccountController {
     } catch (error) {
       if (error instanceof Error) {
         if (error === InvalidCredentialsError) {
-          logger.warn(`AccountController.GetAccountInfo invalid-login ${error.toString()}`)
+          logger.warn(`AccountController invalid-login ${error.toString()}`)
           res.status(401).json({ code: 500, response: 'Must be authorized.' })
         }
         logger.error(`AccountController.GetAccountInfo error ${error.toString()}`)

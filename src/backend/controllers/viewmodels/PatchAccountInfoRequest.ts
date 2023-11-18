@@ -4,7 +4,7 @@ export const MissingKeyError: Error = new Error('Must have at least one key to p
 
 export const InvalidFirstNameTypeError: Error = new Error('firstName  must be a string')
 export const InvalidLastNameTypeError: Error = new Error('lastName  must be a string')
-export const InvalidWordsPerDayTypeError: Error = new Error('wordsPerDay must be a integer')
+export const InvalidWordsPerDayTypeError: Error = new Error('wordsPerDay must be a integer 1-10')
 export const InvalidShowAddedTimeInButtonTypeError: Error = new Error('wordsPerDay must be a boolean')
 export const InvalidSendEmailLessonAbsesnceTypeError: Error = new Error('sendEmailLessonAbsesnce must be a boolean')
 
@@ -27,26 +27,26 @@ export class PatchAccountInfoRequest {
   const lastName = 'lastName' as ObjectKey
   const wordsPerDay = 'wordsPerDay' as ObjectKey
   const showAddedTimeInButton = 'showAddedTimeInButton' as ObjectKey
-  const sendEmailLessonAbsesnce = 'showAddedTimeInButton' as ObjectKey
+  const sendEmailLessonAbsesnce = 'sendEmailLessonAbsesnce' as ObjectKey
 
-  if (!json) {
+  if (Object.keys(json).length === 0) {
     throw MissingKeyError
   }
 
-  if (typeof json[firstName] !== 'string') {
+  if (firstName in json && typeof json[firstName] !== 'string') {
     throw InvalidFirstNameTypeError
   }
-  if (typeof json[lastName] !== 'string') {
+  if (lastName in json && typeof json[lastName] !== 'string') {
     throw InvalidLastNameTypeError
   }
   // Must be an integer
-  if (typeof json[wordsPerDay] !== 'number' || !Number.isInteger(json[wordsPerDay])) {
+  if (wordsPerDay in json && (typeof json[wordsPerDay] !== 'number' || !Number.isInteger(json[wordsPerDay]) || json[wordsPerDay] > 10 || json[wordsPerDay] < 1)) {
     throw InvalidWordsPerDayTypeError
   }
-  if (typeof json[showAddedTimeInButton] !== 'boolean') {
+  if (showAddedTimeInButton in json && typeof json[showAddedTimeInButton] !== 'boolean') {
     throw InvalidShowAddedTimeInButtonTypeError
   }
-  if (typeof json[sendEmailLessonAbsesnce] !== 'boolean') {
+  if (sendEmailLessonAbsesnce in json && typeof json[sendEmailLessonAbsesnce] !== 'boolean') {
     throw InvalidSendEmailLessonAbsesnceTypeError
   }
 

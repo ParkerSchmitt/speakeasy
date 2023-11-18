@@ -43,7 +43,7 @@ class AccountRepository {
      * @returns a object, OR null if there is nothing for the given email (email doesn't exist). {hash: string, salt: string}
      */
   async retrieveAccountDTO (email: string): Promise<AccountType | null> {
-    const query = `SELECT id, "email", "firstName", "lastName", "passwordHash", "passwordSalt", "emailVerificationToken", "isEmailAuthenticated" FROM ${this.tableName} WHERE email=$1`
+    const query = `SELECT id, "email", "firstName", "lastName", "passwordHash", "passwordSalt", "emailVerificationToken", "isEmailAuthenticated", "wordsPerDay", "showAddedTimeInButton", "sendEmailLessonAbsesnce" FROM ${this.tableName} WHERE email=$1`
     const values = [email]
     const result = await this.client.query(query, values)
     if (result.rowCount === 0) {

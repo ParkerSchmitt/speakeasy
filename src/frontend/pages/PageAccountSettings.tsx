@@ -90,7 +90,6 @@ function PageLogin (): ReactElement {
                     </MDBValidationItem>
                 </MDBValidation>
                 <MDBCheckbox name='flagShowAddedTime' value='' id='flagShowAddedTime' label='Show added time in rememberance buttons' />
-                <MDBCheckbox name='flagVaryCardSides' value='' id='flagVaryCardSides' label='Vary target/orign language sides' />
                 <br/>
                 <MDBBtn size='lg' color="secondary">
                   Reset

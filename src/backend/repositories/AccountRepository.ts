@@ -104,6 +104,71 @@ class AccountRepository {
     const values = [verifiedStatus, '', accountId]
     await this.client.query(query, values)
   }
+
+  /**
+     * setFirstName updates an account's first name
+     * @param accountId The account id to update
+     * @param value the value to update the field to
+     */
+  async setFirstName (accountId: number, value: string): Promise<void> {
+    const query = `UPDATE ${this.tableName} 
+                  SET "firstName"=$1
+                  WHERE ${this.tableName}.id = $2`
+    const values = [value, accountId]
+    await this.client.query(query, values)
+  }  
+
+    /**
+     * setLastName updates an account's last name
+     * @param accountId The account id to update
+     * @param value the value to update the field to
+     */
+    async setLastName (accountId: number, value: string): Promise<void> {
+      const query = `UPDATE ${this.tableName} 
+                    SET "lastName"=$1
+                    WHERE ${this.tableName}.id = $2`
+      const values = [value, accountId]
+      await this.client.query(query, values)
+    }
+
+    /**
+     * setWordsPerDay updates an account's wordsPerDay setting
+     * @param accountId The account id to update
+     * @param value the value to update the field to
+     */
+    async setWordsPerDay (accountId: number, value: number): Promise<void> {
+      const query = `UPDATE ${this.tableName} 
+                    SET "wordsPerDay"=$1
+                    WHERE ${this.tableName}.id = $2`
+      const values = [value, accountId]
+      await this.client.query(query, values)
+    }    
+
+    /**
+     * setShowAddedTimeInButton updates an account's showAddedTimeInButton setting
+     * @param accountId The account id to update
+     * @param value the value to update the field to
+     */
+    async setShowAddedTimeInButton (accountId: number, value: boolean): Promise<void> {
+      const query = `UPDATE ${this.tableName} 
+                    SET "showAddedTimeInButton"=$1
+                    WHERE ${this.tableName}.id = $2`
+      const values = [value, accountId]
+      await this.client.query(query, values)
+    }
+    
+    /**
+     * setSendEmailLessonAbsesnce updates an account's sendEmailLessonAbsesnce setting
+     * @param accountId The account id to update
+     * @param value the value to update the field to
+     */
+    async setSendEmailLessonAbsesnce (accountId: number, value: boolean): Promise<void> {
+      const query = `UPDATE ${this.tableName} 
+                    SET "sendEmailLessonAbsesnce"=$1
+                    WHERE ${this.tableName}.id = $2`
+      const values = [value, accountId]
+      await this.client.query(query, values)
+    }        
 }
 
 export default AccountRepository

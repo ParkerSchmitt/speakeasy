@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/indent */
 import { type Request, type Response, type NextFunction } from 'express'
 import type SignUpMediator from '../mediators/AccountMediator'
-import { AccountExistsError, InvalidCredentialsError, InvalidTokenError } from '../mediators/AccountMediator'
+import { AccountExistsError, InvalidCredentialsAuthError, InvalidCredentialsError, InvalidTokenError } from '../mediators/AccountMediator'
 import { SignUpRequest } from './viewmodels/SignUpRequest'
 import { SignInRequest } from './viewmodels/SignInRequest'
 import { logger } from '../Logger'
+import { PatchAccountInfoRequest } from './viewmodels/PatchAccountInfoRequest'
 
 export interface AccountControllerConfig {
   Mediator: SignUpMediator
@@ -79,7 +80,7 @@ class AccountController {
     } catch (error) {
       const message = 'Could not process request'
       if (error instanceof Error) {
-        if (error === InvalidCredentialsError) {
+        if (error === InvalidCredentialsAuthError) {
           res.status(401).json({ code: 401, response: 'Invalid username or password' })
           return
         }
@@ -184,6 +185,65 @@ class AccountController {
       }
     }
   }
+
+
+  /**
+     * Get returns the JSON account info (name, preferences) for a signed in user
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+  GetAccountInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const session = req.session
+        let accountInfo = await this.mediator.GetAccountInfo(session)
+        res.status(200).json({ code: 200, response: accountInfo })
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error === InvalidCredentialsError) {
+          logger.warn(`AccountController.GetAccountInfo invalid-login ${error.toString()}`)
+          res.status(401).json({ code: 500, response: 'Must be authorized.' })
+        }
+        logger.error(`AccountController.GetAccountInfo error ${error.toString()}`)
+        res.status(500).json({ code: 500, error: error.message })
+    }
+    }
+  }
+
+    /**
+     * Patches the account info
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+    PatchAccountInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      if (req.body == null) {
+        res.status(400).json({ code: 400, response: 'No body found' })
+        return
+      }
+      let requestObj: PatchAccountInfoRequest
+      try {
+        const session = req.session
+        requestObj = PatchAccountInfoRequest.parse(req.body)
+        const account = await this.mediator.PatchAccountInfo(session, requestObj)
+        res.status(200).json({ code: 200, response: 'Updated account settings' })
+      } catch (error) {
+        const message = 'Could not process request'
+        if (error instanceof Error) {
+          if (error === InvalidCredentialsError) {
+            logger.warn(`AccountController.PatchAccountInfo invalid-login ${error.toString()}`)
+            res.status(401).json({ code: 500, response: 'Must be authorized.' })
+          }
+          logger.error(`AccountController.PatchAccountInfo error ${error.toString()}`)
+          res.status(400).json({ code: 400, error: error.message })
+          return
+        }
+        res.status(500).json({ code: 500, error: message })
+        return
+      }
+    }
 }
 
 export default AccountController

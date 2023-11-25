@@ -18,6 +18,8 @@ import {
 }
   from 'mdb-react-ui-kit'
 import { ToastContainer, toast } from 'react-toastify'
+import { DeleteAccountDialog } from '../components/DeleteAccountDialog'
+import { ChangePasswordDialog } from '../components/ChangePasswordDialog'
 
 function PageLogin (): ReactElement {
   const [firstName, setFirstName] = useState('')
@@ -28,6 +30,12 @@ function PageLogin (): ReactElement {
   const [newCards, setNewCards] = useState('')
   const [showRememberance, setShowRememberance] = useState(false)
   const [sendEmailReminder, setSendEmailReminder] = useState(false)
+
+  const [flagDeleteAccountDialog, setFlagDeleteAccountDialog] = useState(false)
+  const toggleFlagDeleteAccountDialog = (): void => { setFlagDeleteAccountDialog(!flagDeleteAccountDialog) }
+  const [flagChangePasswordDialog, setFlagChangePasswordDialog] = useState(false)
+  const toggleFlagChangePasswordDialog = (): void => { setFlagChangePasswordDialog(!flagChangePasswordDialog) }
+
   const updateValues = useRef<Record<string, any>>({})
 
   const navigate = useNavigate()
@@ -72,6 +80,38 @@ function PageLogin (): ReactElement {
       }
     }).catch((error) => {
       console.error(error)
+    })
+  }
+
+  const deleteAccountDialogHandler = (): void => {
+    fetch(`${Config.REACT_APP_API_URL}/account`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(async (response) => {
+      if (response.status === 401) {
+        navigate('/login')
+      } else {
+        const accountInfo = (await response.json()).response
+        setFirstName(accountInfo.firstName)
+        setLastName(accountInfo.lastName)
+        setNewCards(accountInfo.wordsPerDay)
+        setShowRememberance(accountInfo.showAddedTimeInButton)
+        setSendEmailReminder(accountInfo.sendEmailLessonAbsesnce)
+      }
+    }).catch((error) => {
+      console.error(error)
+      toast.error('Error deleting account', {
+        position: toast.POSITION.TOP_CENTER,
+        hideProgressBar: true,
+        theme: 'colored',
+        icon: <MDBIcon fas icon="times" />
+      })
+    }).finally(() => {
+      toggleFlagDeleteAccountDialog()
     })
   }
 
@@ -147,6 +187,9 @@ function PageLogin (): ReactElement {
   return (
     <MDBContainer fluid style={{ backgroundColor: '#fff8e3' }}>
       <ToastContainer />
+      {flagDeleteAccountDialog && <DeleteAccountDialog show={flagDeleteAccountDialog} submitDialogHandler={deleteAccountDialogHandler} closeWindowHandler={toggleFlagDeleteAccountDialog}/>}
+      {flagChangePasswordDialog && <ChangePasswordDialog show={flagChangePasswordDialog} submitDialogHandler={deleteAccountDialogHandler} closeWindowHandler={toggleFlagChangePasswordDialog}/>}
+
       <MDBRow className='d-flex justify-content-center align-items-center h-100'>
         <MDBCol col='12'>
 
@@ -189,11 +232,11 @@ function PageLogin (): ReactElement {
               </MDBValidation>
               <MDBCheckbox name='flexCheck' checked={sendEmailReminder} id='flexCheckDefault' label='Send email notificatons for lesson absesnce' />
               <br />
-              <MDBBtn color="secondary" size='lg'>
+              <MDBBtn color="secondary" size='lg' onClick={() => { toggleFlagChangePasswordDialog() }}>
                 Change Password
               </MDBBtn>
               <hr />
-              <MDBBtn size='lg' outline color="danger">
+              <MDBBtn size='lg' outline color="danger" onClick={() => { toggleFlagDeleteAccountDialog() }}>
                 Delete Account
               </MDBBtn>
             </MDBCardBody>

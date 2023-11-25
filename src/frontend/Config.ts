@@ -6,6 +6,8 @@ interface ConfigInterface {
   REACT_APP_MEDIA_URL: string
   REACT_APP_API_URL: string
   REACT_APP_MAX_CARDS: number
+  REACT_APP_DEFAULT_CARDS: number
+  REACT_APP_SETTING_DEBOUNCE_MILLIS: number
 }
 // Loading process.env as ENV interface
 const getConfig = (): Partial<ConfigInterface> => {
@@ -13,7 +15,9 @@ const getConfig = (): Partial<ConfigInterface> => {
     NODE_ENV: (process.env.NODE_ENV != null) ? String(process.env.NODE_ENV) : undefined,
     REACT_APP_MEDIA_URL: (process.env.REACT_APP_MEDIA_URL != null) ? String(process.env.REACT_APP_MEDIA_URL) : undefined,
     REACT_APP_API_URL: (process.env.REACT_APP_API_URL != null) ? String(process.env.REACT_APP_API_URL) : undefined,
-    REACT_APP_MAX_CARDS: (process.env.REACT_APP_MAX_CARDS != null) ? Number(process.env.REACT_APP_MAX_CARDS) : undefined
+    REACT_APP_MAX_CARDS: (process.env.REACT_APP_MAX_CARDS != null) ? Number(process.env.REACT_APP_MAX_CARDS) : undefined,
+    REACT_APP_DEFAULT_CARDS: (process.env.REACT_APP_DEFAULT_CARDS != null) ? Number(process.env.REACT_APP_DEFAULT_CARDS) : undefined,
+    REACT_APP_SETTING_DEBOUNCE_MILLIS: (process.env.REACT_APP_SETTING_DEBOUNCE_MILLIS != null) ? Number(process.env.REACT_APP_SETTING_DEBOUNCE_MILLIS) : undefined
   }
 }
 // Throwing an Error if any field was undefined we don't

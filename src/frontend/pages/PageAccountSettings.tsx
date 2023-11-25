@@ -163,22 +163,26 @@ function PageLogin (): ReactElement {
    * @param funcSetInput the value that we are changing the state of
    * @param funcSetInputFlag the flag that corresponds to the input. Used to determine input is modified and if a warning should even be displayed.
    */
-  const validateInput = (indicator: boolean, target: HTMLInputElement, funcSetInput: (val: string) => void, funcSetInputFlag: (val: boolean) => void): void => {
+  const validateInput = (indicator: boolean, target: HTMLInputElement, funcSetInput: (val: any) => void, funcSetInputFlag?: (val: boolean) => void): void => {
     if (indicator) {
       funcSetInput(target.value)
-      funcSetInputFlag(true)
+      funcSetInputFlag?.(true)
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete updateValues.current[target.id]
     } else {
-      funcSetInputFlag(false)
-      funcSetInput(target.value)
-      updateValues.current[target.id] = target.value
+      funcSetInputFlag?.(false)
       switch (target.type) {
         case 'number':
           updateValues.current[target.id] = Number(target.value)
+          funcSetInput(target.value)
           break
         case 'text':
           updateValues.current[target.id] = String(target.value)
+          funcSetInput(target.value)
+          break
+        case 'checkbox':
+          updateValues.current[target.id] = target.checked
+          funcSetInput(target.checked)
           break
       }
     }
@@ -205,7 +209,7 @@ function PageLogin (): ReactElement {
                   <MDBInput wrapperClass='mb-4 w-100' label='New Words Per Day' id='wordsPerDay' min={1} max={Config.REACT_APP_MAX_CARDS} value={newCards} onChange={(e) => { validateInput((Number(e.target.value) < 1 || Number(e.target.value) > Config.REACT_APP_MAX_CARDS), e.target, setNewCards, setNewCardsFlag) }} type='number' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
-              <MDBCheckbox name='flagShowAddedTime' checked={showRememberance} id='flagShowAddedTime' label='Show added time in rememberance buttons' />
+              <MDBCheckbox name='flagShowAddedTime' checked={showRememberance} onChange={ (e) => { validateInput(false, e.target, setShowRememberance) }} id='showAddedTimeInButton' label='Show added time in rememberance buttons' />
               <br />
               <MDBBtn size='lg' color="secondary" disabled={(Number(newCards) === Config.REACT_APP_DEFAULT_CARDS)} onClick={() => {
                 setNewCards(String(Config.REACT_APP_DEFAULT_CARDS))
@@ -230,7 +234,7 @@ function PageLogin (): ReactElement {
                   <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='lastName' value={lastName} onChange={(e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) }} type='text' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
-              <MDBCheckbox name='flexCheck' checked={sendEmailReminder} id='flexCheckDefault' label='Send email notificatons for lesson absesnce' />
+              <MDBCheckbox name='flexCheck' checked={sendEmailReminder} onChange={ (e) => { validateInput(false, e.target, setSendEmailReminder) }} id='sendEmailLessonAbsesnce' label='Send email notificatons for lesson absesnce' />
               <br />
               <MDBBtn color="secondary" size='lg' onClick={() => { toggleFlagChangePasswordDialog() }}>
                 Change Password

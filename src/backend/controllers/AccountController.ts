@@ -186,7 +186,6 @@ class AccountController {
     }
   }
 
-
   /**
      * Get returns the JSON account info (name, preferences) for a signed in user
      * @param req the Express request
@@ -197,7 +196,7 @@ class AccountController {
   GetAccountInfo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const session = req.session
-        let accountInfo = await this.mediator.GetAccountInfo(session)
+        const accountInfo = await this.mediator.GetAccountInfo(session)
         res.status(200).json({ code: 200, response: accountInfo })
     } catch (error) {
       if (error instanceof Error) {
@@ -227,7 +226,7 @@ class AccountController {
       try {
         const session = req.session
         requestObj = PatchAccountInfoRequest.parse(req.body)
-        const account = await this.mediator.PatchAccountInfo(session, requestObj)
+        await this.mediator.PatchAccountInfo(session, requestObj)
         res.status(200).json({ code: 200, response: 'Updated account settings' })
       } catch (error) {
         const message = 'Could not process request'
@@ -241,9 +240,32 @@ class AccountController {
           return
         }
         res.status(500).json({ code: 500, error: message })
-        return
       }
     }
+
+  /**
+     * Deletes the account for a signed in user
+     * @param req the Express request
+     * @param res the Express response
+     * @param next the next middleware
+     * @returns a void promise
+     */
+  DeleteAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const session = req.session
+        await this.mediator.DeleteAccount(session)
+        res.status(200).json({ code: 200, response: 'Deleted account' })
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error === InvalidCredentialsError) {
+          logger.warn(`AccountController invalid-login ${error.toString()}`)
+          res.status(401).json({ code: 500, response: 'Must be authorized.' })
+        }
+        logger.error(`AccountController.DeleteAccount error ${error.toString()}`)
+        res.status(500).json({ code: 500, error: error.message })
+    }
+    }
+  }
 }
 
 export default AccountController

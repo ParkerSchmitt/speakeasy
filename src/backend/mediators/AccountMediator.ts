@@ -7,13 +7,12 @@ import { logger } from '../Logger'
 import { SignupTemplate } from '../utils/mailer/templates/SignupTemplate'
 import { type Mailer } from '../utils/mailer/Mailer'
 import { type AccountType } from '../types/AccountType'
-import { PatchAccountInfoRequest } from '../controllers/viewmodels/PatchAccountInfoRequest'
+import { type PatchAccountInfoRequest } from '../controllers/viewmodels/PatchAccountInfoRequest'
 export const AccountExistsError: Error = new Error('Account already exists')
 export const AccountNotCreatedError: Error = new Error('Can not retrieve account credentials after creation')
 export const InvalidCredentialsAuthError: Error = new Error('Invalid email or password')
 export const InvalidCredentialsError: Error = new Error('Not authorized')
 export const InvalidTokenError: Error = new Error('Invalid token')
-
 
 export interface AccountMediatorConfig {
   Repository: AccountRepository
@@ -159,7 +158,6 @@ class AccountMediator {
     }
   }
 
-
   /**
     * GetAccountInfo attempts to return the users information.
     * @param token - the recreated signup request the user made.
@@ -182,7 +180,7 @@ class AccountMediator {
           lastName: session.account.lastName,
           wordsPerDay: session.account.wordsPerDay,
           showAddedTimeInButton: session.account.showAddedTimeInButton,
-          sendEmailLessonAbsesnce: session.account.sendEmailLessonAbsesnce,
+          sendEmailLessonAbsesnce: session.account.sendEmailLessonAbsesnce
         }
       }
     } catch (error) {
@@ -196,48 +194,73 @@ class AccountMediator {
     }
   }
 
-    /**
+  /**
     * PatchAccountInfo attempts to update the users information.
     * @param token - the recreated signup request the user made.
     * @param token - the token from the signup request,
     * @returns void - updates the email to be verified.
     */
-    async PatchAccountInfo (session: Session & Partial<SessionData>, request: PatchAccountInfoRequest): Promise<void> {
-      try {
-        if (session.account === undefined || !session.account.isEmailAuthenticated) {
-          throw InvalidCredentialsError
-        }
+  async PatchAccountInfo (session: Session & Partial<SessionData>, request: PatchAccountInfoRequest): Promise<void> {
+    try {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
+        throw InvalidCredentialsError
+      }
 
-        if (request.firstName) { 
-          await this.repository.setFirstName(session.account.id, request.firstName) 
-        }
-        if (request.lastName) { 
-          await this.repository.setLastName(session.account.id, request.lastName) 
-        }
-        if (request.wordsPerDay) { 
-          await this.repository.setWordsPerDay(session.account.id, request.wordsPerDay) 
-        }
-        if (request.showAddedTimeInButton) { 
-          await this.repository.setShowAddedTimeInButton(session.account.id, request.showAddedTimeInButton) 
-        }
-        if (request.sendEmailLessonAbsesnce) { 
-          await this.repository.setSendEmailLessonAbsesnce(session.account.id, request.sendEmailLessonAbsesnce) 
-        }
-        session.account = {
-          ...session.account,
-          ...request
-        }
-        return
-      } catch (error) {
-        const message = 'Unknown Error'
-        if (error instanceof Error) {
-          logger.error(`AccountMediator.GetAccountInfo error ${error.toString()}`)
-          throw error
-        } else {
-          throw new Error(message)
-        }
+      if (request.firstName != null) {
+        await this.repository.setFirstName(session.account.id, request.firstName)
+      }
+      if (request.lastName != null) {
+        await this.repository.setLastName(session.account.id, request.lastName)
+      }
+      if (request.wordsPerDay != null) {
+        await this.repository.setWordsPerDay(session.account.id, request.wordsPerDay)
+      }
+      if (request.showAddedTimeInButton != null) {
+        await this.repository.setShowAddedTimeInButton(session.account.id, request.showAddedTimeInButton)
+      }
+      if (request.sendEmailLessonAbsesnce != null) {
+        await this.repository.setSendEmailLessonAbsesnce(session.account.id, request.sendEmailLessonAbsesnce)
+      }
+      session.account = {
+        ...session.account,
+        ...request
+      }
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetAccountInfo error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
       }
     }
+  }
+
+  /**
+    * PatchAccountInfo attempts to update the users information.
+    * @param token - the recreated signup request the user made.
+    * @param token - the token from the signup request,
+    * @returns void - updates the email to be verified.
+    */
+  async DeleteAccount (session: Session & Partial<SessionData>): Promise<void> {
+    try {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
+        throw InvalidCredentialsError
+      }
+      await this.repository.deleteAccount(session.account.id)
+      session.destroy((error) => {
+        throw error
+      })
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetAccountInfo error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
 }
 
 export default AccountMediator

@@ -30,7 +30,6 @@ export const DeleteAccountDialog = (props: { show: boolean, closeWindowHandler: 
               <MDBModalFooter>
                 <MDBBtn size='lg' color="danger" onClick={ () => { props.submitDialogHandler() }}>DELETE ACCOUNT</MDBBtn>
                 <MDBBtn size='lg' outline color="secondary" onClick={ () => { props.closeWindowHandler() } }>NEVERMIND</MDBBtn>
-
               </MDBModalFooter>
             </MDBModalContent>
           </MDBModalDialog>

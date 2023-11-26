@@ -171,6 +171,20 @@ class AccountRepository {
   }
 
   /**
+     * setSendEmailLessonAbsesnce updates an account's password
+     * @param accountId The account id to update
+     * @param hash the hash to update
+     * @param salt the salt to update
+     */
+  async setPassword (accountId: number, hash: string, salt: string): Promise<void> {
+    const query = `UPDATE ${this.tableName} 
+                      SET "passwordHash"=$1, SET "passwordSalt" = $2
+                      WHERE ${this.tableName}.id = $3`
+    const values = [hash, salt, accountId]
+    await this.client.query(query, values)
+  }
+
+  /**
      * deleteAccount destroy's an account.
      * @param accountId The account id to destroy
      * @param value the value to update the field to

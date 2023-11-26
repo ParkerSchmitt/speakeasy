@@ -87,7 +87,6 @@ class AccountMediator {
       if (retrieveObj === null) {
         throw InvalidCredentialsAuthError
       }
-      console.log('tee', retrieveObj)
       const hash: string = retrieveObj.passwordHash
       const salt: string = retrieveObj.passwordSalt
 
@@ -220,6 +219,22 @@ class AccountMediator {
       }
       if (request.sendEmailLessonAbsesnce != null) {
         await this.repository.setSendEmailLessonAbsesnce(session.account.id, request.sendEmailLessonAbsesnce)
+      }
+      if (request.newPassword != null && request.currentPassword != null) {
+        const retrieveObj = await this.repository.retrieveAccountDTO(session.account.email)
+        if (retrieveObj === null) {
+          throw InvalidCredentialsAuthError
+        }
+        const hash: string = retrieveObj.passwordHash
+        const salt: string = retrieveObj.passwordSalt
+        const passwordAttemptHash: string = createHash('sha256').update(request.currentPassword + salt, 'utf8').digest('hex')
+        if (passwordAttemptHash !== hash) {
+          throw InvalidCredentialsAuthError
+        }
+        // Generate hash and salt for password for security
+        const passwordSalt = randomBytes(32).toString('hex')
+        const passwordHash: string = createHash('sha256').update(request.newPassword + passwordSalt, 'utf8').digest('hex')
+        await this.repository.setPassword(session.account.id, passwordHash, passwordSalt)
       }
       session.account = {
         ...session.account,

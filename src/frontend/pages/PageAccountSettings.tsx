@@ -32,6 +32,7 @@ function PageLogin (): ReactElement {
   const [newCardsFlag, setNewCardsFlag] = useState(false)
   const [newCards, setNewCards] = useState('')
   const [showRememberance, setShowRememberance] = useState(false)
+  const [shuffleReviewStack, setShuffleReviewStack] = useState(false)
   const [sendEmailReminder, setSendEmailReminder] = useState(false)
 
   const [flagDeleteAccountDialog, setFlagDeleteAccountDialog] = useState(false)
@@ -209,10 +210,16 @@ function PageLogin (): ReactElement {
               <br />
               <MDBValidation className={'row g-3 ' + ((newCardsFlag) ? 'was-validated' : '')}>
                 <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
-                  <MDBInput wrapperClass='mb-4 w-100' label='New Words Per Day' id='wordsPerDay' min={1} max={Config.REACT_APP_MAX_CARDS} value={newCards} onChange={(e) => { validateInput((Number(e.target.value) < 1 || Number(e.target.value) > Config.REACT_APP_MAX_CARDS), e.target, setNewCards, setNewCardsFlag) }} type='number' size="lg" required />
+                  <MDBInput wrapperClass='mb-4 w-100' label='New words per day' id='wordsPerDay' min={1} max={Config.REACT_APP_MAX_CARDS} value={newCards} onChange={(e) => { validateInput((Number(e.target.value) < 1 || Number(e.target.value) > Config.REACT_APP_MAX_CARDS), e.target, setNewCards, setNewCardsFlag) }} type='number' size="lg" required />
+                </MDBValidationItem>
+              </MDBValidation>
+              <MDBValidation className={'row g-3 ' + ((newCardsFlag) ? 'was-validated' : '')}>
+                <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
+                  <MDBInput wrapperClass='mb-4 w-100' label='Learned card bury multiplier' id='wordsPerDay' min={1} max={Config.REACT_APP_MAX_CARDS} value={newCards} onChange={(e) => { validateInput((Number(e.target.value) < 1 || Number(e.target.value) > Config.REACT_APP_MAX_CARDS), e.target, setNewCards, setNewCardsFlag) }} type='number' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
               <MDBCheckbox name='flagShowAddedTime' checked={showRememberance} onChange={(e) => { validateInput(false, e.target, setShowRememberance) }} id='showAddedTimeInButton' label='Show added time in rememberance buttons' />
+              <MDBCheckbox name='flagShuffleReviewStack' checked={shuffleReviewStack} onChange={(e) => { validateInput(false, e.target, setShuffleReviewStack) }} id='shuffleReviewStack' label='Shuffle review stack' />
               <br />
               <MDBBtn size='lg' color="secondary" disabled={(Number(newCards) === Config.REACT_APP_DEFAULT_CARDS)} onClick={() => {
                 setNewCards(String(Config.REACT_APP_DEFAULT_CARDS))
@@ -229,9 +236,9 @@ function PageLogin (): ReactElement {
                   <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
                     <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
                       <MDBInputGroup className='mb-3'>
-                        <input className='form-control' placeholder='2' type='number' />
+                        <input className='form-control' placeholder='2' type='number'/>
                         <span className='input-group-text'>d</span>
-                        <input className='form-control' placeholder='0' type='number' />
+                        <input className='form-control' placeholder='0' type='number'/>
                         <span className='input-group-text'>h</span>
                         <input className='form-control' placeholder='0' type='number' />
                         <span className='input-group-text'>m</span>
@@ -302,12 +309,12 @@ function PageLogin (): ReactElement {
               <br />
               <MDBValidation className={'row g-3 ' + ((firstNameFlag) ? 'was-validated' : '')}>
                 <MDBValidationItem feedback={firstNameFlag && 'Please enter your first name.'} invalid={firstNameFlag}>
-                  <MDBInput wrapperClass='mb-4 w-100' label='First Name' id='firstName' value={firstName} onChange={(e) => { validateInput((e.target.value.length === 0), e.target, setFirstName, setFirstNameFlag) }} type='text' size="lg" required />
+                  <MDBInput wrapperClass='mb-4 w-100' label='First name' id='firstName' value={firstName} onChange={(e) => { validateInput((e.target.value.length === 0), e.target, setFirstName, setFirstNameFlag) }} type='text' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
               <MDBValidation className={'row g-3 ' + ((lastNameFlag) ? 'was-validated' : '')}>
                 <MDBValidationItem feedback={lastNameFlag && 'Please enter your last name.'} invalid={lastNameFlag}>
-                  <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='lastName' value={lastName} onChange={(e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) }} type='text' size="lg" required />
+                  <MDBInput wrapperClass='mb-4 w-100' label='Last name' id='lastName' value={lastName} onChange={(e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) }} type='text' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
               <MDBCheckbox name='flexCheck' checked={sendEmailReminder} onChange={(e) => { validateInput(false, e.target, setSendEmailReminder) }} id='sendEmailLessonAbsesnce' label='Send email notificatons for lesson absesnce' />

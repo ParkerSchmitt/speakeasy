@@ -5,6 +5,7 @@ import Config from '.././Config'
 import {
   MDBCard,
   MDBCardBody,
+  MDBCardSubTitle,
   MDBCardTitle,
   MDBCol,
   MDBContainer,
@@ -26,6 +27,7 @@ export default function PageTopics (): ReactElement {
   const [showImage, setShowImage] = useState(false)
   const [flagReportDialog, setFlagReportDialog] = useState(false)
   const [endOfCardsFlag, setEndOfCardsFlag] = useState(false)
+  const [showRememberance, setShowRememberance] = useState(false)
 
   const toggleFlagReportDialogShow = (): void => { setFlagReportDialog(!flagReportDialog) }
 
@@ -42,7 +44,28 @@ export default function PageTopics (): ReactElement {
   useEffect(() => {
     // Update the document title using the browser API
     receiveCards()
+    receiveAccountInfo()
   }, [])
+
+  const receiveAccountInfo = (): void => {
+    fetch(`${Config.REACT_APP_API_URL}/account/info`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(async (response) => {
+      if (response.status === 401) {
+        navigate('/login')
+      } else {
+        const accountInfo = (await response.json()).response
+        setShowRememberance(accountInfo.showAddedTimeInButton)
+      }
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
 
   const receiveCards = (): void => {
     fetch(`${Config.REACT_APP_API_URL}/retrieveCards`, {
@@ -74,7 +97,8 @@ export default function PageTopics (): ReactElement {
             revealText: json.response[i].revealText,
             pronunciation: json.response[i].pronunciation,
             imageUrl: Config.REACT_APP_MEDIA_URL + (json.response[i].imageUrl as string),
-            audio: new Audio(Config.REACT_APP_MEDIA_URL + (json.response[i].audioUrl as string))
+            audio: new Audio(Config.REACT_APP_MEDIA_URL + (json.response[i].audioUrl as string)),
+            burryTime: json.response[i].burryTime
           }
           newCards.push(card)
         }
@@ -136,6 +160,30 @@ export default function PageTopics (): ReactElement {
   }
 
   /**
+   * renderTimeAddedString takes a time and converts it to a string to render
+   * @param time - EPOCH time to convert.
+   */
+  const renderTimeAddedString = (time: number): string => {
+    // > One day
+    if ((Math.round((time / 86400000) * 10) / 10) > 1) {
+      return `+${Math.round((time / 86400000) * 10) / 10}d`
+    // = One day
+    } else if ((Math.round((time / 86400000) * 10) / 10) === 1) {
+      return `+${Math.round((time / 86400000) * 10) / 10}d`
+    } else if ((Math.round((time / 3600000) * 10) / 10) > 1) {
+      return `+${Math.round((time / 3600000) * 10) / 10}h`
+    } else if ((Math.round((time / 3600000) * 10) / 10) === 1) {
+      return `+${Math.round((time / 3600000) * 10) / 10}h`
+    } else if ((Math.round((time / 600000) * 10) / 10) > 1) {
+      return `+${Math.round((time / 600000) * 10) / 10}h`
+    } else if ((Math.round((time / 600000) * 10) / 10) === 1) {
+      return `+${Math.round((time / 600000) * 10) / 10}m`
+    } else {
+      return `+${Math.round((time / 1000) * 10) / 10}s`
+    }
+  }
+
+  /**
    * Called when a user tries to report a card
    * @param type type type of report - image, reveal, preview, pronunciation
    * @param reason the reason for the report  - offensive, incorrect, improvement
@@ -155,9 +203,9 @@ export default function PageTopics (): ReactElement {
       body: JSON.stringify({
         topic: 'Spanish',
         cardId: currentCards[0].id,
-        type: type,
-        reason: reason,
-        comment: comment
+        type,
+        reason,
+        comment
       })
     }).then((response) => {
       if (response.status === 500) {
@@ -206,6 +254,7 @@ export default function PageTopics (): ReactElement {
                <MDBCard shadow='0' border='success' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-success text-center'>
                        <MDBCardTitle>Mastered</MDBCardTitle>
+                       {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[3])}</MDBCardSubTitle>}
                    </MDBCardBody>
                    </MDBCard>
                </MDBCol>
@@ -213,6 +262,7 @@ export default function PageTopics (): ReactElement {
                    <MDBCard shadow='0' border='secondary' background='white'className='learn-choice p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-secondary text-center'>
                            <MDBCardTitle>Recognized</MDBCardTitle>
+                           {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[2])}</MDBCardSubTitle>}
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
@@ -220,6 +270,7 @@ export default function PageTopics (): ReactElement {
                    <MDBCard shadow='0' border='warning' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-warning text-center'>
                            <MDBCardTitle>Learning</MDBCardTitle>
+                           {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[1])} & review </MDBCardSubTitle>}
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
@@ -227,6 +278,7 @@ export default function PageTopics (): ReactElement {
                    <MDBCard shadow='0' border='danger' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-danger text-center'>
                        <MDBCardTitle>New</MDBCardTitle>
+                       {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[0])} & review</MDBCardSubTitle>}
                    </MDBCardBody>
                    </MDBCard>
                </MDBCol>

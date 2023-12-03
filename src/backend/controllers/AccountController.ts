@@ -105,8 +105,11 @@ class AccountController {
     PostSignout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const session = req.session
-        session.destroy((error) => {
-          throw error
+        session.destroy((error?: Error) => {
+          if (error !== undefined) {
+            throw error
+          }
+          res.status(200).json({ code: 200, response: 'Signed out..' })
         })
       } catch (error) {
         res.status(200).json({ code: 400, response: 'No session to sign out.' })

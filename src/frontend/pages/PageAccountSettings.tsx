@@ -14,7 +14,10 @@ import {
   MDBCheckbox,
   MDBValidation,
   MDBValidationItem,
-  MDBIcon
+  MDBIcon,
+  MDBInputGroup,
+  MDBCardTitle,
+  MDBCardSubTitle
 }
   from 'mdb-react-ui-kit'
 import { ToastContainer, toast } from 'react-toastify'
@@ -191,13 +194,13 @@ function PageLogin (): ReactElement {
   return (
     <MDBContainer fluid style={{ backgroundColor: '#fff8e3' }}>
       <ToastContainer />
-      {flagDeleteAccountDialog && <DeleteAccountDialog show={flagDeleteAccountDialog} submitDialogHandler={deleteAccountDialogHandler} closeWindowHandler={toggleFlagDeleteAccountDialog}/>}
-      {flagChangePasswordDialog && <ChangePasswordDialog show={flagChangePasswordDialog} submitDialogHandler={deleteAccountDialogHandler} closeWindowHandler={toggleFlagChangePasswordDialog}/>}
+      {flagDeleteAccountDialog && <DeleteAccountDialog show={flagDeleteAccountDialog} submitDialogHandler={deleteAccountDialogHandler} closeWindowHandler={toggleFlagDeleteAccountDialog} />}
+      {flagChangePasswordDialog && <ChangePasswordDialog show={flagChangePasswordDialog} submitDialogHandler={deleteAccountDialogHandler} closeWindowHandler={toggleFlagChangePasswordDialog} />}
 
       <MDBRow className='d-flex justify-content-center align-items-center h-100'>
         <MDBCol col='12'>
 
-          <h3 className="my-5 text-center" style={{ color: '#3B71CA', fontFamily: '"Bevan", cursive' }}>speakeasy.</h3>
+          <h3 className="my-5 text-center" style={{ color: '#3B71CA', fontFamily: '"Bevan", cursive' }}><a href="/topics">speakeasy.</a></h3>
 
           <MDBCard className='bg-white my-5 mx-auto' style={{ borderRadius: '1rem', maxWidth: '500px' }}>
             <MDBCardBody className='p-5 w-100 d-flex flex-column'>
@@ -209,7 +212,7 @@ function PageLogin (): ReactElement {
                   <MDBInput wrapperClass='mb-4 w-100' label='New Words Per Day' id='wordsPerDay' min={1} max={Config.REACT_APP_MAX_CARDS} value={newCards} onChange={(e) => { validateInput((Number(e.target.value) < 1 || Number(e.target.value) > Config.REACT_APP_MAX_CARDS), e.target, setNewCards, setNewCardsFlag) }} type='number' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
-              <MDBCheckbox name='flagShowAddedTime' checked={showRememberance} onChange={ (e) => { validateInput(false, e.target, setShowRememberance) }} id='showAddedTimeInButton' label='Show added time in rememberance buttons' />
+              <MDBCheckbox name='flagShowAddedTime' checked={showRememberance} onChange={(e) => { validateInput(false, e.target, setShowRememberance) }} id='showAddedTimeInButton' label='Show added time in rememberance buttons' />
               <br />
               <MDBBtn size='lg' color="secondary" disabled={(Number(newCards) === Config.REACT_APP_DEFAULT_CARDS)} onClick={() => {
                 setNewCards(String(Config.REACT_APP_DEFAULT_CARDS))
@@ -218,6 +221,79 @@ function PageLogin (): ReactElement {
               }}>
                 Reset
               </MDBBtn>
+              <h3 className="my-3 text-center">New Cards</h3>
+              <MDBCard shadow='0' border='success' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
+                <MDBCardBody className='text-success text-center'>
+                  <MDBCardTitle>Mastered</MDBCardTitle>
+                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
+                      <MDBInputGroup className='mb-3'>
+                        <input className='form-control' placeholder='2' type='number' />
+                        <span className='input-group-text'>d</span>
+                        <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>h</span>
+                        <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>m</span>
+                      </MDBInputGroup>
+                    </MDBValidationItem>
+                  </MDBValidation>
+                </MDBCardBody>
+              </MDBCard>
+              <MDBCard shadow='0' border='secondary' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
+                <MDBCardBody className='text-secondary text-center'>
+                  <MDBCardTitle>Recognized</MDBCardTitle>
+                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
+                      <MDBInputGroup className='mb-3'>
+                      <input className='form-control' placeholder='1' type='number' />
+                        <span className='input-group-text'>d</span>
+                        <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>h</span>
+                        <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>m</span>
+                      </MDBInputGroup>
+                    </MDBValidationItem>
+                  </MDBValidation>
+                </MDBCardBody>
+              </MDBCard>
+              <MDBCard shadow='0' border='warning' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
+                <MDBCardBody className='text-warning text-center'>
+                  <MDBCardTitle>Learning</MDBCardTitle>
+                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
+                      <MDBInputGroup className='mb-3'>
+                      <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>d</span>
+                        <input className='form-control' placeholder='1' type='number' />
+                        <span className='input-group-text'>h</span>
+                        <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>m</span>
+                      </MDBInputGroup>
+                    </MDBValidationItem>
+                  </MDBValidation>
+                </MDBCardBody>
+              </MDBCard>
+              <MDBCard shadow='0' border='danger' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
+                <MDBCardBody className='text-danger text-center'>
+                  <MDBCardTitle>New</MDBCardTitle>
+                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
+                      <MDBInputGroup className='mb-3'>
+                      <input className='form-control' placeholder='2' type='number' />
+                        <span className='input-group-text'>d</span>
+                        <input className='form-control' placeholder='0' type='number' />
+                        <span className='input-group-text'>h</span>
+                        <input className='form-control' placeholder='10' type='number' />
+                        <span className='input-group-text'>m</span>
+                      </MDBInputGroup>
+                    </MDBValidationItem>
+                  </MDBValidation>
+                </MDBCardBody>
+              </MDBCard>
             </MDBCardBody>
             <MDBCardBody className='px-5 py-1 w-100 d-flex flex-column'><hr /></MDBCardBody>
             <MDBCardBody className='p-5 w-100 d-flex flex-column'>
@@ -234,7 +310,7 @@ function PageLogin (): ReactElement {
                   <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='lastName' value={lastName} onChange={(e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) }} type='text' size="lg" required />
                 </MDBValidationItem>
               </MDBValidation>
-              <MDBCheckbox name='flexCheck' checked={sendEmailReminder} onChange={ (e) => { validateInput(false, e.target, setSendEmailReminder) }} id='sendEmailLessonAbsesnce' label='Send email notificatons for lesson absesnce' />
+              <MDBCheckbox name='flexCheck' checked={sendEmailReminder} onChange={(e) => { validateInput(false, e.target, setSendEmailReminder) }} id='sendEmailLessonAbsesnce' label='Send email notificatons for lesson absesnce' />
               <br />
               <MDBBtn color="secondary" size='lg' onClick={() => { toggleFlagChangePasswordDialog() }}>
                 Change Password

@@ -116,8 +116,8 @@ class TopicRepository {
      * @param date the time we should look for cards for
      * @returns a promise for an array containing the cards
      */
-  async receiveStoredCards (topic: string, accountId: number, amount: number, date: number): Promise<CardType[]> {
-    const query = `SELECT ${this.cardTableName}.id, "topicId", "previewText", "revealText", ${this.cardTableName}."imageUrl", "audioUrl", pronunciation FROM ${this.cardTableName} 
+  async receiveStoredCards (topic: string, accountId: number, amount: number, date: number): Promise<Array<CardType & CardAccountType>> {
+    const query = `SELECT ${this.cardTableName}.id, "topicId", "previewText", "revealText", ${this.cardTableName}."imageUrl", "audioUrl", pronunciation, ${this.cardAccountLinkageTableName}.interval, ${this.cardAccountLinkageTableName}.repetitions, ${this.cardAccountLinkageTableName}.easiness, ${this.cardAccountLinkageTableName}.datetime FROM ${this.cardTableName}
                     INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id 
                     INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
                     WHERE ${this.cardAccountLinkageTableName}.datetime < ${date} AND ${this.cardAccountLinkageTableName}.account_id = ${accountId} 

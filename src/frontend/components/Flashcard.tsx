@@ -8,6 +8,7 @@ export interface Card {
   imageUrl: string
   pronunciation: string
   audio: HTMLAudioElement
+  burryTime: number[]
 }
 
 export const FlashCard = (props: { id: number, title: string, text: string, pronunciation?: string, audio?: HTMLAudioElement, flagShowImage: boolean, image?: string, pressShowImageButtonHandler: () => void, pressReportButtonHandler: () => void }): React.ReactElement => {

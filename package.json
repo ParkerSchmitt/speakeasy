@@ -49,7 +49,7 @@
     "winston": "^3.9.0"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"npx tsx --require ./src/backend/Tracing.ts ./src/server.ts\"",
+    "start": "concurrently \"react-scripts start\" \"npx tsx ./src/server.ts\"",
     "dev-start": "env $(cat .env | grep -v \"#\" | xargs) npm start",
     "build-be": "tsc --build",
     "build-fe": "react-scripts build",

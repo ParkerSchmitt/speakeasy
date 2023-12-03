@@ -64,30 +64,30 @@ class TopicMediator {
   /**
    * Calculate times for new (non-scheduled) variables
    * @param quality - the quality
-   * @param burryTimeNew - the time to add for new cards
-   * @param burryTimeLearning - the time to add for learning cards
-   * @param burryTimeRecognized - the time to add for recognized cards
-   * @param burryTimeMastered - the time to add for mastered cards
+   * @param buryTimeNew - the time to add for new cards
+   * @param buryTimeLearning - the time to add for learning cards
+   * @param buryTimeRecognized - the time to add for recognized cards
+   * @param buryTimeMastered - the time to add for mastered cards
    */
-  calculateNewVariables = (quality: number, burryTimeNew: number, burryTimeLearning: number, burryTimeRecognized: number, burryTimeMastered: number): { easiness: number, interval: number, repetitions: number, date: number } => {
+  calculateNewVariables = (quality: number, buryTimeNew: number, buryTimeLearning: number, buryTimeRecognized: number, buryTimeMastered: number): { easiness: number, interval: number, repetitions: number, date: number } => {
     const { easiness, interval, repetitions } = this.calculateSM2Variables(quality, 2.5, 0, 0, Date.now())
     let date = Date.now()
     switch (quality) {
       // Learning
       case 0:
-        date += burryTimeNew
+        date += buryTimeNew
         break
       // Learning
       case 1:
-        date += burryTimeLearning
+        date += buryTimeLearning
         break
       // Learning
       case 2:
-        date += burryTimeRecognized
+        date += buryTimeRecognized
         break
       // Learning
       case 3:
-        date += burryTimeMastered
+        date += buryTimeMastered
         break
     }
     return { easiness, interval, repetitions, date }
@@ -162,7 +162,7 @@ class TopicMediator {
     * @param request - the request the user made.
     * @returns a Promise with the information in JSON
     */
-  async PostReceiveCards (session: Session & Partial<SessionData>, time: number, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean, burryTime: number[] }>> {
+  async PostReceiveCards (session: Session & Partial<SessionData>, time: number, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean, buryTime: number[] }>> {
     try {
       if (request.amount > this.maxCards || request.amount < 0) {
         throw InvalidCardAmount
@@ -180,7 +180,7 @@ class TopicMediator {
 
       // First see if there are any review cards. If there are, grab them instead
       if (session.activeReviews !== undefined && session.activeReviews[request.topic].length !== 0) {
-        return session.activeReviews[request.topic].splice(0, request.amount).map(cardData => ({ id: cardData.id, previewText: cardData.previewText, revealText: cardData.revealText, pronunciation: cardData.pronunciation, imageUrl: cardData.imageUrl, audioUrl: cardData.audioUrl, scheduledCard: true, burryTime: [dateNew, dateLearning, dateRecognized, dateMastered] }))
+        return session.activeReviews[request.topic].splice(0, request.amount).map(cardData => ({ id: cardData.id, previewText: cardData.previewText, revealText: cardData.revealText, pronunciation: cardData.pronunciation, imageUrl: cardData.imageUrl, audioUrl: cardData.audioUrl, scheduledCard: true, buryTime: [dateNew, dateLearning, dateRecognized, dateMastered] }))
       }
 
       // First lets grab cards that the user is scheduled to learn- stored in the linkages table
@@ -188,7 +188,7 @@ class TopicMediator {
       const scheduledCards: any = scheduledCardsResponse.map(cardData => ({
         ...cardData,
         scheduledCard: true,
-        burryTime: [
+        buryTime: [
           this.calculateSM2Variables(0, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime,
           this.calculateSM2Variables(1, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime,
           this.calculateSM2Variables(2, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime,
@@ -204,7 +204,7 @@ class TopicMediator {
         const newCards = newCardsResponse.map(cardData => ({
           ...cardData,
           scheduledCard: false,
-          burryTime: [dateNew, dateLearning, dateRecognized, dateMastered]
+          buryTime: [dateNew, dateLearning, dateRecognized, dateMastered]
         }))
         return scheduledCards.concat(newCards)
       }

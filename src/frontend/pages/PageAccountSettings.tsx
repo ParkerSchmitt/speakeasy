@@ -225,7 +225,7 @@ function PageLogin (): ReactElement {
               <MDBCard shadow='0' border='success' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
                 <MDBCardBody className='text-success text-center'>
                   <MDBCardTitle>Mastered</MDBCardTitle>
-                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBCardSubTitle>New card bury time</MDBCardSubTitle>
                   <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
                     <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
                       <MDBInputGroup className='mb-3'>
@@ -243,7 +243,7 @@ function PageLogin (): ReactElement {
               <MDBCard shadow='0' border='secondary' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
                 <MDBCardBody className='text-secondary text-center'>
                   <MDBCardTitle>Recognized</MDBCardTitle>
-                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBCardSubTitle>New card bury time</MDBCardSubTitle>
                   <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
                     <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
                       <MDBInputGroup className='mb-3'>
@@ -261,7 +261,7 @@ function PageLogin (): ReactElement {
               <MDBCard shadow='0' border='warning' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
                 <MDBCardBody className='text-warning text-center'>
                   <MDBCardTitle>Learning</MDBCardTitle>
-                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBCardSubTitle>New card bury time</MDBCardSubTitle>
                   <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
                     <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
                       <MDBInputGroup className='mb-3'>
@@ -279,7 +279,7 @@ function PageLogin (): ReactElement {
               <MDBCard shadow='0' border='danger' background='white' className='learn-choice my-2 p-1 w-100 d-flex flex-column'>
                 <MDBCardBody className='text-danger text-center'>
                   <MDBCardTitle>New</MDBCardTitle>
-                  <MDBCardSubTitle>New card burry time</MDBCardSubTitle>
+                  <MDBCardSubTitle>New card bury time</MDBCardSubTitle>
                   <MDBValidation className={'row g-3 mt-1' + ((newCardsFlag) ? 'was-validated' : '')}>
                     <MDBValidationItem feedback={newCardsFlag && `Value must be between 1 and ${Config.REACT_APP_MAX_CARDS}.`} invalid={newCardsFlag}>
                       <MDBInputGroup className='mb-3'>

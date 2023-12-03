@@ -98,7 +98,7 @@ export default function PageTopics (): ReactElement {
             pronunciation: json.response[i].pronunciation,
             imageUrl: Config.REACT_APP_MEDIA_URL + (json.response[i].imageUrl as string),
             audio: new Audio(Config.REACT_APP_MEDIA_URL + (json.response[i].audioUrl as string)),
-            burryTime: json.response[i].burryTime
+            buryTime: json.response[i].buryTime
           }
           newCards.push(card)
         }
@@ -254,7 +254,7 @@ export default function PageTopics (): ReactElement {
                <MDBCard shadow='0' border='success' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-success text-center'>
                        <MDBCardTitle>Mastered</MDBCardTitle>
-                       {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[3])}</MDBCardSubTitle>}
+                       {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.buryTime[3])}</MDBCardSubTitle>}
                    </MDBCardBody>
                    </MDBCard>
                </MDBCol>
@@ -262,7 +262,7 @@ export default function PageTopics (): ReactElement {
                    <MDBCard shadow='0' border='secondary' background='white'className='learn-choice p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-secondary text-center'>
                            <MDBCardTitle>Recognized</MDBCardTitle>
-                           {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[2])}</MDBCardSubTitle>}
+                           {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.buryTime[2])}</MDBCardSubTitle>}
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
@@ -270,7 +270,7 @@ export default function PageTopics (): ReactElement {
                    <MDBCard shadow='0' border='warning' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                        <MDBCardBody className='text-warning text-center'>
                            <MDBCardTitle>Learning</MDBCardTitle>
-                           {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[1])} & review </MDBCardSubTitle>}
+                           {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.buryTime[1])} & review </MDBCardSubTitle>}
                        </MDBCardBody>
                    </MDBCard>
                </MDBCol>
@@ -278,7 +278,7 @@ export default function PageTopics (): ReactElement {
                    <MDBCard shadow='0' border='danger' background='white' className='learn-choice p-5 w-100 d-flex flex-column'>
                    <MDBCardBody className='text-danger text-center'>
                        <MDBCardTitle>New</MDBCardTitle>
-                       {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.burryTime[0])} & review</MDBCardSubTitle>}
+                       {showRememberance && <MDBCardSubTitle>{renderTimeAddedString(card.buryTime[0])} & review</MDBCardSubTitle>}
                    </MDBCardBody>
                    </MDBCard>
                </MDBCol>

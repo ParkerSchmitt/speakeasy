@@ -159,7 +159,7 @@ class TopicRepository {
   async updateLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
     const query = `UPDATE ${this.cardAccountLinkageTableName} 
                   SET easiness=$1, interval=$2, repetitions=$3, datetime=$4
-                  WHERE ${this.cardAccountLinkageTableName}.card_id = $6 AND ${this.cardAccountLinkageTableName}.account_id = $6`
+                  WHERE ${this.cardAccountLinkageTableName}.card_id = $5 AND ${this.cardAccountLinkageTableName}.account_id = $6`
     const values = [easiness, interval, repetitions, date, cardId, accountId]
     await this.client.query(query, values)
   }

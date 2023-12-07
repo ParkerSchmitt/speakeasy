@@ -53,7 +53,7 @@ class TopicMediator {
       }
       repetitions = repetitions + 1
     }
-    easiness += 0.1 - (4 - quality) * (0.08 + (4 - quality) * 0.02)
+    easiness = Number(easiness) + 0.1 - (4 - quality) * (0.08 + (4 - quality) * 0.02)
     if (easiness < 1.3) {
       easiness = 1.3
     }
@@ -64,14 +64,15 @@ class TopicMediator {
   /**
    * Calculate times for new (non-scheduled) variables
    * @param quality - the quality
+   * @param quality - the epoch time
    * @param buryTimeNew - the time to add for new cards
    * @param buryTimeLearning - the time to add for learning cards
    * @param buryTimeRecognized - the time to add for recognized cards
    * @param buryTimeMastered - the time to add for mastered cards
    */
-  calculateNewVariables = (quality: number, buryTimeNew: number, buryTimeLearning: number, buryTimeRecognized: number, buryTimeMastered: number): { easiness: number, interval: number, repetitions: number, date: number } => {
-    const { easiness, interval, repetitions } = this.calculateSM2Variables(quality, 2.5, 0, 0, Date.now())
-    let date = Date.now()
+  calculateNewVariables = (quality: number, time: number, buryTimeNew: number, buryTimeLearning: number, buryTimeRecognized: number, buryTimeMastered: number): { easiness: number, interval: number, repetitions: number, date: number } => {
+    const { easiness, interval, repetitions } = this.calculateSM2Variables(quality, 2.5, 0, 0, time)
+    let date = time
     switch (quality) {
       // Learning
       case 0:
@@ -172,11 +173,11 @@ class TopicMediator {
       }
 
       // Variables to use if a reset or new card.
-      const currentTime = Date.now()
-      const dateNew = this.calculateNewVariables(0, 600000, 3600000, 86400000, 172800000).date - currentTime
-      const dateLearning = this.calculateNewVariables(1, 600000, 3600000, 86400000, 172800000).date - currentTime
-      const dateRecognized = this.calculateNewVariables(2, 600000, 3600000, 86400000, 172800000).date - currentTime
-      const dateMastered = this.calculateNewVariables(3, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const currentTime = time
+      const dateNew = this.calculateNewVariables(0, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const dateLearning = this.calculateNewVariables(1, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const dateRecognized = this.calculateNewVariables(2, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const dateMastered = this.calculateNewVariables(3, time, 600000, 3600000, 86400000, 172800000).date - currentTime
 
       // First see if there are any review cards. If there are, grab them instead
       if (session.activeReviews !== undefined && session.activeReviews[request.topic].length !== 0) {
@@ -266,7 +267,7 @@ class TopicMediator {
 
         // The card doesn't exist. Lets insert a new card in memory with inital properties
       } else {
-        const { easiness, interval, repetitions, date } = this.calculateSM2Variables(request.quality, 2.5, 0, 0, time)
+        const { easiness, interval, repetitions, date } = this.calculateNewVariables(request.quality, time, 600000, 3600000, 86400000, 172800000)
         await this.repository.insertLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
         // Now it exists
         const card = await this.repository.receiveStoredCard(session.account.id, request.cardId)

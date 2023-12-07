@@ -9,6 +9,7 @@ import PageLearn from './pages/PageLearn'
 import PageIndex from './pages/PageIndex'
 import PageVerifyAccount from './pages/PageVerifyAccountAlert'
 import PageVerifyAccountSender from './pages/PageVerifyAccountSender'
+import PageAccontSettings from './pages/PageAccountSettings'
 
 function Router (): ReactElement {
   return (
@@ -18,6 +19,7 @@ function Router (): ReactElement {
       <Route path="/register" element={ <PageRegister /> } />
       <Route path="/account/verify/:token" element={<PageVerifyAccountSender/>} />
       <Route path="/account/verify/" element={<PageVerifyAccount/>} />
+      <Route path="/account/settings" element={<PageAccontSettings/>} />
         <Route path="/topics" element={
     //      <ProtectedRoute>
             <PageTopics/>

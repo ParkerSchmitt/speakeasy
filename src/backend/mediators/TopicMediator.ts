@@ -29,6 +29,72 @@ class TopicMediator {
   }
 
   /**
+  * This inline method calculates SM2 information about a card in order to space it correctly for a user to learn effectively.
+  * Information about this algorithm can be found below:
+  * https://super-memory.com/english/ol/sm2.htm
+  * @param quality- the score the user gave for the card on how easy it was to recall.
+  * @param easiness - Calculated score of how easy it is for the user to remember
+  * @param interval - How far to space the card. Reset if user can't remember.
+  * @param repetitions - How many successful repetitions the user has had. Reset if can't remember
+  * @param date - EPOCH date
+  * @returns Object contained new quality, date, interval calculated.
+  */
+  calculateSM2Variables = (quality: number, easiness: number, interval: number, repetitions: number, date: number): { easiness: number, interval: number, repetitions: number, date: number } => {
+    if (quality < 2) {
+      interval = 1
+      repetitions = 0
+    } else {
+      if (repetitions === 0) {
+        interval = 1
+      } else if (repetitions === 1) {
+        interval = 5
+      } else {
+        interval = Math.ceil(interval * easiness)
+      }
+      repetitions = repetitions + 1
+    }
+    easiness = Number(easiness) + 0.1 - (4 - quality) * (0.08 + (4 - quality) * 0.02)
+    if (easiness < 1.3) {
+      easiness = 1.3
+    }
+    date += (86400000 * interval)
+    return { easiness, interval, repetitions, date }
+  }
+
+  /**
+   * Calculate times for new (non-scheduled) variables
+   * @param quality - the quality
+   * @param quality - the epoch time
+   * @param buryTimeNew - the time to add for new cards
+   * @param buryTimeLearning - the time to add for learning cards
+   * @param buryTimeRecognized - the time to add for recognized cards
+   * @param buryTimeMastered - the time to add for mastered cards
+   */
+  calculateNewVariables = (quality: number, time: number, buryTimeNew: number, buryTimeLearning: number, buryTimeRecognized: number, buryTimeMastered: number): { easiness: number, interval: number, repetitions: number, date: number } => {
+    const { easiness, interval, repetitions } = this.calculateSM2Variables(quality, 2.5, 0, 0, time)
+    let date = time
+    switch (quality) {
+      // Learning
+      case 0:
+        date += buryTimeNew
+        break
+      // Learning
+      case 1:
+        date += buryTimeLearning
+        break
+      // Learning
+      case 2:
+        date += buryTimeRecognized
+        break
+      // Learning
+      case 3:
+        date += buryTimeMastered
+        break
+    }
+    return { easiness, interval, repetitions, date }
+  }
+
+  /**
     * GetReceiveTopics receives the topics from the database
     * @returns a Promise with the information in JSON
     */
@@ -97,7 +163,7 @@ class TopicMediator {
     * @param request - the request the user made.
     * @returns a Promise with the information in JSON
     */
-  async PostReceiveCards (session: Session & Partial<SessionData>, time: number, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean }>> {
+  async PostReceiveCards (session: Session & Partial<SessionData>, time: number, request: ReceiveCardsRequest): Promise<Array<{ id: number, previewText: string, revealText: string, scheduledCard: boolean, buryTime: number[] }>> {
     try {
       if (request.amount > this.maxCards || request.amount < 0) {
         throw InvalidCardAmount
@@ -106,22 +172,41 @@ class TopicMediator {
         throw InvalidCredentialsError
       }
 
+      // Variables to use if a reset or new card.
+      const currentTime = time
+      const dateNew = this.calculateNewVariables(0, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const dateLearning = this.calculateNewVariables(1, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const dateRecognized = this.calculateNewVariables(2, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+      const dateMastered = this.calculateNewVariables(3, time, 600000, 3600000, 86400000, 172800000).date - currentTime
+
       // First see if there are any review cards. If there are, grab them instead
       if (session.activeReviews !== undefined && session.activeReviews[request.topic].length !== 0) {
-        return session.activeReviews[request.topic].splice(0, request.amount).map(cardData => ({ id: cardData.id, previewText: cardData.previewText, revealText: cardData.revealText, pronunciation: cardData.pronunciation, imageUrl: cardData.imageUrl, audioUrl: cardData.audioUrl, scheduledCard: true }))
+        return session.activeReviews[request.topic].splice(0, request.amount).map(cardData => ({ id: cardData.id, previewText: cardData.previewText, revealText: cardData.revealText, pronunciation: cardData.pronunciation, imageUrl: cardData.imageUrl, audioUrl: cardData.audioUrl, scheduledCard: true, buryTime: [dateNew, dateLearning, dateRecognized, dateMastered] }))
       }
 
       // First lets grab cards that the user is scheduled to learn- stored in the linkages table
-
       const scheduledCardsResponse = await this.repository.receiveStoredCards(request.topic, session.account.id, request.amount, time)
-      const scheduledCards = scheduledCardsResponse.map(cardData => ({ ...cardData, scheduledCard: true }))
+      const scheduledCards: any = scheduledCardsResponse.map(cardData => ({
+        ...cardData,
+        scheduledCard: true,
+        buryTime: [
+          this.calculateSM2Variables(0, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime,
+          this.calculateSM2Variables(1, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime,
+          this.calculateSM2Variables(2, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime,
+          this.calculateSM2Variables(3, cardData.easiness, cardData.interval, cardData.repetitions, currentTime).date - currentTime
+        ]
+      }))
 
       const leftover: number = request.amount - scheduledCardsResponse.length
       const offset: number = await this.repository.receiveMaxCardReached(request.topic, session.account.id) ?? 0
 
       if (leftover > 0) {
         const newCardsResponse = await this.repository.receiveNewCards(request.topic, leftover, offset)
-        const newCards = newCardsResponse.map(cardData => ({ ...cardData, scheduledCard: false }))
+        const newCards = newCardsResponse.map(cardData => ({
+          ...cardData,
+          scheduledCard: false,
+          buryTime: [dateNew, dateLearning, dateRecognized, dateMastered]
+        }))
         return scheduledCards.concat(newCards)
       }
       return scheduledCards
@@ -171,52 +256,18 @@ class TopicMediator {
 
       // First see if a card already exists
       const card = await this.repository.receiveStoredCard(session.account.id, request.cardId)
-
-      /**
-       * This inline method calculates SM2 information about a card in order to space it correctly for a user to learn effectively.
-       * Information about this algorithm can be found below:
-       * https://super-memory.com/english/ol/sm2.htm
-       * @param quality- the score the user gave for the card on how easy it was to recall.
-       * @param easiness - Calculated score of how easy it is for the user to remember
-       * @param interval - How far to space the card. Reset if user can't remember.
-       * @param repetitions - How many successful repetitions the user has had. Reset if can't remember
-       * @param date - EPOCH date
-       * @returns Object contained new quality, date, interval calculated.
-       */
-      const calculateSM2Variables = (quality: number, easiness: number, interval: number, repetitions: number, date: number): { easiness: number, interval: number, repetitions: number, date: number } => {
-        if (quality < 2) {
-          interval = 1
-          repetitions = 0
-        } else {
-          if (repetitions === 0) {
-            interval = 1
-          } else if (repetitions === 1) {
-            interval = 5
-          } else {
-            interval = Math.ceil(interval * easiness)
-          }
-          repetitions = repetitions + 1
-        }
-        easiness += 0.1 - (4 - quality) * (0.08 + (4 - quality) * 0.02)
-        if (easiness < 1.3) {
-          easiness = 1.3
-        }
-        date += (86400000 * interval)
-        return { easiness, interval, repetitions, date }
-      }
-
       // The card already exists. Let's calculate new property values for it and update the record
       if (card !== null) {
-        const { easiness, interval, repetitions, date } = calculateSM2Variables(request.quality, card.easiness, card.interval, card.repetitions, Date.now())
+        const { easiness, interval, repetitions, date } = this.calculateSM2Variables(request.quality, card.easiness, card.interval, card.repetitions, Date.now())
         await this.repository.updateLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
         // Per the SM2 algorithm, we also want the user to review the card until they recognize it.
         if (request.quality < 2) {
           this.saveCardToReviewStack(session, request.topic, card)
         }
 
-      // The card doesn't exist. Lets insert a new card in memory with inital properties
+        // The card doesn't exist. Lets insert a new card in memory with inital properties
       } else {
-        const { easiness, interval, repetitions, date } = calculateSM2Variables(request.quality, 2.5, 0, 0, time)
+        const { easiness, interval, repetitions, date } = this.calculateNewVariables(request.quality, time, 600000, 3600000, 86400000, 172800000)
         await this.repository.insertLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
         // Now it exists
         const card = await this.repository.receiveStoredCard(session.account.id, request.cardId)

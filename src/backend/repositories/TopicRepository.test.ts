@@ -86,7 +86,7 @@ describe('TopicRepository',  () => {
 
     // Makes sure it retrieves the existing (learned) cards form the database.
     it.each([
-        ['Test', 1, 1, 1675820631, [{"id": 1, "revealText": "Home", "previewText": "Casa", "imageUrl": "test/url.png", "audioUrl": "test/url.wav", "pronunciation": "cah-sah", "topicId": 1,}]],
+        ['Test', 1, 1, 1675820631, [{"id": 1, "easiness": 5.3, "datetime": 1675734233, "interval": 5, "repetitions": 3, "previewText": "Casa", "revealText": "Home", "audioUrl": "test/url.wav", "imageUrl": "test/url.png", "pronunciation": "cah-sah", "topicId": 1}]],
         ['Test', 1, 0, 1675820631, []],
         ['Test', 1, 1, 1675303131, []], // should be an empty array because the timestamp is less before the timestamp saved
        ])(
@@ -114,16 +114,16 @@ describe('TopicRepository',  () => {
 
     // Makes sure it updates a card correctly
     it.each([
-        [1,1,6,7,3, 1675734233],
-        [1,1,5.3,5,3, 1675734231],
+        [1,1,6,7,3, 1675734233, 1675734235],
+        [1,1,5.3,5,3, 1675734231, 1675734235],
 
        ])(
         `should update learned card information`,
-        async (cardId, accountId, easiness, interval, repetitions, date) => {
-            await TopicRepositoryCorrectTable.updateLearnedCard(cardId, accountId, easiness, interval, repetitions, date);
+        async (cardId, accountId, easiness, interval, repetitions, date, learnedDate) => {
+            await TopicRepositoryCorrectTable.updateLearnedCard(cardId, accountId, easiness, interval, repetitions, date, learnedDate);
             
             //Now query the database and see if it updated
-            const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$1 AND account_id = $2 `;
+            const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime, learned_datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$1 AND account_id = $2 `;
             const values = [cardId,accountId]
             let results  = await client.query(query,values)
             expect(results.rowCount).toEqual(1);
@@ -133,20 +133,21 @@ describe('TopicRepository',  () => {
             expect(results.rows[0].interval).toEqual(interval);
             expect(results.rows[0].repetitions).toEqual(repetitions);
             expect(results.rows[0].datetime).toEqual(date);
+            expect(results.rows[0].learned_datetime).toEqual(learnedDate);
         }
     );
 
         // Makes sure it inserts a card correctly
         it.each([
-            [2,1,6,7,3, 1675734233],
-            [3,1,5.3,5,3, 1675734231],
+            [2,1,6,7,3, 1675734233,1675734235],
+            [3,1,5.3,5,3, 1675734231, 1675734235],
            ])(
             `should insert learned card information`,
-            async (cardId, accountId, easiness, interval, repetitions, date) => {
-                await TopicRepositoryCorrectTable.insertLearnedCard(cardId, accountId, easiness, interval, repetitions, date);
+            async (cardId, accountId, easiness, interval, repetitions, date, learnedDate) => {
+                await TopicRepositoryCorrectTable.insertLearnedCard(cardId, accountId, easiness, interval, repetitions, date, learnedDate);
                 
                 //Now query the database and see if it updated
-                const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$1 AND account_id = $2 `;
+                const query = `SELECT card_id, account_id, easiness, interval, repetitions, datetime, learned_datetime FROM ${TopicRepositoryCorrectTable.cardAccountLinkageTableName} WHERE card_id =$1 AND account_id = $2 `;
                 const values = [cardId,accountId]
                 let results  = await client.query(query,values)
                 expect(results.rowCount).toEqual(1);
@@ -156,6 +157,7 @@ describe('TopicRepository',  () => {
                 expect(results.rows[0].interval).toEqual(interval);
                 expect(results.rows[0].repetitions).toEqual(repetitions);
                 expect(results.rows[0].datetime).toEqual(date);
+                expect(results.rows[0].learned_datetime).toEqual(learnedDate);
             }
         );
 

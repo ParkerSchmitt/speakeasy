@@ -19,8 +19,8 @@ declare module 'express-session' {
 
 describe('TopicMediator',  () => {
     let TopicMediatorCorrectTable : TopicsMediator
-    const testAccount1 = { id: 1, email: "test@test.com", firstName: "Apple", lastName: "Rose", passwordHash: "xyz", passwordSalt: "abc", emailVerificationToken: "123", isEmailAuthenticated: true }
-    const testAccount2 = { id: 2, email: "john.smith@test.com", firstName: "John", lastName: "Smith", passwordHash: "xyz", passwordSalt: "abc", emailVerificationToken: "123", isEmailAuthenticated: true }
+    const testAccount1 = { id: 1, email: "test@test.com", firstName: "Apple", lastName: "Rose", passwordHash: "xyz", passwordSalt: "abc", emailVerificationToken: "123", isEmailAuthenticated: true, wordsPerDay: 10, showAddedTimeInButton: true, sendEmailLessonAbsesnce: true}
+    const testAccount2 = { id: 2, email: "john.smith@test.com", firstName: "John", lastName: "Smith", passwordHash: "xyz", passwordSalt: "abc", emailVerificationToken: "123", isEmailAuthenticated: true, wordsPerDay: 10, showAddedTimeInButton: true, sendEmailLessonAbsesnce: true }
 
     let client = new DatabaseMock() as Client
 
@@ -78,7 +78,9 @@ describe('TopicMediator',  () => {
 
     // Makes sure it retrieves new (not learned) cards form the database.
     it.each([
-        ['Test', 1, 0, [{"audioUrl": "test/url.wav", "id": 1, "imageUrl": "test/url.png", "previewText": "Casa", "pronunciation": "cah-sah", "revealText": "Home", "scheduledCard": false, "topicId": 1 }]],
+        ['Test', 1, 0, [{
+            "audioUrl": "test/url.wav", "id": 1, "imageUrl": "test/url.png", "previewText": "Casa", "pronunciation": "cah-sah", "revealText": "Home", "scheduledCard": false, "topicId": 1, "buryTime": [600000, 3600000, 86400000, 172800000 ]
+        }]],
     ])(
         `should retrieve not learned cards from the database`,
         async (topic, amount, offset, expectedObject) => {
@@ -122,10 +124,12 @@ describe('TopicMediator',  () => {
     it.each([
         [ testAccount1,
          1,
-         [{"audioUrl": "test/url.wav", "id": 1, "imageUrl": "test/url.png", "previewText": "Casa", "pronunciation": "cah-sah", "revealText": "Home", "scheduledCard": true, "topicId": 1}]],
-       ])(
+            [{
+                "audioUrl": "test/url.wav", "id": 1, "imageUrl": "test/url.png", "previewText": "Casa", "pronunciation": "cah-sah", "revealText": "Home", "scheduledCard": true, "topicId": 1, "interval": 5, "repetitions": 3, "datetime": 1675734233, "easiness": 5.3, "buryTime": [ 86400000, 86400000,2332800000, 2332800000 ],
+            }]],
+    ])(
         `should retrieve a single learned card from the database`,
-        async (account, amount, expectedObbject) => {
+        async (account, amount, expectedObject) => {
 
             let session: Session &  Partial<session.SessionData> = {
                 id: '1',
@@ -156,7 +160,7 @@ describe('TopicMediator',  () => {
                 topic: 'Test'
             }
             const result = await TopicMediatorCorrectTable.PostReceiveCards(session, 1875734233, request);
-            expect(result).toEqual(expectedObbject);
+            expect(result).toEqual(expectedObject);
         }
     );    
 

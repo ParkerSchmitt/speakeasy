@@ -6,7 +6,7 @@ import { MailerMock } from '../mocks/MailerMock'; /*eslint: ignore */
 
 import AccountRepository from '../repositories/AccountRepository';
 import { CardAccountType } from '../types/CardAccountType';
-import AccountMediator, { AccountExistsError, InvalidCredentialsError, InvalidTokenError } from './AccountMediator'
+import AccountMediator, { AccountExistsError, InvalidCredentialsAuthError, InvalidTokenError } from './AccountMediator'
 import { type Client } from 'pg';
 import { Mailer } from '../utils/mailer/Mailer';
 
@@ -55,8 +55,8 @@ describe('AccountMediator',  () => {
     // Makes sure that invalid login requests are interepted correctly
     it.each([
       [{ 'email': 'invalid.table@test.com', 'password': '1234'}, AccountMediatorInvalidTable, Error],
-      [{ 'email': "email.does.not.exist@test.com", 'password': '1234'}, AccountMediatorCorrectTable, InvalidCredentialsError],
-      [{ 'email': "duplicate@test.com", 'password': 'invalidPassword'}, AccountMediatorCorrectTable, InvalidCredentialsError],
+      [{ 'email': "email.does.not.exist@test.com", 'password': '1234'}, AccountMediatorCorrectTable, InvalidCredentialsAuthError],
+      [{ 'email': "duplicate@test.com", 'password': 'invalidPassword'}, AccountMediatorCorrectTable, InvalidCredentialsAuthError],
     ])(
       `should return error errors if can't login user into table`,
       async (viewmodel, mediator, error) => {

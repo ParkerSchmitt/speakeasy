@@ -200,6 +200,12 @@ class TopicMediator {
       const leftover: number = request.amount - scheduledCardsResponse.length
       const offset: number = await this.repository.receiveMaxCardReached(request.topic, session.account.id) ?? 0
 
+      /** TODO
+       * Create repository method: wordsLearnedOnDate()
+       * find value for today
+       * maxWordsAllowedToday user.wordsPerday - wordsLearnedToday
+       * use that with the leftover below
+       **/
       if (leftover > 0) {
         const newCardsResponse = await this.repository.receiveNewCards(request.topic, leftover, offset)
         const newCards = newCardsResponse.map(cardData => ({
@@ -259,7 +265,7 @@ class TopicMediator {
       // The card already exists. Let's calculate new property values for it and update the record
       if (card !== null) {
         const { easiness, interval, repetitions, date } = this.calculateSM2Variables(request.quality, card.easiness, card.interval, card.repetitions, Date.now())
-        await this.repository.updateLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
+        await this.repository.updateLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date, Date.now())
         // Per the SM2 algorithm, we also want the user to review the card until they recognize it.
         if (request.quality < 2) {
           this.saveCardToReviewStack(session, request.topic, card)
@@ -268,7 +274,7 @@ class TopicMediator {
         // The card doesn't exist. Lets insert a new card in memory with inital properties
       } else {
         const { easiness, interval, repetitions, date } = this.calculateNewVariables(request.quality, time, 600000, 3600000, 86400000, 172800000)
-        await this.repository.insertLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date)
+        await this.repository.insertLearnedCard(request.cardId, session.account.id, easiness, interval, repetitions, date, time)
         // Now it exists
         const card = await this.repository.receiveStoredCard(session.account.id, request.cardId)
 

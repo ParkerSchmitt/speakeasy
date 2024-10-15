@@ -146,6 +146,26 @@ class TopicRepository {
   }
 
   /**
+     * recieveCardsLearnedOnDateAmount attempts to retrieve the number of cards last learned/reviewed on a given datetime range.
+     * @param topic the name of the topic to search for cards under
+     * @param accountId the id of the user associated with the cards stored
+     * @param datetimeStart the start epoch datetime that we should look for
+     * @param datetimeEnd the start epoch datetime that we should look for
+     * @returns a promise containing a integer representing the amount of cards that were last learned/reviewed within a give  datetime range
+     */
+  async recieveCardsLearnedOnDateAmount (topic: string, accountId: number, datetimeStart: number, datetimeEnd: number): Promise<number> {
+    const query = `SELECT COUNT(${this.cardTableName}.id) as amount FROM ${this.cardTableName} 
+                      INNER JOIN ${this.topicTableName} ON ${this.cardTableName}."topicId" = ${this.topicTableName}.id 
+                      INNER JOIN ${this.cardAccountLinkageTableName} ON ${this.cardTableName}.id = ${this.cardAccountLinkageTableName}.card_id
+                      WHERE ${this.cardAccountLinkageTableName}.account_id = ${accountId} AND ${this.cardAccountLinkageTableName}.learned_datetime >= ${datetimeStart} AND ${this.cardAccountLinkageTableName}.learned_datetime <= ${datetimeEnd}`
+    const amount = await this.client.query(query)
+    if (amount.rowCount === 0) {
+      return 0
+    }
+    return amount.rows[0].amount
+  }
+
+  /**
      * saveLearnedCard attempts to save a card to auser
      * @param topic the name of the topic to search for cards under
      * @param cardId the id of the card to insert/update
@@ -154,13 +174,14 @@ class TopicRepository {
      * @param interval the interval to store/update
      * @param repetitions the repetitions to store/update
      * @param date the review date to store/update
+     * @param learnedDate the review date that it was last learned on
      * @returns a promise containing a integer representing the highest card a user has learned, or null
      */
-  async updateLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
+  async updateLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number, learnedDate: number): Promise<void> {
     const query = `UPDATE ${this.cardAccountLinkageTableName} 
-                  SET easiness=$1, interval=$2, repetitions=$3, datetime=$4
-                  WHERE ${this.cardAccountLinkageTableName}.card_id = $5 AND ${this.cardAccountLinkageTableName}.account_id = $6`
-    const values = [easiness, interval, repetitions, date, cardId, accountId]
+                  SET easiness=$1, interval=$2, repetitions=$3, datetime=$4, learned_datetime=$5
+                  WHERE ${this.cardAccountLinkageTableName}.card_id = $6 AND ${this.cardAccountLinkageTableName}.account_id = $7`
+    const values = [easiness, interval, repetitions, date, learnedDate, cardId, accountId]
     await this.client.query(query, values)
   }
 
@@ -172,11 +193,12 @@ class TopicRepository {
      * @param interval the interval to store/update
      * @param repetitions the repetitions to store/update
      * @param date the review date to store/update
+     * @param learnedDate the review date that it was last learned on
      * @returns a promise containing a integer representing the highest card a user has learned, or null
      */
-  async insertLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number): Promise<void> {
-    const query = `INSERT INTO ${this.cardAccountLinkageTableName} (card_id, account_id, easiness, interval, repetitions, datetime) VALUES ($1,$2,$3,$4,$5,$6)`
-    const values = [cardId, accountId, easiness, interval, repetitions, date]
+  async insertLearnedCard (cardId: number, accountId: number, easiness: number, interval: number, repetitions: number, date: number, learnedDate: number): Promise<void> {
+    const query = `INSERT INTO ${this.cardAccountLinkageTableName} (card_id, account_id, easiness, interval, repetitions, datetime, learned_datetime) VALUES ($1,$2,$3,$4,$5,$6, $7)`
+    const values = [cardId, accountId, easiness, interval, repetitions, date, learnedDate]
     await this.client.query(query, values)
   }
 

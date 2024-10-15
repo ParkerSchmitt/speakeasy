@@ -17,6 +17,7 @@ import {
 }
   from 'mdb-react-ui-kit'
 import { useNavigate } from 'react-router'
+import { ProfileDropdown } from '../components/ProfileDropdown'
 
 function PageLogin (): ReactElement {
   const topicName = 'Spanish'
@@ -98,6 +99,9 @@ function PageLogin (): ReactElement {
                   </MDBTabsLink>
                 </MDBTabsItem>
               </MDBTabs>
+              <div style={{ position: 'absolute', top: '3rem', right: '4rem' }}>
+                <ProfileDropdown/>
+              </div>
             </div>
           </div>
         </MDBCol>

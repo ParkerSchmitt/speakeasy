@@ -42,12 +42,9 @@ function PageRegister (): ReactElement {
     if (indicator) {
       funcSetInput(target.value)
       funcSetInputFlag(true)
-      target.setCustomValidity('invalid')
-      target.reportValidity()
     } else {
-      funcSetInputFlag(true)
+      funcSetInputFlag(false)
       funcSetInput(target.value)
-      target.setCustomValidity(''); target.reportValidity()
     }
   }
 
@@ -91,33 +88,33 @@ function PageRegister (): ReactElement {
               <MDBCardBody className='p-5 w-100 d-flex flex-column'>
 
                 <h2 className=" mt-0 mb-4 text-center">Register</h2>
-                  <MDBValidation className={'row g-3 ' + (firstNameFlag ? 'was-validated' : '') }>
-                    <MDBValidationItem feedback='Please enter your first name.' invalid={firstNameFlag} >
-                      <MDBInput wrapperClass='mb-4 w-100' label='First Name' id='formControlLg' defaultValue={firstName} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setFirstName, setFirstNameFlag) } } type='text' size="lg" required/>
+                  <MDBValidation className={'row g-3 ' + ((firstName.length > 0 || firstNameFlag) ? 'was-validated' : '') }>
+                    <MDBValidationItem feedback={firstNameFlag && 'Please enter your first name.'} invalid={firstNameFlag} >
+                      <MDBInput wrapperClass='mb-4 w-100' label='First Name' id='firstName' defaultValue={firstName} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setFirstName, setFirstNameFlag) } } type='text' size="lg" required/>
                     </MDBValidationItem>
                   </MDBValidation>
 
-                  <MDBValidation className={'row g-3 ' + (lastNameFlag ? 'was-validated' : '') }>
-                    <MDBValidationItem feedback='Please choose your last name.' invalid={lastNameFlag}>
-                      <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='formControlLg' defaultValue={lastName} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) } } type='text' size="lg"/>
+                  <MDBValidation className={'row g-3 ' + ((lastName.length > 0 || lastNameFlag) ? 'was-validated' : '') }>
+                    <MDBValidationItem feedback={lastNameFlag && 'Please choose your last name.'} invalid={lastNameFlag}>
+                      <MDBInput wrapperClass='mb-4 w-100' label='Last Name' id='lastName' defaultValue={lastName} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setLastName, setLastNameFlag) } } type='text' size="lg" required/>
                       </MDBValidationItem>
                   </MDBValidation>
 
-                  <MDBValidation className={'row g-3 ' + (emailFlag ? 'was-validated' : '') }>
-                    <MDBValidationItem feedback='Please enter a valid email address.' invalid={emailFlag}>
-                      <MDBInput wrapperClass='mb-4 w-100' label='Email address' id='formControlLg' defaultValue={email} onChange={ (e) => { validateInput(!(EmailValidator.validate(e.target.value)), e.target, setEmail, setEmailFlag) } } type='email' size="lg"/>
+                  <MDBValidation className={'row g-3 ' + ((email.length > 0 || emailFlag) ? 'was-validated' : '') }>
+                    <MDBValidationItem feedback={emailFlag && 'Please enter a valid email address.'} invalid={emailFlag}>
+                      <MDBInput wrapperClass='mb-4 w-100' label='Email address' id='emailAddress' defaultValue={email} onChange={ (e) => { validateInput(!(EmailValidator.validate(e.target.value)), e.target, setEmail, setEmailFlag) } } type='email' size="lg" required/>
                     </MDBValidationItem>
                   </MDBValidation>
 
-                  <MDBValidation className={'row g-3 ' + (passwordFlag ? 'was-validated' : '') }>
-                    <MDBValidationItem feedback='Please enter a password.' invalid={ passwordFlag }>
-                      <MDBInput wrapperClass='mb-4 w-100' label='Password' id='formControlLg' defaultValue={password} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setPassword, setPasswordFlag) } } type='password' size="lg"/>
+                  <MDBValidation className={'row g-3 ' + ((password.length > 0 || passwordFlag) ? 'was-validated' : '') }>
+                    <MDBValidationItem feedback={passwordFlag && 'Please enter a password.'} invalid={ passwordFlag }>
+                      <MDBInput wrapperClass='mb-4 w-100' label='Password' id='password' defaultValue={password} onChange={ (e) => { validateInput((e.target.value.length === 0), e.target, setPassword, setPasswordFlag) } } type='password' size="lg" required/>
                     </MDBValidationItem>
                   </MDBValidation>
 
-                  <MDBValidation className={'row g-3 ' + (passwordRepeatFlag ? 'was-validated' : '') }>
-                    <MDBValidationItem feedback='Please make the password match the one above.' invalid={ passwordRepeatFlag }>
-                      <MDBInput wrapperClass='mb-4 w-100' label='Confirm Password' id='formControlLg' defaultValue={passwordRepeat} onChange={ (e) => { validateInput((e.target.value !== password), e.target, setPasswordRepeat, setPasswordRepeatFlag) } } type='password' size="lg"/>
+                  <MDBValidation className={'row g-3 ' + ((passwordRepeat.length > 0 || passwordRepeatFlag) ? 'was-validated' : '')}>
+                    <MDBValidationItem feedback={passwordRepeatFlag && 'Please make the password match the one above.'} invalid={passwordRepeatFlag}>
+                      <MDBInput wrapperClass='mb-4 w-100' label='Confirm Password' id='passwordRepeat' defaultValue={passwordRepeat} onChange={ (e) => { validateInput((e.target.value !== password), e.target, setPasswordRepeat, setPasswordRepeatFlag) } } type='password' size="lg" pattern={password} required/>
                     </MDBValidationItem>
                   </MDBValidation>
 

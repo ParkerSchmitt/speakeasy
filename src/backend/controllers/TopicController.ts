@@ -112,6 +112,7 @@ class TopicController {
       // No errors were thrown. user successfully authenticated.
         requestObj = ReceiveCardsRequest.parse(req.body)
         const responseObj = await this.mediator.PostReceiveCards(req.session, (Math.floor(new Date().getTime() / 1000.0)), requestObj)
+        console.log('controller postreceivecards', req.session)
         res.status(200).json({ code: 200, response: responseObj })
       } catch (error) {
         if (error instanceof Error) {
@@ -143,6 +144,7 @@ class TopicController {
         res.status(200).json({ code: 200, response: 'Saved' })
       } catch (error) {
         if (error instanceof Error) {
+          console.log(error)
           logger.error(`TopicController.PostSaveCard error ${error.toString()}`)
           res.status(400).json({ code: 400, error: error.message })
         }

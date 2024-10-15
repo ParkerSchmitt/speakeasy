@@ -1,3 +1,4 @@
+import { type Session, type SessionData } from 'express-session'
 import { type SignUpRequest } from '../controllers/viewmodels/SignUpRequest'
 import { type SignInRequest } from '../controllers/viewmodels/SignInRequest'
 import type AccountRepository from '../repositories/AccountRepository'
@@ -6,9 +7,11 @@ import { logger } from '../Logger'
 import { SignupTemplate } from '../utils/mailer/templates/SignupTemplate'
 import { type Mailer } from '../utils/mailer/Mailer'
 import { type AccountType } from '../types/AccountType'
+import { type PatchAccountInfoRequest } from '../controllers/viewmodels/PatchAccountInfoRequest'
 export const AccountExistsError: Error = new Error('Account already exists')
 export const AccountNotCreatedError: Error = new Error('Can not retrieve account credentials after creation')
-export const InvalidCredentialsError: Error = new Error('Invalid email or password')
+export const InvalidCredentialsAuthError: Error = new Error('Invalid email or password')
+export const InvalidCredentialsError: Error = new Error('Not authorized')
 export const InvalidTokenError: Error = new Error('Invalid token')
 
 export interface AccountMediatorConfig {
@@ -82,14 +85,14 @@ class AccountMediator {
     try {
       const retrieveObj = await this.repository.retrieveAccountDTO(request.email)
       if (retrieveObj === null) {
-        throw InvalidCredentialsError
+        throw InvalidCredentialsAuthError
       }
       const hash: string = retrieveObj.passwordHash
       const salt: string = retrieveObj.passwordSalt
 
       const passwordAttemptHash: string = createHash('sha256').update(request.password + salt, 'utf8').digest('hex')
       if (passwordAttemptHash !== hash) {
-        throw InvalidCredentialsError
+        throw InvalidCredentialsAuthError
       }
       return retrieveObj
     } catch (error) {
@@ -147,6 +150,126 @@ class AccountMediator {
       const message = 'Unknown Error'
       if (error instanceof Error) {
         logger.error(`AccountMediator.GetVerifyEmail error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * GetAccountInfo attempts to return the users information.
+    * @param token - the recreated signup request the user made.
+    * @param token - the token from the signup request,
+    * @returns an object containing adjustable account info settings from T=>AccountType
+    */
+  async GetAccountInfo (session: Session & Partial<SessionData>): Promise<{
+    firstName: string
+    lastName: string
+    wordsPerDay: number
+    showAddedTimeInButton: boolean
+    sendEmailLessonAbsesnce: boolean
+  }> {
+    try {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
+        throw InvalidCredentialsError
+      } else {
+        return {
+          firstName: session.account.firstName,
+          lastName: session.account.lastName,
+          wordsPerDay: session.account.wordsPerDay,
+          showAddedTimeInButton: session.account.showAddedTimeInButton,
+          sendEmailLessonAbsesnce: session.account.sendEmailLessonAbsesnce
+        }
+      }
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetAccountInfo error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * PatchAccountInfo attempts to update the users information.
+    * @param token - the recreated signup request the user made.
+    * @param token - the token from the signup request,
+    * @returns void - updates the email to be verified.
+    */
+  async PatchAccountInfo (session: Session & Partial<SessionData>, request: PatchAccountInfoRequest): Promise<void> {
+    try {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
+        throw InvalidCredentialsError
+      }
+
+      if (request.firstName != null) {
+        await this.repository.setFirstName(session.account.id, request.firstName)
+      }
+      if (request.lastName != null) {
+        await this.repository.setLastName(session.account.id, request.lastName)
+      }
+      if (request.wordsPerDay != null) {
+        await this.repository.setWordsPerDay(session.account.id, request.wordsPerDay)
+      }
+      if (request.showAddedTimeInButton != null) {
+        await this.repository.setShowAddedTimeInButton(session.account.id, request.showAddedTimeInButton)
+      }
+      if (request.sendEmailLessonAbsesnce != null) {
+        await this.repository.setSendEmailLessonAbsesnce(session.account.id, request.sendEmailLessonAbsesnce)
+      }
+      if (request.newPassword != null && request.currentPassword != null) {
+        const retrieveObj = await this.repository.retrieveAccountDTO(session.account.email)
+        if (retrieveObj === null) {
+          throw InvalidCredentialsAuthError
+        }
+        const hash: string = retrieveObj.passwordHash
+        const salt: string = retrieveObj.passwordSalt
+        const passwordAttemptHash: string = createHash('sha256').update(request.currentPassword + salt, 'utf8').digest('hex')
+        if (passwordAttemptHash !== hash) {
+          throw InvalidCredentialsAuthError
+        }
+        // Generate hash and salt for password for security
+        const passwordSalt = randomBytes(32).toString('hex')
+        const passwordHash: string = createHash('sha256').update(request.newPassword + passwordSalt, 'utf8').digest('hex')
+        await this.repository.setPassword(session.account.id, passwordHash, passwordSalt)
+      }
+      session.account = {
+        ...session.account,
+        ...request
+      }
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetAccountInfo error ${error.toString()}`)
+        throw error
+      } else {
+        throw new Error(message)
+      }
+    }
+  }
+
+  /**
+    * PatchAccountInfo attempts to update the users information.
+    * @param token - the recreated signup request the user made.
+    * @param token - the token from the signup request,
+    * @returns void - updates the email to be verified.
+    */
+  async DeleteAccount (session: Session & Partial<SessionData>): Promise<void> {
+    try {
+      if (session.account === undefined || !session.account.isEmailAuthenticated) {
+        throw InvalidCredentialsError
+      }
+      await this.repository.deleteAccount(session.account.id)
+      session.destroy((error) => {
+        throw error
+      })
+    } catch (error) {
+      const message = 'Unknown Error'
+      if (error instanceof Error) {
+        logger.error(`AccountMediator.GetAccountInfo error ${error.toString()}`)
         throw error
       } else {
         throw new Error(message)

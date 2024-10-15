@@ -55,8 +55,6 @@ const getConfig = (): Partial<ConfigInterface> => {
     SESSION_RESAVE: (process.env.SESSION_RESAVE != null) ? Boolean(process.env.SESSION_RESAVE) : undefined,
     SESSION_COOKIE_MAX_AGE: (process.env.SESSION_COOKIE_MAX_AGE != null) ? Number(process.env.SESSION_COOKIE_MAX_AGE) : undefined,
     SESSION_SAVE_UNINITALIZED: (process.env.SESSION_SAVE_UNINITALIZED != null) ? Boolean(process.env.SESSION_SAVE_UNINITALIZED) : undefined,
-    OTEL_RESOURCE_ATTRIBUTES: (process.env.OTEL_RESOURCE_ATTRIBUTES != null) ? String(process.env.OTEL_RESOURCE_ATTRIBUTES) : undefined,
-    OTEL_EXPORT_URL: (process.env.OTEL_EXPORT_URL != null) ? String(process.env.OTEL_EXPORT_URL) : undefined,
     SENDGRID_API_KEY: (process.env.SENDGRID_API_KEY != null) ? String(process.env.SENDGRID_API_KEY) : undefined
   }
 }

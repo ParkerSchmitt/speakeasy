@@ -7,4 +7,7 @@ export interface AccountType {
   passwordSalt: string
   emailVerificationToken: string
   isEmailAuthenticated: boolean
+  wordsPerDay: number
+  showAddedTimeInButton: boolean
+  sendEmailLessonAbsesnce: boolean
 }
